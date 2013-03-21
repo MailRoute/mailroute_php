@@ -31,25 +31,29 @@ class TestClient extends ClassTest
 	public function testResellerList()
 	{
 		$reseller_name = 'test '.microtime(1);
-		$this->Client->API()->Reseller()->POST(array('name' => $reseller_name.'1'));
-		$this->Client->API()->Reseller()->POST(array('name' => $reseller_name.'2'));
-		$this->Client->API()->Reseller()->POST(array('name' => $reseller_name.'3'));
-		$this->Client->API()->Reseller()->POST(array('name' => $reseller_name.'4'));
-		$this->Client->API()->Reseller()->POST(array('name' => $reseller_name.'5'));
-		$result = $this->Client->API()->Reseller()->GET('', array(), 0, 5);
+		$resellers[]   = $this->Client->API()->Reseller()->POST(array('name' => $reseller_name.'1'));
+		$resellers[]   = $this->Client->API()->Reseller()->POST(array('name' => $reseller_name.'2'));
+		$resellers[]   = $this->Client->API()->Reseller()->POST(array('name' => $reseller_name.'3'));
+		$resellers[]   = $this->Client->API()->Reseller()->POST(array('name' => $reseller_name.'4'));
+		$resellers[]   = $this->Client->API()->Reseller()->POST(array('name' => $reseller_name.'5'));
+		$result        = $this->Client->API()->Reseller()->GET('', array(), 0, 5);
 		$this->assertIsArray($result, $result);
 		$this->assertTrue(count($result)==5);
+		foreach ($resellers as $reseller)
+		{
+			$this->Client->API()->Reseller()->DELETE($reseller['id']);
+		}
 	}
 
 	public function testResellerPOST()
 	{
 		$reseller_name = 'test '.microtime(1);
-		$result        = $this->Client->API()->Reseller()->POST(array('name' => $reseller_name));
-		$this->assertTrue($result);
-		$this->assertIsArray($result);
-		$this->assertEquals($result['name'], $reseller_name);
+		$reseller      = $this->Client->API()->Reseller()->POST(array('name' => $reseller_name));
+		$this->assertIsArray($reseller);
+		$this->assertEquals($reseller['name'], $reseller_name);
 		$result = $this->Client->API()->Reseller()->GET('', array('name' => $reseller_name));
 		$this->assertIsArray($result);
+		$this->Client->API()->Reseller()->DELETE($reseller['id']);
 	}
 
 	public function testResellerDELETE()
@@ -62,5 +66,16 @@ class TestClient extends ClassTest
 		$this->assertTrue($result);
 		$result = $this->Client->API()->Reseller()->GET($reseller['id']);
 		$this->assertTrue(!$result);
+	}
+
+	public function testResellerPUT()
+	{
+		$reseller_name = 'test '.microtime(1).'_put';
+		$reseller      = $this->Client->API()->Reseller()->POST(array('name' => $reseller_name));
+		$this->assertEquals($reseller['name'], $reseller_name);
+		$reseller['name'] = $reseller_name.'_updated';
+		$reseller         = $this->Client->API()->Reseller()->PUT($reseller);
+		$this->assertEquals($reseller['name'], $reseller_name.'_updated', true);
+		$this->Client->API()->Reseller()->DELETE($reseller['id']);
 	}
 }

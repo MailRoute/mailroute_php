@@ -82,6 +82,14 @@ class EntityHandler
 				$arguments['limit'] = $limit;
 			}
 		}
+		elseif ($method=='PUT')
+		{
+			$id = $arguments[0]['id'];
+			if (!empty($id))
+			{
+				$url_request_part .= $id.'/';
+			}
+		}
 	}
 
 	public function setEntityName($entity_name)
