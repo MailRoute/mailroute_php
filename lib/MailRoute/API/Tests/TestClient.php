@@ -28,6 +28,12 @@ class TestClient extends ClassTest
 		$this->assertTrue(isset($result['allowed_detail_http_methods']));
 	}
 
+	public function testResellerList()
+	{
+		$result = $this->Client->API()->Reseller()->GET('', array(), 0, 5);
+		$this->assertEquals($result, 's');
+	}
+
 	public function testResellerPOST()
 	{
 		$result = $this->Client->API()->Reseller()->POST(array('name' => 'test_reseller', 'resource_uri' => 'https://github.com/MailRoute/mailroute_php_new'));

@@ -21,7 +21,12 @@ class EntityHandler
 		$method           = $function;
 		$url_request_part = '/'.$this->entity_name.'/';
 		$this->handleMethod($arguments, $method, $url_request_part);
-		return $this->Client->callAPI($url_request_part, $method, $arguments);
+		$result = $this->Client->callAPI($url_request_part, $method, $arguments);
+		if ($method=='GET' && isset($result['meta']) && isset($result['objects']))
+		{
+			$result = $result['objects'];
+		}
+		return $result;
 	}
 
 	/**
