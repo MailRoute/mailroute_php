@@ -1,0 +1,20 @@
+<?php
+namespace MailRoute\API\Tests;
+
+use MailRoute\API\Client;
+
+class ClientMock extends Client
+{
+	private $Request;
+
+	protected function getNewRequest()
+	{
+		$this->Request = new RequestMock();
+		return $this->Request;
+	}
+
+	public function getRequestMock()
+	{
+		return $this->Request;
+	}
+}
