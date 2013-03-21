@@ -15,6 +15,8 @@ class RequestMock extends Request
 
 	public function getLog()
 	{
-		return $this->log;
+		$log       = $this->log;
+		$this->log = array();
+		return $log;
 	}
 }

@@ -6,4 +6,4 @@
 	url = git://github.com/jamm/HTTP.git
 [submodule "vendors/Autoload"]
 	path = vendors/Autoload
-	url = git@github.com:jamm/Autoload.git
+	url = git://github.com/jamm/Autoload.git

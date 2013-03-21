@@ -30,9 +30,10 @@ class TestClient extends ClassTest
 
 	public function testResellerPOST()
 	{
-		$result = $this->Client->API()->Reseller()->POST(array('name' => 'test reseller', 'resource_uri' => 'https://github.com/MailRoute/mailroute_php_new'));
-		$this->assertTrue($result);
-		$result = $this->Client->API()->Reseller()->GET();
-		$this->assertEquals($result, '.');
+		$result = $this->Client->API()->Reseller()->POST(array('name' => 'test_reseller', 'resource_uri' => 'https://github.com/MailRoute/mailroute_php_new'));
+		$this->assertTrue($result)->addCommentary(print_r($this->Client->getRequestMock()->getLog(), 1));
+		$result = $this->Client->API()->Reseller()->GET('', array('name' => 'test_reseller'));
+		$this->assertEquals($result, '.')->addCommentary(print_r($this->Client->getRequestMock()->getLog(), 1));
+		;
 	}
 }

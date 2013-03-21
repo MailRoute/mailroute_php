@@ -14,7 +14,6 @@ $Test->RunTests();
 $Printer = new \Jamm\Tester\ResultsPrinter();
 $Printer->addTests($Test->getTests());
 $Printer->printResultsLine();
-$Printer->printFailedTests();
 $tests = $Test->getTests();
 
 foreach ($tests as $test_result)
