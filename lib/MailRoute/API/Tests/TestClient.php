@@ -34,6 +34,5 @@ class TestClient extends ClassTest
 		$this->assertTrue($result)->addCommentary(print_r($this->Client->getRequestMock()->getLog(), 1));
 		$result = $this->Client->API()->Reseller()->GET('', array('name' => 'test_reseller'));
 		$this->assertEquals($result, '.')->addCommentary(print_r($this->Client->getRequestMock()->getLog(), 1));
-		;
 	}
 }
