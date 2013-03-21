@@ -22,9 +22,28 @@ class EntityHandler
 		$url_request_part = '/'.$this->entity_name.'/';
 		$this->handleMethod($arguments, $method, $url_request_part);
 		$result = $this->Client->callAPI($url_request_part, $method, $arguments);
+		$result = $this->handleOutput($method, $result);
+		return $result;
+	}
+
+	/**
+	 * @param $method
+	 * @param $result
+	 * @return mixed
+	 */
+	protected function handleOutput($method, $result)
+	{
 		if ($method=='GET' && isset($result['meta']) && isset($result['objects']))
 		{
 			$result = $result['objects'];
+			return $result;
+		}
+		elseif ($method=='DELETE')
+		{
+			if ($result!==false)
+			{
+				$result = true;
+			}
 		}
 		return $result;
 	}
