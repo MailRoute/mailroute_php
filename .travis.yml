@@ -1,8 +1,6 @@
 language: php
 php:
   - 5.4
-env:
-  - DB=redis
 
 before_script: 
   - phpenv config-add test/php.config  
