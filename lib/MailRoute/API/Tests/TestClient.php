@@ -30,7 +30,7 @@ class TestClient extends ClassTest
 
 	public function testResellerList()
 	{
-		$reseller_name = 'test '.microtime();
+		$reseller_name = 'test '.microtime(1);
 		$this->Client->API()->Reseller()->POST(array('name' => $reseller_name.'1'));
 		$this->Client->API()->Reseller()->POST(array('name' => $reseller_name.'2'));
 		$this->Client->API()->Reseller()->POST(array('name' => $reseller_name.'3'));
@@ -43,20 +43,24 @@ class TestClient extends ClassTest
 
 	public function testResellerPOST()
 	{
-		$reseller_name = 'test '.microtime();
-		$result        = $this->Client->API()->Reseller()->POST(array('name' => $reseller_name, 'resource_uri' => 'https://github.com/MailRoute/mailroute_php_new'));
-		$this->assertTrue($result)->addCommentary(print_r($this->Client->getRequestMock()->getLog(), 1));
-		$this->assertTrue($result > 0);
+		$reseller_name = 'test '.microtime(1);
+		$result        = $this->Client->API()->Reseller()->POST(array('name' => $reseller_name));
+		$this->assertTrue($result);
+		$this->assertIsArray($result);
+		$this->assertEquals($result['name'], $reseller_name);
 		$result = $this->Client->API()->Reseller()->GET('', array('name' => $reseller_name));
 		$this->assertIsArray($result);
-		$this->assertTrue($result['name'] = $reseller_name);
 	}
 
 	public function testResellerDELETE()
 	{
-		$reseller_name = 'test '.microtime().'_del';
-		$id            = $this->Client->API()->Reseller()->POST(array('name' => $reseller_name));
-		$result        = $this->Client->API()->Reseller()->DELETE($id);
+		$reseller_name = 'test '.microtime(1).'_del';
+		$reseller      = $this->Client->API()->Reseller()->POST(array('name' => $reseller_name));
+		$this->assertIsArray($reseller);
+		$this->assertEquals($reseller['name'], $reseller_name)->addCommentary(print_r($reseller, 1));
+		$result = $this->Client->API()->Reseller()->DELETE($reseller);
 		$this->assertTrue($result);
+		$result = $this->Client->API()->Reseller()->GET($reseller['id']);
+		$this->assertTrue(!$result);
 	}
 }
