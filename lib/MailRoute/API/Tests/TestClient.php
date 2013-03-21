@@ -31,14 +31,18 @@ class TestClient extends ClassTest
 	public function testResellerList()
 	{
 		$result = $this->Client->API()->Reseller()->GET('', array(), 0, 5);
-		$this->assertEquals($result, 's');
+		$this->assertIsArray($result, $result);
+		$this->assertTrue(count($result)==5);
 	}
 
 	public function testResellerPOST()
 	{
-		$result = $this->Client->API()->Reseller()->POST(array('name' => 'test_reseller', 'resource_uri' => 'https://github.com/MailRoute/mailroute_php_new'));
+		$reseller_name = 'test '.microtime();
+		$result        = $this->Client->API()->Reseller()->POST(array('name' => $reseller_name, 'resource_uri' => 'https://github.com/MailRoute/mailroute_php_new'));
 		$this->assertTrue($result)->addCommentary(print_r($this->Client->getRequestMock()->getLog(), 1));
-		$result = $this->Client->API()->Reseller()->GET('', array('name' => 'test_reseller'));
-		$this->assertEquals($result, '.')->addCommentary(print_r($this->Client->getRequestMock()->getLog(), 1));
+
+		$result = $this->Client->API()->Reseller()->GET('', array('name' => $reseller_name));
+		$this->assertIsArray($result);
+		$this->assertTrue($result['name'] = $reseller_name);
 	}
 }

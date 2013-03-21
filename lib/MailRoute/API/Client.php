@@ -52,10 +52,10 @@ class Client implements IClient
 	 */
 	private function SendAPIQuery($url_request_part, $method, $arguments)
 	{
-		$url     = rtrim($this->api_url, '/').'/'.ltrim(str_replace('//', '/', $url_request_part), '/');
-		if (substr($url,-1)!='/')
+		$url = rtrim($this->api_url, '/').'/'.ltrim(str_replace('//', '/', $url_request_part), '/');
+		if (substr($url, -1)!='/')
 		{
-			$url.='/';
+			$url .= '/';
 		}
 		$Request = $this->getNewRequest();
 		$Request->setMethod($method);
@@ -63,6 +63,10 @@ class Client implements IClient
 		{
 			if (!in_array($method, array('GET', 'HEAD', 'OPTIONS')))
 			{
+				if (count($arguments)==1)
+				{
+					$arguments = current($arguments);
+				}
 				$arguments = json_encode($arguments);
 			}
 			$Request->setData($arguments);
@@ -123,7 +127,23 @@ class Client implements IClient
 			trigger_error('Can not get response', E_USER_WARNING);
 			return false;
 		}
-		if ($Response->isStatusError()) return false;
+		/** @var IResponse $Response */
+		if ($Response->isStatusError())
+		{
+			if ($message = $Response->getBody())
+			{
+				if (is_array($message))
+				{
+					$message = current($message);
+				}
+				if (is_array($message))
+				{
+					$message = print_r($message, 1);
+				}
+				trigger_error($message, E_USER_WARNING);
+			}
+			return false;
+		}
 		return $Response->getBody();
 	}
 

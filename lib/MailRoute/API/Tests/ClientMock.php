@@ -17,4 +17,9 @@ class ClientMock extends Client
 	{
 		return $this->Request;
 	}
+
+	public function getResponse()
+	{
+		return parent::getResponse();
+	}
 }
