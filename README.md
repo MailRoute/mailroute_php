@@ -10,14 +10,17 @@ PHP 5.3+
 `$Client = new \MailRoute\API\Client($Config);`  
 
 ##Create "Reseller" entity
-`$Client->API()->Reseller->POST(['name'=>'New Reseller']);`   
+`$Client->API()->Reseller->create(['name'=>'New Reseller']);`   
 is equal to:  
-`$Client->Reseller->POST(['name'=>'New Reseller']);`    
+`$Client->Reseller->create(['name'=>'New Reseller']);`    
 method `API()` exists only for autocompletion (also called "IntelliSense") in IDE.  
 Method POST will return an array, containing all fields of entity.
 
 ##Get Reseller by ID
-`$Client->API()->Reseller->GET(99);`  
+`$Client->API()->Reseller->get(99);`  
  
-##Get Reseller by name
-`$Client->API()->Reseller->GET(0, ['name'=>'New Reseller']);`  
+##Get list of Resellers by name
+`$Client->API()->Reseller->filter(['name'=>'New Reseller'])->fetchList();`        
+
+##Read list with offset and limit
+`$Client->API()->Reseller->offset(5)->limit(30)->fetchList();`    
