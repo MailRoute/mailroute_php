@@ -39,8 +39,7 @@ class Client implements IClient
 	protected function getEntityHandler($entity)
 	{
 		$entity  = strtolower($entity);
-		$Handler = new EntityHandler($this);
-		$Handler->setEntityName($entity);
+		$Handler = new EntityHandler($this, $entity);
 		return $Handler;
 	}
 
@@ -63,7 +62,7 @@ class Client implements IClient
 		{
 			if (!in_array($method, array('GET', 'HEAD', 'OPTIONS')))
 			{
-				if (count($arguments)==1)
+				if (count($arguments)==1 && key($arguments)===0)
 				{
 					$arguments = current($arguments);
 				}

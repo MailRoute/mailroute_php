@@ -13,6 +13,9 @@ class ClientMock extends Client
 		return $this->Request;
 	}
 
+	/**
+	 * @return RequestMock
+	 */
 	public function getRequestMock()
 	{
 		return $this->Request;

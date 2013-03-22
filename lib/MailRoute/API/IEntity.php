@@ -3,19 +3,27 @@ namespace MailRoute\API;
 
 interface IEntity
 {
-	/**
-	 * In case of changing arguments of this method, change method EntityHandler::handleMethod() also
-	 * @param int|string $id
-	 * @param array $filters
-	 * @param int $offset
-	 * @param int $limit
-	 * @return array
-	 */
-	public function GET($id = '', $filters = array(), $offset = 0, $limit = 0);
+	/** @return array */
+	public function get($id = '');
 
-	public function POST($data);
+	/** @return array */
+	public function create(array $data);
 
-	public function PUT($data);
+	/** @return array */
+	public function update(array $data);
 
-	public function DELETE($id);
+	/** @return boolean */
+	public function delete($id);
+
+	/** @return IEntity */
+	public function limit($limit);
+
+	/** @return IEntity */
+	public function offset($offset);
+
+	/** @return IEntity */
+	public function filter(array $filter_map);
+
+	/** @return array */
+	public function fetchList();
 }
