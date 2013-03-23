@@ -123,8 +123,7 @@ class Client implements IClient
 			{
 				return $Response;
 			}
-			trigger_error('Can not get response', E_USER_WARNING);
-			return false;
+			throw new MailRouteException('Can not get response', 500);
 		}
 		/** @var IResponse $Response */
 		if ($Response->isStatusError())
@@ -139,9 +138,12 @@ class Client implements IClient
 				{
 					$message = print_r($message, 1);
 				}
-				trigger_error($message, E_USER_WARNING);
 			}
-			return false;
+			else
+			{
+				$message = 'Error';
+			}
+			throw new MailRouteException($message, $Response->getStatusCode());
 		}
 		return $Response->getBody();
 	}
