@@ -74,7 +74,18 @@ class EntityHandler implements IEntity
 
 	public function delete($id)
 	{
-		return $this->callAPI('DELETE', $id);
+		try
+		{
+			$this->callAPI('DELETE', $id);
+		}
+		catch (MailRouteException $E)
+		{
+			if ($E->getCode()<>404)
+			{
+				throw $E;
+			}
+		}
+		return true;
 	}
 
 	public function limit($limit)

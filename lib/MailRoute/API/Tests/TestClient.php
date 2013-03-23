@@ -3,6 +3,7 @@ namespace MailRoute\API\Tests;
 
 use Jamm\Tester\ClassTest;
 use MailRoute\API\IClient;
+use MailRoute\API\MailRouteException;
 
 class TestClient extends ClassTest
 {
@@ -65,7 +66,14 @@ class TestClient extends ClassTest
 		$this->assertEquals($reseller['name'], $reseller_name)->addCommentary(print_r($reseller, 1));
 		$result = $this->Client->API()->Reseller()->delete($reseller['id']);
 		$this->assertTrue($result)->addCommentary(gettype($reseller).': '.print_r($reseller, 1));
-		$result = $this->Client->API()->Reseller()->get($reseller['id']);
+		try
+		{
+			$result = $this->Client->API()->Reseller()->get($reseller['id']);
+		}
+		catch (MailRouteException $E)
+		{
+			$result = false;
+		}
 		$this->assertTrue(!$result)->addCommentary(gettype($result).': '.print_r($result, 1));
 	}
 
