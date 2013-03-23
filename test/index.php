@@ -16,6 +16,10 @@ $Printer->addTests($Test->getTests());
 $Printer->printResultsLine();
 $tests = $Test->getTests();
 
+////Generate entities
+//$EG = new \MailRoute\API\Tests\EntitiesGenerator();
+//$EG->generateEntities(__DIR__.'/../lib/MailRoute/API/Entity', 'MailRoute\\API\\Entity', $Client);
+
 foreach ($tests as $test_result)
 {
 	if (!$test_result->isSuccessful())
