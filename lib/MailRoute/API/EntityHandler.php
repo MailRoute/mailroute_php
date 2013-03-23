@@ -13,7 +13,7 @@ class EntityHandler implements IEntity
 		$this->entity_name = $entity_name;
 	}
 
-	protected function callAPI($method, $add_to_query_path, $arguments = array())
+	public function callAPI($method, $add_to_query_path, $arguments = array())
 	{
 		$url_request_part = '/'.$this->entity_name.'/'.$add_to_query_path;
 		$result           = $this->Client->callAPI($url_request_part, $method, $arguments);
