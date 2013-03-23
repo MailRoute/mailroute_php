@@ -1,7 +1,7 @@
 <?php
 namespace MailRoute\API;
 
-class ActiveEntity
+class ActiveEntity implements IActiveEntity
 {
 	private $Entity;
 	private $EntityHandler;
@@ -52,5 +52,15 @@ class ActiveEntity
 	public function setEntityConverter($EntityConverter)
 	{
 		$this->EntityConverter = $EntityConverter;
+	}
+
+	public function getEntity()
+	{
+		return $this->Entity;
+	}
+
+	public function setEntity($Entity)
+	{
+		$this->Entity = $Entity;
 	}
 }

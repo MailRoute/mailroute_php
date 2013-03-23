@@ -2,6 +2,8 @@
 namespace MailRoute\API\Tests;
 
 use Jamm\Tester\ClassTest;
+use MailRoute\API\Entity\Reseller;
+use MailRoute\API\IActiveEntity;
 use MailRoute\API\IClient;
 use MailRoute\API\MailRouteException;
 
@@ -22,9 +24,9 @@ class TestClient extends ClassTest
 		$this->assertTrue(isset($result['reseller']));
 	}
 
-	public function testReseller()
+	public function testSchema()
 	{
-		$result = $this->Client->API()->Reseller()->get('schema');
+		$result = $this->Client->GET('reseller/schema');
 		$this->assertIsArray($result);
 		$this->assertTrue(isset($result['allowed_detail_http_methods']));
 	}
@@ -32,43 +34,50 @@ class TestClient extends ClassTest
 	public function testResellerList()
 	{
 		$reseller_name = 'test '.microtime(1);
-		$resellers[]   = $this->Client->API()->Reseller()->create(array('name' => $reseller_name.'1'));
-		$resellers[]   = $this->Client->API()->Reseller()->create(array('name' => $reseller_name.'2'));
-		$resellers[]   = $this->Client->API()->Reseller()->create(array('name' => $reseller_name.'3'));
-		$resellers[]   = $this->Client->API()->Reseller()->create(array('name' => $reseller_name.'4'));
-		$resellers[]   = $this->Client->API()->Reseller()->create(array('name' => $reseller_name.'5'));
-		$result        = $this->Client->API()->Reseller()->limit(5)->fetchList();
+		/** @var IActiveEntity[] $resellers */
+		$resellers   = array();
+		$NewReseller = new Reseller();
+		$NewReseller->setName($reseller_name.'1');
+		$resellers[] = $this->Client->API()->Reseller()->create($NewReseller);
+		$resellers[] = $this->Client->API()->Reseller()->create(array('name' => $reseller_name.'2'));
+		$resellers[] = $this->Client->API()->Reseller()->create(array('name' => $reseller_name.'3'));
+		$resellers[] = $this->Client->API()->Reseller()->create(array('name' => $reseller_name.'4'));
+		$resellers[] = $this->Client->API()->Reseller()->create(array('name' => $reseller_name.'5'));
+		$resellers[] = $this->Client->API()->Reseller()->create(array('name' => $reseller_name.'6'));
+		$result      = $this->Client->API()->Reseller()->offset(1)->limit(5)->fetchList();
 		$this->assertIsArray($result);
 		$this->assertTrue(count($result)==5)->addCommentary(print_r($result, 1).
 				print_r($this->Client->getRequestMock()->getLog(), 1));
-		foreach ($resellers as $reseller)
+		foreach ($resellers as $Reseller)
 		{
-			$this->Client->API()->Reseller()->delete($reseller['id']);
+			$Reseller->delete();
 		}
 	}
 
 	public function testResellerPOST()
 	{
 		$reseller_name = 'test '.microtime(1);
-		$reseller      = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
-		$this->assertIsArray($reseller);
-		$this->assertEquals($reseller['name'], $reseller_name);
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$this->assertTrue(is_object($Reseller));
+		$this->assertEquals($Reseller->getName(), $reseller_name);
 		$result = $this->Client->API()->Reseller()->filter(array('name' => $reseller_name))->fetchList();
 		$this->assertIsArray($result);
-		$this->Client->API()->Reseller()->delete($reseller['id']);
+		$Reseller->delete();
 	}
 
 	public function testResellerDELETE()
 	{
 		$reseller_name = 'test '.microtime(1).'_del';
-		$reseller      = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
-		$this->assertIsArray($reseller);
-		$this->assertEquals($reseller['name'], $reseller_name)->addCommentary(print_r($reseller, 1));
-		$result = $this->Client->API()->Reseller()->delete($reseller['id']);
-		$this->assertTrue($result)->addCommentary(gettype($reseller).': '.print_r($reseller, 1));
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$this->assertTrue(is_object($Reseller));
+		$this->assertEquals($Reseller->getName(), $reseller_name)->addCommentary(print_r($Reseller, 1));
+		$result = $Reseller->delete();
+		$this->assertTrue($result)->addCommentary(gettype($Reseller).': '.print_r($Reseller, 1));
 		try
 		{
-			$result = $this->Client->API()->Reseller()->get($reseller['id']);
+			$result = $this->Client->API()->Reseller()->get($Reseller->getId());
 		}
 		catch (MailRouteException $E)
 		{
@@ -80,11 +89,32 @@ class TestClient extends ClassTest
 	public function testResellerPUT()
 	{
 		$reseller_name = 'test '.microtime(1).'_put';
-		$reseller      = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
-		$this->assertEquals($reseller['name'], $reseller_name);
-		$reseller['name'] = $reseller_name.'_updated';
-		$reseller         = $this->Client->API()->Reseller()->update($reseller);
-		$this->assertEquals($reseller['name'], $reseller_name.'_updated', true);
-		$this->Client->API()->Reseller()->delete($reseller['id']);
+		/** @var Reseller $Reseller */
+		$NewReseller = new Reseller();
+		$NewReseller->setName($reseller_name);
+		$Reseller = $this->Client->API()->Reseller()->create($NewReseller);
+		$this->assertEquals($Reseller->getName(), $reseller_name);
+		$Reseller->setName($reseller_name.'_updated');
+		try
+		{
+			$Reseller = $this->Client->API()->Reseller()->update($Reseller);
+		}
+		catch (\Exception $E)
+		{
+			$this->assertTrue(false)->addCommentary(print_r($this->Client->getRequestMock()->getlog(), 1));
+		}
+		$this->assertEquals($Reseller->getName(), $reseller_name.'_updated', true);
+		$Reseller->setName($reseller_name.'_saved');
+		try
+		{
+			$Reseller->save();
+		}
+		catch (\Exception $E)
+		{
+			$this->assertTrue(false)->addCommentary(print_r($this->Client->getRequestMock()->getlog(), 1));
+		}
+		$Reseller = $this->Client->API()->Reseller()->get($Reseller->getId());
+		$this->assertEquals($Reseller->getName(), $reseller_name.'_saved', true);
+		$Reseller->delete();
 	}
 }

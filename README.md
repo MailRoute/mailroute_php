@@ -14,7 +14,10 @@ PHP 5.3+
 is equal to:  
 `$Client->Reseller->create(['name'=>'New Reseller']);`    
 method `API()` exists only for autocompletion (also called "IntelliSense") in IDE.  
-Method POST will return an array, containing all fields of entity.
+Also, you can use Reseller object entity as argument:  
+`$Reseller = new Reseller();  
+$Reseller->setName('New Reseller');  
+$Client->API()->Reseller->create($Reseller);`
 
 ##Get Reseller by ID
 `$Client->API()->Reseller->get(99);`  

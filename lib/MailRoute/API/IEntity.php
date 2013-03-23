@@ -3,27 +3,48 @@ namespace MailRoute\API;
 
 interface IEntity
 {
-	/** @return array */
+	/**
+	 * @param string $id
+	 * @return IActiveEntity|IActiveEntity[]
+	 */
 	public function get($id = '');
 
-	/** @return array */
-	public function create(array $data);
+	/**
+	 * @param array|object $data
+	 * @return IActiveEntity
+	 */
+	public function create($data);
 
-	/** @return array */
-	public function update(array $data);
+	/**
+	 * @param array|object $data
+	 * @return IActiveEntity
+	 */
+	public function update($data);
 
-	/** @return boolean */
+	/**
+	 * @param int|string $id
+	 * @return boolean
+	 */
 	public function delete($id);
 
-	/** @return IEntity */
+	/**
+	 * @param int $limit
+	 * @return IEntity
+	 */
 	public function limit($limit);
 
-	/** @return IEntity */
+	/**
+	 * @param int $offset
+	 * @return IEntity
+	 */
 	public function offset($offset);
 
-	/** @return IEntity */
+	/**
+	 * @param array $filter_map
+	 * @return IEntity
+	 */
 	public function filter(array $filter_map);
 
-	/** @return array */
+	/** @return IActiveEntity[] */
 	public function fetchList();
 }
