@@ -3,76 +3,76 @@ namespace MailRoute\API;
 
 interface API
 {
-	/** @return IEntity */
+	/** @return IResource */
 	public function Admins();
 
-	/** @return IEntity */
+	/** @return IResource */
 	public function Brandinginfo();
 
-	/** @return IEntity */
-	public function Contact_customer();
+	/** @return IResource */
+	public function ContactCustomer();
 
-	/** @return IEntity */
-	public function Contact_domain();
+	/** @return IResource */
+	public function ContactDomain();
 
-	/** @return IEntity */
-	public function Contact_email_account();
+	/** @return IResource */
+	public function ContactEmailAccount();
 
-	/** @return IEntity */
-	public function Contact_reseller();
+	/** @return IResource */
+	public function ContactReseller();
 
-	/** @return IEntity */
+	/** @return IResource */
 	public function Customer();
 
-	/** @return IEntity */
+	/** @return IResource */
 	public function Domain();
 
-	/** @return IEntity */
-	public function Domain_alias();
+	/** @return IResource */
+	public function DomainAlias();
 
-	/** @return IEntity */
-	public function Domain_with_alias();
+	/** @return IResource */
+	public function DomainWithAlias();
 
-	/** @return IEntity */
-	public function Email_account();
+	/** @return IResource */
+	public function EmailAccount();
 
-	/** @return IEntity */
-	public function Localpart_alias();
+	/** @return IResource */
+	public function LocalpartAlias();
 
-	/** @return IEntity */
-	public function Mail_server();
+	/** @return IResource */
+	public function MailServer();
 
-	/** @return IEntity */
-	public function Notification_account_task();
+	/** @return IResource */
+	public function NotificationAccountTask();
 
-	/** @return IEntity */
-	public function Notification_domain_task();
+	/** @return IResource */
+	public function NotificationDomainTask();
 
-	/** @return IEntity */
-	public function Outbound_server();
+	/** @return IResource */
+	public function OutboundServer();
 
-	/** @return IEntity */
-	public function Policy_domain();
+	/** @return IResource */
+	public function PolicyDomain();
 
-	/** @return IEntity */
-	public function Policy_user();
+	/** @return IResource */
+	public function PolicyUser();
 
-	/** @return IEntity */
+	/** @return IResource */
 	public function Quarantine();
 
-	/** @return IEntity */
-	public function Quarantine_message();
+	/** @return IResource */
+	public function QuarantineMessage();
 
-	/** @return IEntity */
-	public function Quarantine_readonly();
+	/** @return IResource */
+	public function QuarantineReadonly();
 
-	/** @return IEntity */
-	public function Quarantine_readonly_message();
+	/** @return IResource */
+	public function QuarantineReadonlyMessage();
 
-	/** @return IEntity */
+	/** @return IResource */
 	public function Reseller();
 
-	/** @return IEntity */
+	/** @return IResource */
 	public function Wblist();
 
 }

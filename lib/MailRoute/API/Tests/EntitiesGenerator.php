@@ -36,37 +36,29 @@ class EntitiesGenerator
 		}
 		$code .= "<?php\n".
 				"namespace $namespace;\n\n";
-		if (isset($schema['fields']['id']))
-		{
-			$code .= "/**\n".
-					"* @method save()\n".
-					"* @method delete()\n".
-					"*/\n";
-		}
 		$code .= "class ".$this->inCamelCase($entity);
 		if (!empty($parent_entity))
 		{
+			$parent_entity = '\\'.trim($parent_entity, '\\');
 			$code .= " extends $parent_entity";
 		}
 		$code .= "\n{\n";
+		$code .= "\tprotected \$api_entity_resource = '".$entity."';\n";
 		if (!empty($schema['fields']))
 		{
-			foreach ($schema['fields'] as $field => $properties)
-			{
-				$code .= "\tprivate $".$field.";\n";
-			}
+			$code .= "\tprotected \$fields = array('".implode("', '", array_keys($schema['fields']))."');\n";
 			$code .= "\n";
 			foreach ($schema['fields'] as $field => $properties)
 			{
 				$code .= "\tpublic function get".$this->inCamelCase($field)."()\n".
 						"\t{\n".
-						"\t\t".'return $this->'.$field.";\n".
+						"\t\treturn \$this->fields['$field'];\n".
 						"\t}\n\n";
 				if (!isset($properties['readonly']) || !$properties['readonly'] || $properties['readonly']==='false')
 				{
 					$code .= "\tpublic function set".$this->inCamelCase($field)."($$field)\n".
 							"\t{\n".
-							"\t\t".'$this->'.$field.' = $'.$field.";\n".
+							"\t\t\$this->fields['$field'] = \$$field;\n".
 							"\t}\n\n";
 				}
 			}

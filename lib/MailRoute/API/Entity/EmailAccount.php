@@ -1,152 +1,134 @@
 <?php
 namespace MailRoute\API\Entity;
 
-/**
-* @method save()
-* @method delete()
-*/
-class EmailAccount
+class EmailAccount extends \MailRoute\API\ActiveEntity
 {
-	private $change_pwd;
-	private $confirm_password;
-	private $contact;
-	private $create_opt;
-	private $created_at;
-	private $domain;
-	private $id;
-	private $localpart;
-	private $localpart_aliases;
-	private $notification_task;
-	private $password;
-	private $policy;
-	private $priority;
-	private $resource_uri;
-	private $send_welcome;
-	private $updated_at;
+	protected $api_entity_resource = 'email_account';
+	protected $fields = array('change_pwd', 'confirm_password', 'contact', 'create_opt', 'created_at', 'domain', 'id', 'localpart', 'localpart_aliases', 'notification_task', 'password', 'policy', 'priority', 'resource_uri', 'send_welcome', 'updated_at');
 
 	public function getChangePwd()
 	{
-		return $this->change_pwd;
+		return $this->fields['change_pwd'];
 	}
 
 	public function setChangePwd($change_pwd)
 	{
-		$this->change_pwd = $change_pwd;
+		$this->fields['change_pwd'] = $change_pwd;
 	}
 
 	public function getConfirmPassword()
 	{
-		return $this->confirm_password;
+		return $this->fields['confirm_password'];
 	}
 
 	public function setConfirmPassword($confirm_password)
 	{
-		$this->confirm_password = $confirm_password;
+		$this->fields['confirm_password'] = $confirm_password;
 	}
 
 	public function getContact()
 	{
-		return $this->contact;
+		return $this->fields['contact'];
 	}
 
 	public function getCreateOpt()
 	{
-		return $this->create_opt;
+		return $this->fields['create_opt'];
 	}
 
 	public function setCreateOpt($create_opt)
 	{
-		$this->create_opt = $create_opt;
+		$this->fields['create_opt'] = $create_opt;
 	}
 
 	public function getCreatedAt()
 	{
-		return $this->created_at;
+		return $this->fields['created_at'];
 	}
 
 	public function getDomain()
 	{
-		return $this->domain;
+		return $this->fields['domain'];
 	}
 
 	public function setDomain($domain)
 	{
-		$this->domain = $domain;
+		$this->fields['domain'] = $domain;
 	}
 
 	public function getId()
 	{
-		return $this->id;
+		return $this->fields['id'];
 	}
 
 	public function setId($id)
 	{
-		$this->id = $id;
+		$this->fields['id'] = $id;
 	}
 
 	public function getLocalpart()
 	{
-		return $this->localpart;
+		return $this->fields['localpart'];
 	}
 
 	public function setLocalpart($localpart)
 	{
-		$this->localpart = $localpart;
+		$this->fields['localpart'] = $localpart;
 	}
 
 	public function getLocalpartAliases()
 	{
-		return $this->localpart_aliases;
+		return $this->fields['localpart_aliases'];
 	}
 
 	public function getNotificationTask()
 	{
-		return $this->notification_task;
+		return $this->fields['notification_task'];
 	}
 
 	public function getPassword()
 	{
-		return $this->password;
+		return $this->fields['password'];
 	}
 
 	public function setPassword($password)
 	{
-		$this->password = $password;
+		$this->fields['password'] = $password;
 	}
 
 	public function getPolicy()
 	{
-		return $this->policy;
+		return $this->fields['policy'];
 	}
 
 	public function getPriority()
 	{
-		return $this->priority;
+		return $this->fields['priority'];
 	}
 
 	public function setPriority($priority)
 	{
-		$this->priority = $priority;
+		$this->fields['priority'] = $priority;
 	}
 
 	public function getResourceUri()
 	{
-		return $this->resource_uri;
+		return $this->fields['resource_uri'];
 	}
 
 	public function getSendWelcome()
 	{
-		return $this->send_welcome;
+		return $this->fields['send_welcome'];
 	}
 
 	public function setSendWelcome($send_welcome)
 	{
-		$this->send_welcome = $send_welcome;
+		$this->fields['send_welcome'] = $send_welcome;
 	}
 
 	public function getUpdatedAt()
 	{
-		return $this->updated_at;
+		return $this->fields['updated_at'];
 	}
 
 }

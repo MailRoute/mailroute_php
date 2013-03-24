@@ -1,194 +1,174 @@
 <?php
 namespace MailRoute\API\Entity;
 
-/**
-* @method save()
-* @method delete()
-*/
-class ContactCustomer
+class ContactCustomer extends \MailRoute\API\ActiveEntity
 {
-	private $address;
-	private $address2;
-	private $city;
-	private $country;
-	private $created_at;
-	private $customer;
-	private $email;
-	private $first_name;
-	private $id;
-	private $is_billing;
-	private $is_emergency;
-	private $is_technical;
-	private $last_name;
-	private $phone;
-	private $resource_uri;
-	private $state;
-	private $updated_at;
-	private $zipcode;
+	protected $api_entity_resource = 'contact_customer';
+	protected $fields = array('address', 'address2', 'city', 'country', 'created_at', 'customer', 'email', 'first_name', 'id', 'is_billing', 'is_emergency', 'is_technical', 'last_name', 'phone', 'resource_uri', 'state', 'updated_at', 'zipcode');
 
 	public function getAddress()
 	{
-		return $this->address;
+		return $this->fields['address'];
 	}
 
 	public function setAddress($address)
 	{
-		$this->address = $address;
+		$this->fields['address'] = $address;
 	}
 
 	public function getAddress2()
 	{
-		return $this->address2;
+		return $this->fields['address2'];
 	}
 
 	public function setAddress2($address2)
 	{
-		$this->address2 = $address2;
+		$this->fields['address2'] = $address2;
 	}
 
 	public function getCity()
 	{
-		return $this->city;
+		return $this->fields['city'];
 	}
 
 	public function setCity($city)
 	{
-		$this->city = $city;
+		$this->fields['city'] = $city;
 	}
 
 	public function getCountry()
 	{
-		return $this->country;
+		return $this->fields['country'];
 	}
 
 	public function setCountry($country)
 	{
-		$this->country = $country;
+		$this->fields['country'] = $country;
 	}
 
 	public function getCreatedAt()
 	{
-		return $this->created_at;
+		return $this->fields['created_at'];
 	}
 
 	public function getCustomer()
 	{
-		return $this->customer;
+		return $this->fields['customer'];
 	}
 
 	public function setCustomer($customer)
 	{
-		$this->customer = $customer;
+		$this->fields['customer'] = $customer;
 	}
 
 	public function getEmail()
 	{
-		return $this->email;
+		return $this->fields['email'];
 	}
 
 	public function setEmail($email)
 	{
-		$this->email = $email;
+		$this->fields['email'] = $email;
 	}
 
 	public function getFirstName()
 	{
-		return $this->first_name;
+		return $this->fields['first_name'];
 	}
 
 	public function setFirstName($first_name)
 	{
-		$this->first_name = $first_name;
+		$this->fields['first_name'] = $first_name;
 	}
 
 	public function getId()
 	{
-		return $this->id;
+		return $this->fields['id'];
 	}
 
 	public function setId($id)
 	{
-		$this->id = $id;
+		$this->fields['id'] = $id;
 	}
 
 	public function getIsBilling()
 	{
-		return $this->is_billing;
+		return $this->fields['is_billing'];
 	}
 
 	public function setIsBilling($is_billing)
 	{
-		$this->is_billing = $is_billing;
+		$this->fields['is_billing'] = $is_billing;
 	}
 
 	public function getIsEmergency()
 	{
-		return $this->is_emergency;
+		return $this->fields['is_emergency'];
 	}
 
 	public function setIsEmergency($is_emergency)
 	{
-		$this->is_emergency = $is_emergency;
+		$this->fields['is_emergency'] = $is_emergency;
 	}
 
 	public function getIsTechnical()
 	{
-		return $this->is_technical;
+		return $this->fields['is_technical'];
 	}
 
 	public function setIsTechnical($is_technical)
 	{
-		$this->is_technical = $is_technical;
+		$this->fields['is_technical'] = $is_technical;
 	}
 
 	public function getLastName()
 	{
-		return $this->last_name;
+		return $this->fields['last_name'];
 	}
 
 	public function setLastName($last_name)
 	{
-		$this->last_name = $last_name;
+		$this->fields['last_name'] = $last_name;
 	}
 
 	public function getPhone()
 	{
-		return $this->phone;
+		return $this->fields['phone'];
 	}
 
 	public function setPhone($phone)
 	{
-		$this->phone = $phone;
+		$this->fields['phone'] = $phone;
 	}
 
 	public function getResourceUri()
 	{
-		return $this->resource_uri;
+		return $this->fields['resource_uri'];
 	}
 
 	public function getState()
 	{
-		return $this->state;
+		return $this->fields['state'];
 	}
 
 	public function setState($state)
 	{
-		$this->state = $state;
+		$this->fields['state'] = $state;
 	}
 
 	public function getUpdatedAt()
 	{
-		return $this->updated_at;
+		return $this->fields['updated_at'];
 	}
 
 	public function getZipcode()
 	{
-		return $this->zipcode;
+		return $this->fields['zipcode'];
 	}
 
 	public function setZipcode($zipcode)
 	{
-		$this->zipcode = $zipcode;
+		$this->fields['zipcode'] = $zipcode;
 	}
 
 }

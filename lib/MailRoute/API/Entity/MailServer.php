@@ -1,106 +1,94 @@
 <?php
 namespace MailRoute\API\Entity;
 
-/**
-* @method save()
-* @method delete()
-*/
-class MailServer
+class MailServer extends \MailRoute\API\ActiveEntity
 {
-	private $created_at;
-	private $domain;
-	private $id;
-	private $priority;
-	private $resource_uri;
-	private $sasl_login;
-	private $sasl_password;
-	private $server;
-	private $updated_at;
-	private $use_sasl;
+	protected $api_entity_resource = 'mail_server';
+	protected $fields = array('created_at', 'domain', 'id', 'priority', 'resource_uri', 'sasl_login', 'sasl_password', 'server', 'updated_at', 'use_sasl');
 
 	public function getCreatedAt()
 	{
-		return $this->created_at;
+		return $this->fields['created_at'];
 	}
 
 	public function getDomain()
 	{
-		return $this->domain;
+		return $this->fields['domain'];
 	}
 
 	public function setDomain($domain)
 	{
-		$this->domain = $domain;
+		$this->fields['domain'] = $domain;
 	}
 
 	public function getId()
 	{
-		return $this->id;
+		return $this->fields['id'];
 	}
 
 	public function setId($id)
 	{
-		$this->id = $id;
+		$this->fields['id'] = $id;
 	}
 
 	public function getPriority()
 	{
-		return $this->priority;
+		return $this->fields['priority'];
 	}
 
 	public function setPriority($priority)
 	{
-		$this->priority = $priority;
+		$this->fields['priority'] = $priority;
 	}
 
 	public function getResourceUri()
 	{
-		return $this->resource_uri;
+		return $this->fields['resource_uri'];
 	}
 
 	public function getSaslLogin()
 	{
-		return $this->sasl_login;
+		return $this->fields['sasl_login'];
 	}
 
 	public function setSaslLogin($sasl_login)
 	{
-		$this->sasl_login = $sasl_login;
+		$this->fields['sasl_login'] = $sasl_login;
 	}
 
 	public function getSaslPassword()
 	{
-		return $this->sasl_password;
+		return $this->fields['sasl_password'];
 	}
 
 	public function setSaslPassword($sasl_password)
 	{
-		$this->sasl_password = $sasl_password;
+		$this->fields['sasl_password'] = $sasl_password;
 	}
 
 	public function getServer()
 	{
-		return $this->server;
+		return $this->fields['server'];
 	}
 
 	public function setServer($server)
 	{
-		$this->server = $server;
+		$this->fields['server'] = $server;
 	}
 
 	public function getUpdatedAt()
 	{
-		return $this->updated_at;
+		return $this->fields['updated_at'];
 	}
 
 	public function getUseSasl()
 	{
-		return $this->use_sasl;
+		return $this->fields['use_sasl'];
 	}
 
 	public function setUseSasl($use_sasl)
 	{
-		$this->use_sasl = $use_sasl;
+		$this->fields['use_sasl'] = $use_sasl;
 	}
 
 }

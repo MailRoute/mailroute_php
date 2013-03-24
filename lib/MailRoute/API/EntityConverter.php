@@ -109,4 +109,16 @@ class EntityConverter
 		$array = $this->mapObjectToArray($object, true);
 		return array_keys($array);
 	}
+
+	public function inCamelCase($string)
+	{
+		if (is_numeric($string[0]))
+		{
+			$string = 'n_'.$string;
+		}
+		$string = str_replace('_', ' ', $string);
+		$string = ucwords(strtolower($string));
+		$string = str_replace(' ', '', $string);
+		return $string;
+	}
 }

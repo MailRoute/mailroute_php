@@ -1,56 +1,49 @@
 <?php
 namespace MailRoute\API\Entity;
 
-/**
-* @method save()
-* @method delete()
-*/
-class NotificationAccountTask
+class NotificationAccountTask extends \MailRoute\API\ActiveEntity
 {
-	private $email_account;
-	private $enabled;
-	private $id;
-	private $priority;
-	private $resource_uri;
+	protected $api_entity_resource = 'notification_account_task';
+	protected $fields = array('email_account', 'enabled', 'id', 'priority', 'resource_uri');
 
 	public function getEmailAccount()
 	{
-		return $this->email_account;
+		return $this->fields['email_account'];
 	}
 
 	public function getEnabled()
 	{
-		return $this->enabled;
+		return $this->fields['enabled'];
 	}
 
 	public function setEnabled($enabled)
 	{
-		$this->enabled = $enabled;
+		$this->fields['enabled'] = $enabled;
 	}
 
 	public function getId()
 	{
-		return $this->id;
+		return $this->fields['id'];
 	}
 
 	public function setId($id)
 	{
-		$this->id = $id;
+		$this->fields['id'] = $id;
 	}
 
 	public function getPriority()
 	{
-		return $this->priority;
+		return $this->fields['priority'];
 	}
 
 	public function setPriority($priority)
 	{
-		$this->priority = $priority;
+		$this->fields['priority'] = $priority;
 	}
 
 	public function getResourceUri()
 	{
-		return $this->resource_uri;
+		return $this->fields['resource_uri'];
 	}
 
 }

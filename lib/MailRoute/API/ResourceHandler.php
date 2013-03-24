@@ -1,13 +1,14 @@
 <?php
 namespace MailRoute\API;
 
-class EntityHandler implements IEntity
+class ResourceHandler implements IResource
 {
 	private $entity_name;
 	private $Client;
 	private $filter = array();
 	private $EntityConverter;
 	private $entities_namespace;
+	private $resource_name;
 
 	public function __construct(IClient $Client, $entity_name)
 	{
@@ -18,10 +19,20 @@ class EntityHandler implements IEntity
 
 	public function callAPI($method, $add_to_query_path, $arguments = array())
 	{
-		$url_request_part = '/'.$this->entity_name.'/'.$add_to_query_path;
+		$url_request_part = '/'.$this->getResourceName().'/'.$add_to_query_path;
 		$result           = $this->Client->callAPI($url_request_part, $method, $arguments);
 		$result           = $this->handleAPIResponse($method, $result);
 		return $result;
+	}
+
+	protected function getResourceName()
+	{
+		if (empty($this->resource_name))
+		{
+			$Entity              = $this->getActiveEntity();
+			$this->resource_name = $Entity->getApiEntityResource();
+		}
+		return $this->resource_name;
 	}
 
 	/**
@@ -46,11 +57,6 @@ class EntityHandler implements IEntity
 		return $result;
 	}
 
-	public function setEntityName($entity_name)
-	{
-		$this->entity_name = $entity_name;
-	}
-
 	public function get($id = '')
 	{
 		$result = $this->callAPI('GET', $id);
@@ -61,13 +67,13 @@ class EntityHandler implements IEntity
 				$objects = array();
 				foreach ($result as $data)
 				{
-					$objects[] = $this->getActiveEntityFromArray($data);
+					$objects[] = $this->getActiveEntity($data);
 				}
 				return $objects;
 			}
 			else
 			{
-				return $this->getActiveEntityFromArray($result);
+				return $this->getActiveEntity($result);
 			}
 		}
 		return $result;
@@ -77,14 +83,10 @@ class EntityHandler implements IEntity
 	{
 		if (is_object($data))
 		{
-			if (is_a($data, 'MailRoute\\API\\IActiveEntity'))
-			{
-				$data = $data->getEntity();
-			}
-			$data = $this->getEntityConverter()->mapObjectToArray($data);
+			$data = $this->getArrayFromInputObject($data);
 		}
 		$result = $this->callAPI('POST', '', $data);
-		$Entity = $this->getActiveEntityFromArray($result);
+		$Entity = $this->getActiveEntity($result);
 		return $Entity;
 	}
 
@@ -92,11 +94,7 @@ class EntityHandler implements IEntity
 	{
 		if (is_object($data))
 		{
-			if (is_a($data, 'MailRoute\\API\\IActiveEntity'))
-			{
-				$data = $data->getEntity();
-			}
-			$data = $this->getEntityConverter()->mapObjectToArray($data);
+			$data = $this->getArrayFromInputObject($data);
 		}
 		$add = '';
 		if (isset($data['id']))
@@ -108,8 +106,25 @@ class EntityHandler implements IEntity
 			}
 		}
 		$result = $this->callAPI('PUT', $add, $data);
-		$Entity = $this->getActiveEntityFromArray($result);
+		$Entity = $this->getActiveEntity($result);
 		return $Entity;
+	}
+
+	/**
+	 * @param object $data
+	 * @return array
+	 */
+	protected function getArrayFromInputObject($data)
+	{
+		if (is_a($data, 'MailRoute\\API\\ActiveEntity'))
+		{
+			/** @var ActiveEntity $data */
+			return $data->getFields();
+		}
+		else
+		{
+			return $this->getEntityConverter()->mapObjectToArray($data);
+		}
 	}
 
 	public function delete($id)
@@ -154,7 +169,7 @@ class EntityHandler implements IEntity
 			$objects = array();
 			foreach ($result as $data)
 			{
-				$objects[] = $this->getActiveEntityFromArray($data);
+				$objects[] = $this->getActiveEntity($data);
 			}
 			return $objects;
 		}
@@ -170,29 +185,16 @@ class EntityHandler implements IEntity
 		return $this->EntityConverter;
 	}
 
-	protected function getActiveEntityFromArray(array $data)
+	protected function getActiveEntity(array $data = array())
 	{
-		$class  = $this->getEntitiesNamespace().'\\'.$this->inCamelCase($this->entity_name);
-		$Entity = new $class;
-		$this->getEntityConverter()->mapObjectFromArray($Entity, $data);
-		return $this->getActiveEntity($Entity);
-	}
-
-	protected function getActiveEntity($Entity)
-	{
-		return new ActiveEntity($Entity, $this);
-	}
-
-	protected function inCamelCase($string)
-	{
-		if (is_numeric($string[0]))
+		$class = $this->getEntitiesNamespace().'\\'.$this->entity_name;
+		/** @var ActiveEntity $Entity */
+		$Entity = new $class($this->Client);
+		if (!empty($data))
 		{
-			$string = 'n_'.$string;
+			$Entity->setFields($data);
 		}
-		$string = str_replace('_', ' ', $string);
-		$string = ucwords(strtolower($string));
-		$string = str_replace(' ', '', $string);
-		return $string;
+		return $Entity;
 	}
 
 	public function getEntitiesNamespace()
@@ -203,5 +205,10 @@ class EntityHandler implements IEntity
 	public function setEntitiesNamespace($entities_namespace)
 	{
 		$this->entities_namespace = $entities_namespace;
+	}
+
+	public function setEntityConverter($EntityConverter)
+	{
+		$this->EntityConverter = $EntityConverter;
 	}
 }

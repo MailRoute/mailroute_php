@@ -36,7 +36,7 @@ class TestClient extends ClassTest
 		$reseller_name = 'test '.microtime(1);
 		/** @var IActiveEntity[] $resellers */
 		$resellers   = array();
-		$NewReseller = new Reseller();
+		$NewReseller = new Reseller($this->Client);
 		$NewReseller->setName($reseller_name.'1');
 		$resellers[] = $this->Client->API()->Reseller()->create($NewReseller);
 		$resellers[] = $this->Client->API()->Reseller()->create(array('name' => $reseller_name.'2'));
@@ -90,7 +90,7 @@ class TestClient extends ClassTest
 	{
 		$reseller_name = 'test '.microtime(1).'_put';
 		/** @var Reseller $Reseller */
-		$NewReseller = new Reseller();
+		$NewReseller = new Reseller($this->Client);
 		$NewReseller->setName($reseller_name);
 		$Reseller = $this->Client->API()->Reseller()->create($NewReseller);
 		$this->assertEquals($Reseller->getName(), $reseller_name);

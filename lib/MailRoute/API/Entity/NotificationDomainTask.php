@@ -1,56 +1,49 @@
 <?php
 namespace MailRoute\API\Entity;
 
-/**
-* @method save()
-* @method delete()
-*/
-class NotificationDomainTask
+class NotificationDomainTask extends \MailRoute\API\ActiveEntity
 {
-	private $domain;
-	private $enabled;
-	private $id;
-	private $priority;
-	private $resource_uri;
+	protected $api_entity_resource = 'notification_domain_task';
+	protected $fields = array('domain', 'enabled', 'id', 'priority', 'resource_uri');
 
 	public function getDomain()
 	{
-		return $this->domain;
+		return $this->fields['domain'];
 	}
 
 	public function getEnabled()
 	{
-		return $this->enabled;
+		return $this->fields['enabled'];
 	}
 
 	public function setEnabled($enabled)
 	{
-		$this->enabled = $enabled;
+		$this->fields['enabled'] = $enabled;
 	}
 
 	public function getId()
 	{
-		return $this->id;
+		return $this->fields['id'];
 	}
 
 	public function setId($id)
 	{
-		$this->id = $id;
+		$this->fields['id'] = $id;
 	}
 
 	public function getPriority()
 	{
-		return $this->priority;
+		return $this->fields['priority'];
 	}
 
 	public function setPriority($priority)
 	{
-		$this->priority = $priority;
+		$this->fields['priority'] = $priority;
 	}
 
 	public function getResourceUri()
 	{
-		return $this->resource_uri;
+		return $this->fields['resource_uri'];
 	}
 
 }

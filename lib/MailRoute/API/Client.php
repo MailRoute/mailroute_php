@@ -18,6 +18,7 @@ class Client implements IClient
 	/** @var Connection */
 	private $Connection;
 	private $async_mode = false;
+	private $EntityConverter;
 
 	public function __construct(Config $Config)
 	{
@@ -33,13 +34,13 @@ class Client implements IClient
 
 	public function __call($entity, $arguments)
 	{
-		return $this->getEntityHandler($entity);
+		return $this->getResourceHandler($entity);
 	}
 
-	protected function getEntityHandler($entity)
+	protected function getResourceHandler($entity)
 	{
 		$entity  = strtolower($entity);
-		$Handler = new EntityHandler($this, $entity);
+		$Handler = new ResourceHandler($this, $entity);
 		return $Handler;
 	}
 
@@ -151,6 +152,15 @@ class Client implements IClient
 	public function getAsyncMode()
 	{
 		return $this->async_mode;
+	}
+
+	public function getEntityConverter()
+	{
+		if (empty($this->EntityConverter))
+		{
+			$this->EntityConverter = new EntityConverter();
+		}
+		return $this->EntityConverter;
 	}
 
 	protected function getResponse()

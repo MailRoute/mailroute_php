@@ -1,66 +1,73 @@
 <?php
 namespace MailRoute\API;
 
-class ActiveEntity implements IActiveEntity
+abstract class ActiveEntity implements IActiveEntity
 {
-	private $Entity;
-	private $EntityHandler;
-	private $EntityConverter;
+	protected $api_entity_resource = '';
+	protected $fields = array();
+	protected $Client;
 
-	public function __call($method, $arguments)
+	public function __construct(IClient $Client)
 	{
-		return call_user_func_array(array($this->Entity, $method), $arguments);
-	}
-
-	public function __construct($Entity, EntityHandler $EntityHandler)
-	{
-		$this->Entity        = $Entity;
-		$this->EntityHandler = $EntityHandler;
+		$this->Client = $Client;
 	}
 
 	public function save()
 	{
-		$data = $this->getEntityConverter()->mapObjectToArray($this->Entity);
+		$data = $this->getFields();
 		if (empty($data['id']))
 		{
 			throw new MailRouteException("Can't save entity without ID", 400);
 		}
-		$result = $this->EntityHandler->callAPI('PUT', $data['id'], $data);
+		$result = $this->Client->callAPI($this->getApiEntityResource().'/'.$data['id'], 'PUT', $data);
 		return (!empty($result));
 	}
 
 	public function delete()
 	{
-		$data = $this->getEntityConverter()->mapObjectToArray($this->Entity);
+		$data = $this->getFields();
 		if (empty($data['id']))
 		{
 			throw new MailRouteException("Can't delete entity without ID", 400);
 		}
-		$result = $this->EntityHandler->delete($data['id']);
-		return $result;
-	}
-
-	public function getEntityConverter()
-	{
-		if (empty($this->EntityConverter))
+		try
 		{
-			$this->EntityConverter = new EntityConverter();
+			$result = $this->Client->callAPI($this->getApiEntityResource().'/'.$data['id'], 'DELETE');
 		}
-		return $this->EntityConverter;
+		catch (MailRouteException $E)
+		{
+			return false;
+		}
+		return $result!==false;
 	}
 
-	public function setEntityConverter($EntityConverter)
+	public function getApiEntityResource()
 	{
-		$this->EntityConverter = $EntityConverter;
+		return $this->api_entity_resource;
 	}
 
-	public function getEntity()
+	public function setApiEntityResource($api_entity_resource)
 	{
-		return $this->Entity;
+		$this->api_entity_resource = $api_entity_resource;
 	}
 
-	public function setEntity($Entity)
+	public function getClient()
 	{
-		$this->Entity = $Entity;
+		return $this->Client;
+	}
+
+	public function setClient(IClient $Client)
+	{
+		$this->Client = $Client;
+	}
+
+	public function getFields()
+	{
+		return $this->fields;
+	}
+
+	public function setFields(array $fields)
+	{
+		$this->fields = $fields;
 	}
 }

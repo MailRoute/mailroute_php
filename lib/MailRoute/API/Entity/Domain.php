@@ -1,159 +1,139 @@
 <?php
 namespace MailRoute\API\Entity;
 
-/**
-* @method save()
-* @method delete()
-*/
-class Domain
+class Domain extends \MailRoute\API\ActiveEntity
 {
-	private $active;
-	private $bounce_unlisted;
-	private $contacts;
-	private $created_at;
-	private $customer;
-	private $deliveryport;
-	private $domain_aliases;
-	private $email_accounts;
-	private $hold_email;
-	private $id;
-	private $mail_servers;
-	private $name;
-	private $notification_task;
-	private $outbound_enabled;
-	private $outbound_servers;
-	private $policy;
-	private $resource_uri;
-	private $updated_at;
+	protected $api_entity_resource = 'domain';
+	protected $fields = array('active', 'bounce_unlisted', 'contacts', 'created_at', 'customer', 'deliveryport', 'domain_aliases', 'email_accounts', 'hold_email', 'id', 'mail_servers', 'name', 'notification_task', 'outbound_enabled', 'outbound_servers', 'policy', 'resource_uri', 'updated_at');
 
 	public function getActive()
 	{
-		return $this->active;
+		return $this->fields['active'];
 	}
 
 	public function setActive($active)
 	{
-		$this->active = $active;
+		$this->fields['active'] = $active;
 	}
 
 	public function getBounceUnlisted()
 	{
-		return $this->bounce_unlisted;
+		return $this->fields['bounce_unlisted'];
 	}
 
 	public function setBounceUnlisted($bounce_unlisted)
 	{
-		$this->bounce_unlisted = $bounce_unlisted;
+		$this->fields['bounce_unlisted'] = $bounce_unlisted;
 	}
 
 	public function getContacts()
 	{
-		return $this->contacts;
+		return $this->fields['contacts'];
 	}
 
 	public function getCreatedAt()
 	{
-		return $this->created_at;
+		return $this->fields['created_at'];
 	}
 
 	public function getCustomer()
 	{
-		return $this->customer;
+		return $this->fields['customer'];
 	}
 
 	public function setCustomer($customer)
 	{
-		$this->customer = $customer;
+		$this->fields['customer'] = $customer;
 	}
 
 	public function getDeliveryport()
 	{
-		return $this->deliveryport;
+		return $this->fields['deliveryport'];
 	}
 
 	public function setDeliveryport($deliveryport)
 	{
-		$this->deliveryport = $deliveryport;
+		$this->fields['deliveryport'] = $deliveryport;
 	}
 
 	public function getDomainAliases()
 	{
-		return $this->domain_aliases;
+		return $this->fields['domain_aliases'];
 	}
 
 	public function getEmailAccounts()
 	{
-		return $this->email_accounts;
+		return $this->fields['email_accounts'];
 	}
 
 	public function getHoldEmail()
 	{
-		return $this->hold_email;
+		return $this->fields['hold_email'];
 	}
 
 	public function setHoldEmail($hold_email)
 	{
-		$this->hold_email = $hold_email;
+		$this->fields['hold_email'] = $hold_email;
 	}
 
 	public function getId()
 	{
-		return $this->id;
+		return $this->fields['id'];
 	}
 
 	public function setId($id)
 	{
-		$this->id = $id;
+		$this->fields['id'] = $id;
 	}
 
 	public function getMailServers()
 	{
-		return $this->mail_servers;
+		return $this->fields['mail_servers'];
 	}
 
 	public function getName()
 	{
-		return $this->name;
+		return $this->fields['name'];
 	}
 
 	public function setName($name)
 	{
-		$this->name = $name;
+		$this->fields['name'] = $name;
 	}
 
 	public function getNotificationTask()
 	{
-		return $this->notification_task;
+		return $this->fields['notification_task'];
 	}
 
 	public function getOutboundEnabled()
 	{
-		return $this->outbound_enabled;
+		return $this->fields['outbound_enabled'];
 	}
 
 	public function setOutboundEnabled($outbound_enabled)
 	{
-		$this->outbound_enabled = $outbound_enabled;
+		$this->fields['outbound_enabled'] = $outbound_enabled;
 	}
 
 	public function getOutboundServers()
 	{
-		return $this->outbound_servers;
+		return $this->fields['outbound_servers'];
 	}
 
 	public function getPolicy()
 	{
-		return $this->policy;
+		return $this->fields['policy'];
 	}
 
 	public function getResourceUri()
 	{
-		return $this->resource_uri;
+		return $this->fields['resource_uri'];
 	}
 
 	public function getUpdatedAt()
 	{
-		return $this->updated_at;
+		return $this->fields['updated_at'];
 	}
 
 }

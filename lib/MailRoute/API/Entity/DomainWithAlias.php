@@ -1,73 +1,64 @@
 <?php
 namespace MailRoute\API\Entity;
 
-/**
-* @method save()
-* @method delete()
-*/
-class DomainWithAlias
+class DomainWithAlias extends \MailRoute\API\ActiveEntity
 {
-	private $created_at;
-	private $domain;
-	private $id;
-	private $name;
-	private $resource_uri;
-	private $type;
-	private $updated_at;
+	protected $api_entity_resource = 'domain_with_alias';
+	protected $fields = array('created_at', 'domain', 'id', 'name', 'resource_uri', 'type', 'updated_at');
 
 	public function getCreatedAt()
 	{
-		return $this->created_at;
+		return $this->fields['created_at'];
 	}
 
 	public function getDomain()
 	{
-		return $this->domain;
+		return $this->fields['domain'];
 	}
 
 	public function setDomain($domain)
 	{
-		$this->domain = $domain;
+		$this->fields['domain'] = $domain;
 	}
 
 	public function getId()
 	{
-		return $this->id;
+		return $this->fields['id'];
 	}
 
 	public function setId($id)
 	{
-		$this->id = $id;
+		$this->fields['id'] = $id;
 	}
 
 	public function getName()
 	{
-		return $this->name;
+		return $this->fields['name'];
 	}
 
 	public function setName($name)
 	{
-		$this->name = $name;
+		$this->fields['name'] = $name;
 	}
 
 	public function getResourceUri()
 	{
-		return $this->resource_uri;
+		return $this->fields['resource_uri'];
 	}
 
 	public function getType()
 	{
-		return $this->type;
+		return $this->fields['type'];
 	}
 
 	public function setType($type)
 	{
-		$this->type = $type;
+		$this->fields['type'] = $type;
 	}
 
 	public function getUpdatedAt()
 	{
-		return $this->updated_at;
+		return $this->fields['updated_at'];
 	}
 
 }

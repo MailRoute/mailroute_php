@@ -1,162 +1,144 @@
 <?php
 namespace MailRoute\API\Entity;
 
-/**
-* @method save()
-* @method delete()
-*/
-class Brandinginfo
+class Brandinginfo extends \MailRoute\API\ActiveEntity
 {
-	private $color;
-	private $created_at;
-	private $customer;
-	private $domain;
-	private $email_from;
-	private $enabled;
-	private $favicon;
-	private $highlight_color;
-	private $id;
-	private $logo;
-	private $reseller;
-	private $resource_uri;
-	private $service_name;
-	private $ssl_cert_passphrase;
-	private $subdomain;
-	private $updated_at;
+	protected $api_entity_resource = 'brandinginfo';
+	protected $fields = array('color', 'created_at', 'customer', 'domain', 'email_from', 'enabled', 'favicon', 'highlight_color', 'id', 'logo', 'reseller', 'resource_uri', 'service_name', 'ssl_cert_passphrase', 'subdomain', 'updated_at');
 
 	public function getColor()
 	{
-		return $this->color;
+		return $this->fields['color'];
 	}
 
 	public function setColor($color)
 	{
-		$this->color = $color;
+		$this->fields['color'] = $color;
 	}
 
 	public function getCreatedAt()
 	{
-		return $this->created_at;
+		return $this->fields['created_at'];
 	}
 
 	public function getCustomer()
 	{
-		return $this->customer;
+		return $this->fields['customer'];
 	}
 
 	public function getDomain()
 	{
-		return $this->domain;
+		return $this->fields['domain'];
 	}
 
 	public function setDomain($domain)
 	{
-		$this->domain = $domain;
+		$this->fields['domain'] = $domain;
 	}
 
 	public function getEmailFrom()
 	{
-		return $this->email_from;
+		return $this->fields['email_from'];
 	}
 
 	public function setEmailFrom($email_from)
 	{
-		$this->email_from = $email_from;
+		$this->fields['email_from'] = $email_from;
 	}
 
 	public function getEnabled()
 	{
-		return $this->enabled;
+		return $this->fields['enabled'];
 	}
 
 	public function setEnabled($enabled)
 	{
-		$this->enabled = $enabled;
+		$this->fields['enabled'] = $enabled;
 	}
 
 	public function getFavicon()
 	{
-		return $this->favicon;
+		return $this->fields['favicon'];
 	}
 
 	public function setFavicon($favicon)
 	{
-		$this->favicon = $favicon;
+		$this->fields['favicon'] = $favicon;
 	}
 
 	public function getHighlightColor()
 	{
-		return $this->highlight_color;
+		return $this->fields['highlight_color'];
 	}
 
 	public function setHighlightColor($highlight_color)
 	{
-		$this->highlight_color = $highlight_color;
+		$this->fields['highlight_color'] = $highlight_color;
 	}
 
 	public function getId()
 	{
-		return $this->id;
+		return $this->fields['id'];
 	}
 
 	public function setId($id)
 	{
-		$this->id = $id;
+		$this->fields['id'] = $id;
 	}
 
 	public function getLogo()
 	{
-		return $this->logo;
+		return $this->fields['logo'];
 	}
 
 	public function setLogo($logo)
 	{
-		$this->logo = $logo;
+		$this->fields['logo'] = $logo;
 	}
 
 	public function getReseller()
 	{
-		return $this->reseller;
+		return $this->fields['reseller'];
 	}
 
 	public function getResourceUri()
 	{
-		return $this->resource_uri;
+		return $this->fields['resource_uri'];
 	}
 
 	public function getServiceName()
 	{
-		return $this->service_name;
+		return $this->fields['service_name'];
 	}
 
 	public function setServiceName($service_name)
 	{
-		$this->service_name = $service_name;
+		$this->fields['service_name'] = $service_name;
 	}
 
 	public function getSslCertPassphrase()
 	{
-		return $this->ssl_cert_passphrase;
+		return $this->fields['ssl_cert_passphrase'];
 	}
 
 	public function setSslCertPassphrase($ssl_cert_passphrase)
 	{
-		$this->ssl_cert_passphrase = $ssl_cert_passphrase;
+		$this->fields['ssl_cert_passphrase'] = $ssl_cert_passphrase;
 	}
 
 	public function getSubdomain()
 	{
-		return $this->subdomain;
+		return $this->fields['subdomain'];
 	}
 
 	public function setSubdomain($subdomain)
 	{
-		$this->subdomain = $subdomain;
+		$this->fields['subdomain'] = $subdomain;
 	}
 
 	public function getUpdatedAt()
 	{
-		return $this->updated_at;
+		return $this->fields['updated_at'];
 	}
 
 }

@@ -1,61 +1,54 @@
 <?php
 namespace MailRoute\API\Entity;
 
-/**
-* @method save()
-* @method delete()
-*/
-class Wblist
+class Wblist extends \MailRoute\API\ActiveEntity
 {
-	private $domain;
-	private $email_account;
-	private $id;
-	private $resource_uri;
-	private $wb;
+	protected $api_entity_resource = 'wblist';
+	protected $fields = array('domain', 'email_account', 'id', 'resource_uri', 'wb');
 
 	public function getDomain()
 	{
-		return $this->domain;
+		return $this->fields['domain'];
 	}
 
 	public function setDomain($domain)
 	{
-		$this->domain = $domain;
+		$this->fields['domain'] = $domain;
 	}
 
 	public function getEmailAccount()
 	{
-		return $this->email_account;
+		return $this->fields['email_account'];
 	}
 
 	public function setEmailAccount($email_account)
 	{
-		$this->email_account = $email_account;
+		$this->fields['email_account'] = $email_account;
 	}
 
 	public function getId()
 	{
-		return $this->id;
+		return $this->fields['id'];
 	}
 
 	public function setId($id)
 	{
-		$this->id = $id;
+		$this->fields['id'] = $id;
 	}
 
 	public function getResourceUri()
 	{
-		return $this->resource_uri;
+		return $this->fields['resource_uri'];
 	}
 
 	public function getWb()
 	{
-		return $this->wb;
+		return $this->fields['wb'];
 	}
 
 	public function setWb($wb)
 	{
-		$this->wb = $wb;
+		$this->fields['wb'] = $wb;
 	}
 
 }

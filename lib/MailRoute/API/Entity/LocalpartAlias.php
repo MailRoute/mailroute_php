@@ -1,79 +1,69 @@
 <?php
 namespace MailRoute\API\Entity;
 
-/**
-* @method save()
-* @method delete()
-*/
-class LocalpartAlias
+class LocalpartAlias extends \MailRoute\API\ActiveEntity
 {
-	private $created_at;
-	private $domain;
-	private $email_account;
-	private $id;
-	private $localpart;
-	private $resource_uri;
-	private $type;
-	private $updated_at;
+	protected $api_entity_resource = 'localpart_alias';
+	protected $fields = array('created_at', 'domain', 'email_account', 'id', 'localpart', 'resource_uri', 'type', 'updated_at');
 
 	public function getCreatedAt()
 	{
-		return $this->created_at;
+		return $this->fields['created_at'];
 	}
 
 	public function getDomain()
 	{
-		return $this->domain;
+		return $this->fields['domain'];
 	}
 
 	public function getEmailAccount()
 	{
-		return $this->email_account;
+		return $this->fields['email_account'];
 	}
 
 	public function setEmailAccount($email_account)
 	{
-		$this->email_account = $email_account;
+		$this->fields['email_account'] = $email_account;
 	}
 
 	public function getId()
 	{
-		return $this->id;
+		return $this->fields['id'];
 	}
 
 	public function setId($id)
 	{
-		$this->id = $id;
+		$this->fields['id'] = $id;
 	}
 
 	public function getLocalpart()
 	{
-		return $this->localpart;
+		return $this->fields['localpart'];
 	}
 
 	public function setLocalpart($localpart)
 	{
-		$this->localpart = $localpart;
+		$this->fields['localpart'] = $localpart;
 	}
 
 	public function getResourceUri()
 	{
-		return $this->resource_uri;
+		return $this->fields['resource_uri'];
 	}
 
 	public function getType()
 	{
-		return $this->type;
+		return $this->fields['type'];
 	}
 
 	public function setType($type)
 	{
-		$this->type = $type;
+		$this->fields['type'] = $type;
 	}
 
 	public function getUpdatedAt()
 	{
-		return $this->updated_at;
+		return $this->fields['updated_at'];
 	}
 
 }

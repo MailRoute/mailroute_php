@@ -1,7 +1,7 @@
 <?php
 namespace MailRoute\API;
 
-interface IEntity
+interface IResource
 {
 	/**
 	 * @param string $id
@@ -29,19 +29,19 @@ interface IEntity
 
 	/**
 	 * @param int $limit
-	 * @return IEntity
+	 * @return IResource
 	 */
 	public function limit($limit);
 
 	/**
 	 * @param int $offset
-	 * @return IEntity
+	 * @return IResource
 	 */
 	public function offset($offset);
 
 	/**
 	 * @param array $filter_map
-	 * @return IEntity
+	 * @return IResource
 	 */
 	public function filter(array $filter_map);
 

@@ -1,116 +1,104 @@
 <?php
 namespace MailRoute\API\Entity;
 
-/**
-* @method save()
-* @method delete()
-*/
-class Admins
+class Admins extends \MailRoute\API\ActiveEntity
 {
-	private $customer;
-	private $date_joined;
-	private $email;
-	private $id;
-	private $is_active;
-	private $last_login;
-	private $reseller;
-	private $resource_uri;
-	private $send_welcome;
-	private $username;
+	protected $api_entity_resource = 'admins';
+	protected $fields = array('customer', 'date_joined', 'email', 'id', 'is_active', 'last_login', 'reseller', 'resource_uri', 'send_welcome', 'username');
 
 	public function getCustomer()
 	{
-		return $this->customer;
+		return $this->fields['customer'];
 	}
 
 	public function setCustomer($customer)
 	{
-		$this->customer = $customer;
+		$this->fields['customer'] = $customer;
 	}
 
 	public function getDateJoined()
 	{
-		return $this->date_joined;
+		return $this->fields['date_joined'];
 	}
 
 	public function setDateJoined($date_joined)
 	{
-		$this->date_joined = $date_joined;
+		$this->fields['date_joined'] = $date_joined;
 	}
 
 	public function getEmail()
 	{
-		return $this->email;
+		return $this->fields['email'];
 	}
 
 	public function setEmail($email)
 	{
-		$this->email = $email;
+		$this->fields['email'] = $email;
 	}
 
 	public function getId()
 	{
-		return $this->id;
+		return $this->fields['id'];
 	}
 
 	public function setId($id)
 	{
-		$this->id = $id;
+		$this->fields['id'] = $id;
 	}
 
 	public function getIsActive()
 	{
-		return $this->is_active;
+		return $this->fields['is_active'];
 	}
 
 	public function setIsActive($is_active)
 	{
-		$this->is_active = $is_active;
+		$this->fields['is_active'] = $is_active;
 	}
 
 	public function getLastLogin()
 	{
-		return $this->last_login;
+		return $this->fields['last_login'];
 	}
 
 	public function setLastLogin($last_login)
 	{
-		$this->last_login = $last_login;
+		$this->fields['last_login'] = $last_login;
 	}
 
 	public function getReseller()
 	{
-		return $this->reseller;
+		return $this->fields['reseller'];
 	}
 
 	public function setReseller($reseller)
 	{
-		$this->reseller = $reseller;
+		$this->fields['reseller'] = $reseller;
 	}
 
 	public function getResourceUri()
 	{
-		return $this->resource_uri;
+		return $this->fields['resource_uri'];
 	}
 
 	public function getSendWelcome()
 	{
-		return $this->send_welcome;
+		return $this->fields['send_welcome'];
 	}
 
 	public function setSendWelcome($send_welcome)
 	{
-		$this->send_welcome = $send_welcome;
+		$this->fields['send_welcome'] = $send_welcome;
 	}
 
 	public function getUsername()
 	{
-		return $this->username;
+		return $this->fields['username'];
 	}
 
 	public function setUsername($username)
 	{
-		$this->username = $username;
+		$this->fields['username'] = $username;
 	}
 
 }
