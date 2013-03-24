@@ -4,7 +4,7 @@ namespace MailRoute\API\Entity;
 class Admins extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'admins';
-	protected $fields = array('customer', 'date_joined', 'email', 'id', 'is_active', 'last_login', 'reseller', 'resource_uri', 'send_welcome', 'username');
+	protected $fields = array();
 
 	public function getCustomer()
 	{

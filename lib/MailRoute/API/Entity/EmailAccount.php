@@ -4,7 +4,7 @@ namespace MailRoute\API\Entity;
 class EmailAccount extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'email_account';
-	protected $fields = array('change_pwd', 'confirm_password', 'contact', 'create_opt', 'created_at', 'domain', 'id', 'localpart', 'localpart_aliases', 'notification_task', 'password', 'policy', 'priority', 'resource_uri', 'send_welcome', 'updated_at');
+	protected $fields = array();
 
 	public function getChangePwd()
 	{

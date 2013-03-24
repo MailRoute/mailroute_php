@@ -4,7 +4,7 @@ namespace MailRoute\API\Entity;
 class Wblist extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'wblist';
-	protected $fields = array('domain', 'email_account', 'id', 'resource_uri', 'wb');
+	protected $fields = array();
 
 	public function getDomain()
 	{

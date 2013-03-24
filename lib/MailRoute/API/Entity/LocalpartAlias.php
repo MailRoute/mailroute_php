@@ -4,7 +4,7 @@ namespace MailRoute\API\Entity;
 class LocalpartAlias extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'localpart_alias';
-	protected $fields = array('created_at', 'domain', 'email_account', 'id', 'localpart', 'resource_uri', 'type', 'updated_at');
+	protected $fields = array();
 
 	public function getCreatedAt()
 	{

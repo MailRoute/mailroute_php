@@ -4,7 +4,7 @@ namespace MailRoute\API\Entity;
 class MailServer extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'mail_server';
-	protected $fields = array('created_at', 'domain', 'id', 'priority', 'resource_uri', 'sasl_login', 'sasl_password', 'server', 'updated_at', 'use_sasl');
+	protected $fields = array();
 
 	public function getCreatedAt()
 	{

@@ -4,7 +4,7 @@ namespace MailRoute\API\Entity;
 class ContactReseller extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'contact_reseller';
-	protected $fields = array('address', 'address2', 'city', 'country', 'created_at', 'email', 'first_name', 'id', 'is_billing', 'is_emergency', 'is_technical', 'last_name', 'phone', 'reseller', 'resource_uri', 'state', 'updated_at', 'zipcode');
+	protected $fields = array();
 
 	public function getAddress()
 	{

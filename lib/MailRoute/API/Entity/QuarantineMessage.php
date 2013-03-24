@@ -4,7 +4,7 @@ namespace MailRoute\API\Entity;
 class QuarantineMessage extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'quarantine_message';
-	protected $fields = array('resource_uri');
+	protected $fields = array();
 
 	public function getResourceUri()
 	{

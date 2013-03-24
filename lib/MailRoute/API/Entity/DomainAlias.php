@@ -4,7 +4,7 @@ namespace MailRoute\API\Entity;
 class DomainAlias extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'domain_alias';
-	protected $fields = array('active', 'created_at', 'domain', 'id', 'name', 'resource_uri', 'updated_at');
+	protected $fields = array();
 
 	public function getActive()
 	{

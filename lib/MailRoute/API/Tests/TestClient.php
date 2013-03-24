@@ -2,6 +2,7 @@
 namespace MailRoute\API\Tests;
 
 use Jamm\Tester\ClassTest;
+use MailRoute\API\Entity\ContactReseller;
 use MailRoute\API\Entity\Reseller;
 use MailRoute\API\IActiveEntity;
 use MailRoute\API\IClient;
@@ -64,6 +65,21 @@ class TestClient extends ClassTest
 		$result = $this->Client->API()->Reseller()->filter(array('name' => $reseller_name))->fetchList();
 		$this->assertIsArray($result);
 		$Reseller->delete();
+	}
+
+	public function testContactResellerPOST()
+	{
+		$email = 'test@example.com';
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => 'test contactReseller '.microtime(1)));
+		/** @var ContactReseller $ContactReseller */
+		$Item = new ContactReseller($this->Client);
+		$Item->setEmail($email);
+		$Item->setReseller($Reseller->getResourceUri());
+		$ContactReseller = $this->Client->API()->ContactReseller()->create($Item);
+		$this->assertTrue(is_object($ContactReseller));
+		$this->assertEquals($ContactReseller->getEmail(), $email);
+		$ContactReseller->delete();
 	}
 
 	public function testResellerDELETE()

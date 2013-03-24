@@ -4,7 +4,7 @@ namespace MailRoute\API\Entity;
 class NotificationDomainTask extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'notification_domain_task';
-	protected $fields = array('domain', 'enabled', 'id', 'priority', 'resource_uri');
+	protected $fields = array();
 
 	public function getDomain()
 	{

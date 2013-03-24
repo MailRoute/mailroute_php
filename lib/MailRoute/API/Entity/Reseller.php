@@ -4,7 +4,7 @@ namespace MailRoute\API\Entity;
 class Reseller extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'reseller';
-	protected $fields = array('allow_branding', 'allow_customer_branding', 'branding_info', 'contacts', 'created_at', 'customers', 'id', 'name', 'resource_uri', 'updated_at');
+	protected $fields = array();
 
 	public function getAllowBranding()
 	{

@@ -4,7 +4,7 @@ namespace MailRoute\API\Entity;
 class PolicyUser extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'policy_user';
-	protected $fields = array('addr_extension_bad_header', 'addr_extension_banned', 'addr_extension_spam', 'addr_extension_virus', 'archive_quarantine_to', 'bad_header_lover', 'bad_header_quarantine_to', 'banned_files_lover', 'banned_quarantine_to', 'bypass_banned_checks', 'bypass_header_checks', 'bypass_spam_checks', 'bypass_virus_checks', 'email_account', 'id', 'message_size_limit', 'priority', 'resource_uri', 'spam_kill_level', 'spam_lover', 'spam_quarantine_cutoff_level', 'spam_quarantine_to', 'spam_subject_tag', 'spam_subject_tag2', 'spam_subject_tag3', 'spam_tag2_level', 'spam_tag3_level', 'spam_tag_level', 'unchecked_lover', 'unchecked_quarantine_to', 'virus_lover', 'virus_quarantine_to', 'warnbadhrecip', 'warnbannedrecip', 'warnvirusrecip');
+	protected $fields = array();
 
 	public function getAddrExtensionBadHeader()
 	{

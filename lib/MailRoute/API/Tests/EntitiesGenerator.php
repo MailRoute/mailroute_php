@@ -46,7 +46,7 @@ class EntitiesGenerator
 		$code .= "\tprotected \$api_entity_resource = '".$entity."';\n";
 		if (!empty($schema['fields']))
 		{
-			$code .= "\tprotected \$fields = array('".implode("', '", array_keys($schema['fields']))."');\n";
+			$code .= "\tprotected \$fields = array();\n";
 			$code .= "\n";
 			foreach ($schema['fields'] as $field => $properties)
 			{

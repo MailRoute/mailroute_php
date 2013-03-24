@@ -4,7 +4,7 @@ namespace MailRoute\API\Entity;
 class OutboundServer extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'outbound_server';
-	protected $fields = array('created_at', 'domain', 'id', 'resource_uri', 'server', 'updated_at');
+	protected $fields = array();
 
 	public function getCreatedAt()
 	{

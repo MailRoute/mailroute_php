@@ -4,7 +4,7 @@ namespace MailRoute\API\Entity;
 class NotificationAccountTask extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'notification_account_task';
-	protected $fields = array('email_account', 'enabled', 'id', 'priority', 'resource_uri');
+	protected $fields = array();
 
 	public function getEmailAccount()
 	{

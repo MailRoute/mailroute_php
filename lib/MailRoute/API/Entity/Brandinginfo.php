@@ -4,7 +4,7 @@ namespace MailRoute\API\Entity;
 class Brandinginfo extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'brandinginfo';
-	protected $fields = array('color', 'created_at', 'customer', 'domain', 'email_from', 'enabled', 'favicon', 'highlight_color', 'id', 'logo', 'reseller', 'resource_uri', 'service_name', 'ssl_cert_passphrase', 'subdomain', 'updated_at');
+	protected $fields = array();
 
 	public function getColor()
 	{

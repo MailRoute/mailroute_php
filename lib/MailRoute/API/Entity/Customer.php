@@ -4,7 +4,7 @@ namespace MailRoute\API\Entity;
 class Customer extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'customer';
-	protected $fields = array('allow_branding', 'branding_info', 'contacts', 'created_at', 'domains', 'id', 'is_full_user_list', 'name', 'reported_user_count', 'reseller', 'resource_uri', 'updated_at');
+	protected $fields = array();
 
 	public function getAllowBranding()
 	{
