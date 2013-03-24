@@ -7,7 +7,7 @@ interface API
 	public function Admins();
 
 	/** @return IEntity */
-	public function BrandingInfo();
+	public function Brandinginfo();
 
 	/** @return IEntity */
 	public function Contact_customer();
@@ -37,7 +37,7 @@ interface API
 	public function Email_account();
 
 	/** @return IEntity */
-	public function LocalPart_alias();
+	public function Localpart_alias();
 
 	/** @return IEntity */
 	public function Mail_server();
@@ -73,6 +73,6 @@ interface API
 	public function Reseller();
 
 	/** @return IEntity */
-	public function WbList();
+	public function Wblist();
 
 }

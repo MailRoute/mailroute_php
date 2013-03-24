@@ -1,6 +1,10 @@
 <?php
 namespace MailRoute\API\Entity;
 
+/**
+* @method save()
+* @method delete()
+*/
 class NotificationDomainTask
 {
 	private $domain;

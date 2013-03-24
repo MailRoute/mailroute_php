@@ -1,6 +1,10 @@
 <?php
 namespace MailRoute\API\Entity;
 
+/**
+* @method save()
+* @method delete()
+*/
 class DomainWithAlias
 {
 	private $created_at;

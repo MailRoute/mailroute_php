@@ -21,15 +21,29 @@ class EntitiesGenerator
 
 	protected function generateEntityCode(IClient $Client, $entity, $namespace, $parent_entity = '')
 	{
-		$code   = '';
-		$schema = $Client->GET($entity.'/schema/');
+		$code = '';
+		try
+		{
+			$schema = $Client->GET($entity.'/schema/');
+		}
+		catch (\Exception $E)
+		{
+			return false;
+		}
 		if (empty($schema))
 		{
 			return false;
 		}
 		$code .= "<?php\n".
-				"namespace $namespace;\n\n".
-				"class ".$this->inCamelCase($entity);
+				"namespace $namespace;\n\n";
+		if (isset($schema['fields']['id']))
+		{
+			$code .= "/**\n".
+					"* @method save()\n".
+					"* @method delete()\n".
+					"*/\n";
+		}
+		$code .= "class ".$this->inCamelCase($entity);
 		if (!empty($parent_entity))
 		{
 			$code .= " extends $parent_entity";

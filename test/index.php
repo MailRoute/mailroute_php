@@ -19,6 +19,9 @@ $tests = $Test->getTests();
 ////Generate entities
 //$EG = new \MailRoute\API\Tests\EntitiesGenerator();
 //$EG->generateEntities(__DIR__.'/../lib/MailRoute/API/Entity', 'MailRoute\\API\\Entity', $Client);
+////Generate API interface for code completion
+//$IG = new \MailRoute\API\Tests\InterfaceGenerator();
+//file_put_contents(__DIR__.'/../lib/MailRoute/API/API.php', $IG->getInterface($Client));
 
 foreach ($tests as $test_result)
 {
