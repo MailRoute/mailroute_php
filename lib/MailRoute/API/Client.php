@@ -19,11 +19,26 @@ class Client implements IClient
 	private $Connection;
 	private $async_mode = false;
 	private $EntityConverter;
+	private $api_path_prefix;
 
 	public function __construct(Config $Config)
 	{
 		$this->setAuthorizationHeader($Config->auth_method.' '.$Config->login.':'.$Config->password);
 		$this->setAPIUrl($Config->schema.'://'.$Config->host.$Config->absolute_path_prefix);
+		$this->setAPIPathPrefix($Config->absolute_path_prefix);
+	}
+
+	/**
+	 * @param string $api_url
+	 */
+	public function setAPIUrl($api_url)
+	{
+		$this->api_url = rtrim(trim($api_url), '/').'/';
+	}
+
+	public function setAPIPathPrefix($api_path_prefix)
+	{
+		$this->api_path_prefix = $api_path_prefix;
 	}
 
 	/** @return API */
@@ -42,6 +57,124 @@ class Client implements IClient
 		$entity  = strtolower($entity);
 		$Handler = new ResourceHandler($this, $entity);
 		return $Handler;
+	}
+
+	public function getAsyncMode()
+	{
+		return $this->async_mode;
+	}
+
+	public function setAsyncMode($mode = true)
+	{
+		$this->async_mode = $mode;
+	}
+
+	public function getEntityConverter()
+	{
+		if (empty($this->EntityConverter))
+		{
+			$this->EntityConverter = new EntityConverter();
+		}
+		return $this->EntityConverter;
+	}
+
+	public function getAPIPathPrefix()
+	{
+		return $this->api_path_prefix;
+	}
+
+	public function getApiUrl()
+	{
+		return $this->api_url;
+	}
+
+	/**
+	 * @param string $header
+	 * @param string $value
+	 * @return bool
+	 */
+	public function setRequestHeader($header, $value)
+	{
+		if (empty($header)) return false;
+		if ($value===NULL)
+		{
+			unset($this->custom_request_headers[$header]);
+			return true;
+		}
+		$this->custom_request_headers[(string)$header] = (string)$value;
+		return true;
+	}
+
+	public function getAuthorizationHeader()
+	{
+		return $this->authorization_header;
+	}
+
+	public function setAuthorizationHeader($authorization_header)
+	{
+		$this->authorization_header = $authorization_header;
+	}
+
+	/**
+	 * @return Connection
+	 */
+	public function getConnection()
+	{
+		return $this->Connection;
+	}
+
+	/**
+	 * @param Connection $Connection
+	 */
+	public function setConnection($Connection)
+	{
+		$this->Connection = $Connection;
+	}
+
+	public function GET($id = '')
+	{
+		if (!empty($id))
+		{
+			return $this->callAPI('/'.$id, 'GET');
+		}
+		else
+		{
+			return $this->callAPI('', 'GET');
+		}
+	}
+
+	public function callAPI($url_request_part, $method, $arguments = array())
+	{
+		$Response = $this->SendAPIQuery($url_request_part, $method, $arguments);
+		if (!is_object($Response))
+		{
+			if (is_bool($Response))
+			{
+				return $Response;
+			}
+			throw new MailRouteException('Can not get response', 500);
+		}
+		/** @var IResponse $Response */
+		if ($Response->isStatusError())
+		{
+			if ($message = $Response->getBody())
+			{
+				if (is_array($message))
+				{
+					$message = current($message);
+				}
+				if (is_array($message))
+				{
+					$message = print_r($message, 1);
+				}
+			}
+			else
+			{
+				$message = 'Error';
+			}
+			throw new MailRouteException($message, $Response->getStatusCode());
+		}
+		return $Response->getBody();
 	}
 
 	/**
@@ -99,95 +232,9 @@ class Client implements IClient
 		return $result;
 	}
 
-	public function setAsyncMode($mode = true)
+	protected function getNewRequest()
 	{
-		$this->async_mode = $mode;
-	}
-
-	/** @param string $api_url */
-	public function setAPIUrl($api_url)
-	{
-		$this->api_url = rtrim(trim($api_url), '/').'/';
-	}
-
-	public function setAuthorizationHeader($authorization_header)
-	{
-		$this->authorization_header = $authorization_header;
-	}
-
-	public function callAPI($url_request_part, $method, $arguments = array())
-	{
-		$Response = $this->SendAPIQuery($url_request_part, $method, $arguments);
-		if (!is_object($Response))
-		{
-			if (is_bool($Response))
-			{
-				return $Response;
-			}
-			throw new MailRouteException('Can not get response', 500);
-		}
-		/** @var IResponse $Response */
-		if ($Response->isStatusError())
-		{
-			if ($message = $Response->getBody())
-			{
-				if (is_array($message))
-				{
-					$message = current($message);
-				}
-				if (is_array($message))
-				{
-					$message = print_r($message, 1);
-				}
-			}
-			else
-			{
-				$message = 'Error';
-			}
-			throw new MailRouteException($message, $Response->getStatusCode());
-		}
-		return $Response->getBody();
-	}
-
-	public function getAsyncMode()
-	{
-		return $this->async_mode;
-	}
-
-	public function getEntityConverter()
-	{
-		if (empty($this->EntityConverter))
-		{
-			$this->EntityConverter = new EntityConverter();
-		}
-		return $this->EntityConverter;
-	}
-
-	protected function getResponse()
-	{
-		return $this->Response;
-	}
-
-	public function getApiUrl()
-	{
-		return $this->api_url;
-	}
-
-	/**
-	 * @param string $header
-	 * @param string $value
-	 * @return bool
-	 */
-	public function setRequestHeader($header, $value)
-	{
-		if (empty($header)) return false;
-		if ($value===NULL)
-		{
-			unset($this->custom_request_headers[$header]);
-			return true;
-		}
-		$this->custom_request_headers[(string)$header] = (string)$value;
-		return true;
+		return new Request();
 	}
 
 	protected function setCustomRequestHeaders(IRequest $Request)
@@ -200,44 +247,6 @@ class Client implements IClient
 		return true;
 	}
 
-	public function getAuthorizationHeader()
-	{
-		return $this->authorization_header;
-	}
-
-	/**
-	 * @return Connection
-	 */
-	public function getConnection()
-	{
-		return $this->Connection;
-	}
-
-	/**
-	 * @param Connection $Connection
-	 */
-	public function setConnection($Connection)
-	{
-		$this->Connection = $Connection;
-	}
-
-	public function GET($id = '')
-	{
-		if (!empty($id))
-		{
-			return $this->callAPI('/'.$id, 'GET');
-		}
-		else
-		{
-			return $this->callAPI('', 'GET');
-		}
-	}
-
-	protected function getNewRequest()
-	{
-		return new Request();
-	}
-
 	protected function getNewResponse()
 	{
 		return new Response();
@@ -246,5 +255,10 @@ class Client implements IClient
 	protected function getNewSerializer()
 	{
 		return new SerializerJSON();
+	}
+
+	protected function getResponse()
+	{
+		return $this->Response;
 	}
 }

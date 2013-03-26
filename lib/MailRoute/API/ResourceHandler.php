@@ -119,7 +119,7 @@ class ResourceHandler implements IResource
 		if (is_a($data, 'MailRoute\\API\\ActiveEntity'))
 		{
 			/** @var ActiveEntity $data */
-			return $data->getFields();
+			return $data->getAPIEntityFields();
 		}
 		else
 		{
@@ -207,7 +207,7 @@ class ResourceHandler implements IResource
 		$Entity = new $class($this->Client);
 		if (!empty($data))
 		{
-			$Entity->setFields($data);
+			$Entity->setAPIEntityFields($data);
 		}
 		return $Entity;
 	}

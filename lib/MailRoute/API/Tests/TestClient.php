@@ -47,8 +47,7 @@ class TestClient extends ClassTest
 		$resellers[] = $this->Client->API()->Reseller()->create(array('name' => $reseller_name.'6'));
 		$result      = $this->Client->API()->Reseller()->offset(1)->limit(5)->fetchList();
 		$this->assertIsArray($result);
-		$this->assertTrue(count($result)==5)->addCommentary(print_r($result, 1).
-				print_r($this->Client->getRequestMock()->getLog(), 1));
+		$this->assertTrue(count($result)==5)->addCommentary(print_r($result, 1));
 		foreach ($resellers as $Reseller)
 		{
 			$Reseller->delete();
@@ -117,7 +116,7 @@ class TestClient extends ClassTest
 		}
 		catch (\Exception $E)
 		{
-			$this->assertTrue(false)->addCommentary(print_r($this->Client->getRequestMock()->getlog(), 1));
+			$this->assertTrue(false);
 		}
 		$this->assertEquals($Reseller->getName(), $reseller_name.'_updated', true);
 		$Reseller->setName($reseller_name.'_saved');
@@ -127,7 +126,7 @@ class TestClient extends ClassTest
 		}
 		catch (\Exception $E)
 		{
-			$this->assertTrue(false)->addCommentary(print_r($this->Client->getRequestMock()->getlog(), 1));
+			$this->assertTrue(false);
 		}
 		$Reseller = $this->Client->API()->Reseller()->get($Reseller->getId());
 		$this->assertEquals($Reseller->getName(), $reseller_name.'_saved', true);
@@ -147,5 +146,31 @@ class TestClient extends ClassTest
 		$result      = $this->Client->API()->Reseller()->search($reseller_name);
 		$this->assertIsArray($result);
 		$this->assertIsObject($result[0]);
+		foreach ($resellers as $Reseller)
+		{
+			$Reseller->delete();
+		}
+	}
+
+	public function testCreateAdmin()
+	{
+		$reseller_name = 'test '.microtime(1).'create_admin';
+		$NewReseller   = new Reseller($this->Client);
+		$NewReseller->setName($reseller_name);
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create($NewReseller);
+		try
+		{
+			$Admin = $Reseller->createAdmin('test@example.com', 'welcome');
+		}
+		catch (\Exception $E)
+		{
+			$this->assertTrue(false);
+			//->addCommentary(print_r($this->Client->getRequestMock()->getLog(), 1))
+			return false;
+		}
+		$this->assertIsObject($Admin);
+		$this->assertEquals($Admin->getEmail(), 'test@example.com');
+		$this->assertTrue($Reseller->delete());
 	}
 }

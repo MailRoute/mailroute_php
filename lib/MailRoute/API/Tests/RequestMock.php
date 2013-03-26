@@ -13,6 +13,9 @@ class RequestMock extends Request
 		return parent::writeToConnection($data);
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getLog()
 	{
 		$log       = $this->log;

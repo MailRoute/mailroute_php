@@ -5,6 +5,7 @@ use MailRoute\API\Client;
 
 class ClientMock extends Client
 {
+	/** @var RequestMock */
 	private $Request;
 
 	protected function getNewRequest()

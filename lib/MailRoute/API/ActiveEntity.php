@@ -14,7 +14,7 @@ abstract class ActiveEntity implements IActiveEntity
 
 	public function save()
 	{
-		$data = $this->getFields();
+		$data = $this->getAPIEntityFields();
 		if (empty($data['id']))
 		{
 			throw new MailRouteException("Can't save entity without ID", 400);
@@ -25,7 +25,7 @@ abstract class ActiveEntity implements IActiveEntity
 
 	public function delete()
 	{
-		$data = $this->getFields();
+		$data = $this->getAPIEntityFields();
 		if (empty($data['id']))
 		{
 			throw new MailRouteException("Can't delete entity without ID", 400);
@@ -36,6 +36,10 @@ abstract class ActiveEntity implements IActiveEntity
 		}
 		catch (MailRouteException $E)
 		{
+			if ($E->getCode() > 299 && $E->getCode()<>404)
+			{
+				throw $E;
+			}
 			return false;
 		}
 		return $result!==false;
@@ -51,22 +55,22 @@ abstract class ActiveEntity implements IActiveEntity
 		$this->api_entity_resource = $api_entity_resource;
 	}
 
-	public function getClient()
+	public function getAPIClient()
 	{
 		return $this->Client;
 	}
 
-	public function setClient(IClient $Client)
+	public function setAPIClient(IClient $Client)
 	{
 		$this->Client = $Client;
 	}
 
-	public function getFields()
+	public function getAPIEntityFields()
 	{
 		return $this->fields;
 	}
 
-	public function setFields(array $fields)
+	public function setAPIEntityFields(array $fields)
 	{
 		$this->fields = $fields;
 	}
