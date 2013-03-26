@@ -152,7 +152,7 @@ class TestClient extends ClassTest
 		}
 	}
 
-	public function testCreateAdmin()
+	public function testCreateAndDeleteAdmin()
 	{
 		$reseller_name = 'test '.microtime(1).'create_admin';
 		$NewReseller   = new Reseller($this->Client);
@@ -171,6 +171,7 @@ class TestClient extends ClassTest
 		}
 		$this->assertIsObject($Admin);
 		$this->assertEquals($Admin->getEmail(), 'test@example.com');
+		$this->assertTrue($Reseller->deleteAdmin('test@example.com'));
 		$this->assertTrue($Reseller->delete());
 	}
 }

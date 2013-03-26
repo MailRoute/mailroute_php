@@ -7,6 +7,8 @@ class Reseller extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'reseller';
 	protected $fields = array();
+	/** @var Admins[] */
+	private $admins;
 
 	/**
 	 * @param $email
@@ -28,6 +30,35 @@ class Reseller extends \MailRoute\API\ActiveEntity
 		$new_data = $Client->callAPI('admins/reseller/'.$this->getId().'/', 'POST', $Admin->getAPIEntityFields());
 		$Admin->setAPIEntityFields($new_data);
 		return $Admin;
+	}
+
+	public function deleteAdmin($email)
+	{
+		if (!$this->getId())
+		{
+			throw new MailRouteException('This method requires ID');
+		}
+		$Admins = $this->getAdmins();
+		foreach ($Admins as $Admin)
+		{
+			if ($Admin->getEmail()==$email)
+			{
+				try
+				{
+					$result = $this->Client->callAPI('admins/reseller/'.$this->getId().'/admin/'.$Admin->getId(), 'DELETE');
+				}
+				catch (MailRouteException $E)
+				{
+					if ($E->getCode()<>404)
+					{
+						throw $E;
+					}
+					return true;
+				}
+				return ($result!==false);
+			}
+		}
+		return true;
 	}
 
 	public function getAllowBranding()
@@ -100,4 +131,15 @@ class Reseller extends \MailRoute\API\ActiveEntity
 		return $this->fields['updated_at'];
 	}
 
+	/**
+	 * @return Admins[]
+	 */
+	public function getAdmins()
+	{
+		if ($this->admins===NULL)
+		{
+			$this->admins = $this->getAPIClient()->API()->Admins()->get($this->getApiEntityResource().'/'.$this->getId());
+		}
+		return $this->admins;
+	}
 }
