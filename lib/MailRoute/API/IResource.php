@@ -47,4 +47,10 @@ interface IResource
 
 	/** @return IActiveEntity[] */
 	public function fetchList();
+
+	/**
+	 * @param string $word
+	 * @return IActiveEntity[]
+	 */
+	public function search($word);
 }

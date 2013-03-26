@@ -176,6 +176,21 @@ class ResourceHandler implements IResource
 		return $result;
 	}
 
+	public function search($word)
+	{
+		$result = $this->callAPI('GET', '', array('q' => $word));
+		if (is_array($result))
+		{
+			$objects = array();
+			foreach ($result as $data)
+			{
+				$objects[] = $this->getActiveEntity($data);
+			}
+			return $objects;
+		}
+		return $result;
+	}
+
 	protected function getEntityConverter()
 	{
 		if (empty($this->EntityConverter))

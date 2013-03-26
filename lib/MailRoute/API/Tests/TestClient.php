@@ -133,4 +133,19 @@ class TestClient extends ClassTest
 		$this->assertEquals($Reseller->getName(), $reseller_name.'_saved', true);
 		$Reseller->delete();
 	}
+
+	public function testSearch()
+	{
+		$reseller_name = 'test '.microtime(1);
+		/** @var IActiveEntity[] $resellers */
+		$resellers   = array();
+		$NewReseller = new Reseller($this->Client);
+		$NewReseller->setName($reseller_name.'1');
+		$resellers[] = $this->Client->API()->Reseller()->create($NewReseller);
+		$NewReseller->setName($reseller_name.'2');
+		$resellers[] = $this->Client->API()->Reseller()->create($NewReseller);
+		$result      = $this->Client->API()->Reseller()->search($reseller_name);
+		$this->assertIsArray($result);
+		$this->assertIsObject($result[0]);
+	}
 }
