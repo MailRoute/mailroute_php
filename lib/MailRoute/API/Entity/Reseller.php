@@ -9,6 +9,7 @@ class Reseller extends \MailRoute\API\ActiveEntity
 	protected $fields = array();
 	/** @var Admins[] */
 	private $admins;
+	private $contacts;
 
 	/**
 	 * @param $email
@@ -86,9 +87,27 @@ class Reseller extends \MailRoute\API\ActiveEntity
 		return $this->fields['branding_info'];
 	}
 
+	/**
+	 * @return ContactReseller[]
+	 */
 	public function getContacts()
 	{
-		return $this->fields['contacts'];
+		if (empty($this->contacts))
+		{
+			$Client         = $this->getAPIClient();
+			$this->contacts = array();
+			$contacts       = $Client->callAPI($this->getApiEntityResource().'/'.$this->getId().'/contacts', 'GET');
+			if (!empty($contacts['objects']))
+			{
+				foreach ($contacts['objects'] as $contact_data)
+				{
+					$Contact = new ContactReseller($Client);
+					$Contact->setAPIEntityFields($contact_data);
+					$this->contacts[] = $Contact;
+				}
+			}
+		}
+		return $this->contacts;
 	}
 
 	public function getCreatedAt()

@@ -174,4 +174,26 @@ class TestClient extends ClassTest
 		$this->assertTrue($Reseller->deleteAdmin('test@example.com'));
 		$this->assertTrue($Reseller->delete());
 	}
+
+	public function testResellerGetContacts()
+	{
+		$reseller_name = 'test '.microtime(1).'contact';
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		for ($i = 0; $i < 5; $i++)
+		{
+			$ContactReseller = $this->Client->API()->ContactReseller()->create(array(
+				'reseller' => $this->Client->getAPIPathPrefix().$Reseller->getApiEntityResource().'/'.$Reseller->getId().'/',
+				'email'    => 'reseller_contact@example.com'
+			));
+		}
+		$Contacts = $Reseller->getContacts();
+		$this->assertIsArray($Contacts);
+		$this->assertIsObject($Contacts[0]);
+		foreach ($Contacts as $Contact)
+		{
+			$this->assertTrue($Contact->delete());
+		}
+		$this->assertTrue($Reseller->delete());
+	}
 }
