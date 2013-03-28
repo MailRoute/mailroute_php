@@ -53,6 +53,24 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $this->getAPIClient()->API()->OutboundServer()->create($OutboundServer);
 	}
 
+	/**
+	 * @param string $localpart the localpart of the email address
+	 * @param string $create_opt
+	 * @param string $password
+	 * @param bool $send_welcome
+	 * @return EmailAccount
+	 */
+	public function createEmailAccount($localpart, $create_opt = 'generate_pwd', $password = '', $send_welcome = false)
+	{
+		$EmailAccount = new EmailAccount($this->getAPIClient());
+		$EmailAccount->setLocalpart($localpart);
+		$EmailAccount->setCreateOpt($create_opt);
+		$EmailAccount->setPassword($password);
+		$EmailAccount->setSendWelcome($send_welcome);
+		$EmailAccount->setDomain($this->getResourceUri());
+		return $this->getAPIClient()->API()->EmailAccount()->create($EmailAccount);
+	}
+
 	public function getActive()
 	{
 		return $this->fields['active'];

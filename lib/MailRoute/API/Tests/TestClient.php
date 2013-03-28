@@ -18,6 +18,7 @@ class TestClient extends ClassTest
 	public function __construct(IClient $Client)
 	{
 		$this->Client = $Client;
+		$this->Client->setDeleteNotFoundIsError(true);
 	}
 
 	public function testGetRootSchema()
@@ -359,4 +360,23 @@ class TestClient extends ClassTest
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
 	}
+
+	public function testDomainCreateEmailAccount()
+	{
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+
+		$lp     = substr(md5(microtime(1).__LINE__), 5);
+		$result = $Domain->createEmailAccount($lp);
+		$this->assertIsObject($result);
+		$this->assertEquals($result->getLocalpart(), $lp);
+		$this->assertTrue($result->delete());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
 }
