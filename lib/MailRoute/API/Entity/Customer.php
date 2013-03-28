@@ -1,8 +1,11 @@
 <?php
 namespace MailRoute\API\Entity;
 
+use MailRoute\API\MailRouteException;
+
 class Customer extends \MailRoute\API\ActiveEntity
 {
+	private $admins;
 	protected $api_entity_resource = 'customer';
 	protected $fields = array();
 
@@ -28,6 +31,38 @@ class Customer extends \MailRoute\API\ActiveEntity
 		$Contact->setCustomer($this->getResourceUri());
 		$Contact->setEmail($email);
 		return $this->getAPIClient()->API()->ContactCustomer()->create($Contact);
+	}
+
+	public function createAdmin($email, $send_welcome = false)
+	{
+		if (!$this->getId())
+		{
+			throw new MailRouteException('This method requires ID');
+		}
+		$Admin = new Admins($this->getAPIClient());
+		$Admin->setEmail($email);
+		$Admin->setSendWelcome($send_welcome);
+		$new_data = $this->getAPIClient()->callAPI($Admin->getApiEntityResource().'/'.$this->getApiEntityResource().'/'.$this->getId().'/',
+			'POST', $Admin->getAPIEntityFields());
+		$Admin->setAPIEntityFields($new_data);
+		return $Admin;
+	}
+
+	public function deleteAdmin($email)
+	{
+		if (!$this->getId())
+		{
+			throw new MailRouteException('This method requires ID');
+		}
+		$Admins = $this->getAdmins();
+		foreach ($Admins as $Admin)
+		{
+			if ($Admin->getEmail()==$email)
+			{
+				return $Admin->delete();
+			}
+		}
+		return true;
 	}
 
 	public function getAllowBranding()
@@ -115,4 +150,15 @@ class Customer extends \MailRoute\API\ActiveEntity
 		return $this->fields['updated_at'];
 	}
 
+	/**
+	 * @return Admins[]
+	 */
+	public function getAdmins()
+	{
+		if ($this->admins===NULL)
+		{
+			$this->admins = $this->getAPIClient()->API()->Admins()->get($this->getApiEntityResource().'/'.$this->getId());
+		}
+		return $this->admins;
+	}
 }

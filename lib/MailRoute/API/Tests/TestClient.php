@@ -214,9 +214,9 @@ class TestClient extends ClassTest
 		$reseller_name = 'test '.microtime(1).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
-		$result   = $Reseller->createCustomer('customer!');
+		$result   = $Reseller->createCustomer('customer'.$reseller_name);
 		$this->assertIsObject($result);
-		$this->assertEquals($result->getName(), 'customer!');
+		$this->assertEquals($result->getName(), 'customer'.$reseller_name);
 		$this->assertTrue($result->delete());
 		$this->assertTrue($Reseller->delete());
 	}
@@ -226,11 +226,39 @@ class TestClient extends ClassTest
 		$reseller_name = 'test '.microtime(1).'contact';
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
-		$Customer = $Reseller->createCustomer('customer!');
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
 		$result   = $Customer->createContact('customer@example.com');
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getEmail(), 'customer@example.com');
 		$this->assertTrue($result->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testCustomerCreateAdmin()
+	{
+		$reseller_name = 'test '.microtime(1).'contact';
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$result   = $Customer->createAdmin('admin_customer@example.com');
+		$this->assertIsObject($result);
+		$this->assertEquals($result->getEmail(), 'admin_customer@example.com');
+		$this->assertTrue($result->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testCustomerDeleteAdmin()
+	{
+		$reseller_name = 'test '.microtime(1).'contact';
+		/** @var Reseller $Reseller */
+		$Reseller  = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer  = $Reseller->createCustomer('customer'.$reseller_name);
+		$adm_email = 'admin_customer'.md5($reseller_name).'@example.com';
+		$Customer->createAdmin($adm_email);
+		$result = $Customer->deleteAdmin($adm_email);
+		$this->assertTrueStrict($result);
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
 	}

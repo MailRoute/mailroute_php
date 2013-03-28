@@ -28,7 +28,8 @@ class Reseller extends \MailRoute\API\ActiveEntity
 		$Admin->setEmail($email);
 		$Admin->setSendWelcome($send_welcome);
 		$Admin->setReseller($this->getResourceUri());
-		$new_data = $Client->callAPI('admins/reseller/'.$this->getId().'/', 'POST', $Admin->getAPIEntityFields());
+		$new_data = $Client->callAPI($Admin->getApiEntityResource().'/'.$this->getApiEntityResource().'/'.$this->getId().'/',
+			'POST', $Admin->getAPIEntityFields());
 		$Admin->setAPIEntityFields($new_data);
 		return $Admin;
 	}
@@ -44,19 +45,7 @@ class Reseller extends \MailRoute\API\ActiveEntity
 		{
 			if ($Admin->getEmail()==$email)
 			{
-				try
-				{
-					$result = $this->Client->callAPI('admins/reseller/'.$this->getId().'/admin/'.$Admin->getId(), 'DELETE');
-				}
-				catch (MailRouteException $E)
-				{
-					if ($E->getCode()<>404)
-					{
-						throw $E;
-					}
-					return true;
-				}
-				return ($result!==false);
+				return $Admin->delete();
 			}
 		}
 		return true;

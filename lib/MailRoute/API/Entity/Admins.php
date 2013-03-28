@@ -101,4 +101,8 @@ class Admins extends \MailRoute\API\ActiveEntity
 		$this->fields['username'] = $username;
 	}
 
+	public function delete()
+	{
+		return $this->getAPIClient()->callAPI($this->getResourceUri(), 'DELETE');
+	}
 }
