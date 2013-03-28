@@ -3,6 +3,7 @@ namespace MailRoute\API\Tests;
 
 use Jamm\Tester\ClassTest;
 use MailRoute\API\Entity\ContactReseller;
+use MailRoute\API\Entity\Customer;
 use MailRoute\API\Entity\Reseller;
 use MailRoute\API\IActiveEntity;
 use MailRoute\API\IClient;
@@ -257,8 +258,15 @@ class TestClient extends ClassTest
 		$Customer  = $Reseller->createCustomer('customer'.$reseller_name);
 		$adm_email = 'admin_customer'.md5($reseller_name).'@example.com';
 		$Customer->createAdmin($adm_email);
+		$Customer->createAdmin('2'.$adm_email);
 		$result = $Customer->deleteAdmin($adm_email);
 		$this->assertTrueStrict($result);
+		/** @var Customer $RefreshCustomer */
+		$RefreshCustomer = $this->Client->API()->Customer()->get($Customer->getId());
+		$new_list        = $RefreshCustomer->getAdmins();
+		$this->assertEquals(count($new_list), 1, true);
+		$this->assertEquals($new_list[0]->getEmail(), '2'.$adm_email);
+		$this->assertTrue($new_list[0]->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
 	}

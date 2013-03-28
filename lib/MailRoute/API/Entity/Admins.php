@@ -103,6 +103,7 @@ class Admins extends \MailRoute\API\ActiveEntity
 
 	public function delete()
 	{
-		return $this->getAPIClient()->callAPI($this->getResourceUri(), 'DELETE');
+		$resource_path = substr($this->getResourceUri(), strlen($this->getAPIClient()->getAPIPathPrefix()));
+		return $this->getAPIClient()->callAPI($resource_path, 'DELETE');
 	}
 }

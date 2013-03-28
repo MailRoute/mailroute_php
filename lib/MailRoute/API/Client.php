@@ -221,9 +221,12 @@ class Client implements IClient
 			$this->Response->setSerializer($Serializer);
 			$Request->Send($url, $this->Response);
 			$result = $this->Response;
-			if ($Request->getMethod()==='DELETE' && $this->Response->getStatusCode()==404)
+			if ($Request->getMethod()==='DELETE')
 			{
-				$result = true;
+				if ($this->Response->getStatusCode()==404 || $this->Response->getStatusCode() < 300)
+				{
+					$result = true;
+				}
 			}
 		}
 		else
