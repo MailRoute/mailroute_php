@@ -141,11 +141,6 @@ class ContactDomain extends \MailRoute\API\ActiveEntity
 		$this->fields['phone'] = $phone;
 	}
 
-	public function getResourceUri()
-	{
-		return $this->fields['resource_uri'];
-	}
-
 	public function getState()
 	{
 		return $this->fields['state'];

@@ -126,11 +126,6 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $this->fields['policy'];
 	}
 
-	public function getResourceUri()
-	{
-		return $this->fields['resource_uri'];
-	}
-
 	public function getUpdatedAt()
 	{
 		return $this->fields['updated_at'];

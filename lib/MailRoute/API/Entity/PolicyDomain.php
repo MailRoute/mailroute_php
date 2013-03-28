@@ -171,11 +171,6 @@ class PolicyDomain extends \MailRoute\API\ActiveEntity
 		$this->fields['priority'] = $priority;
 	}
 
-	public function getResourceUri()
-	{
-		return $this->fields['resource_uri'];
-	}
-
 	public function getSpamKillLevel()
 	{
 		return $this->fields['spam_kill_level'];

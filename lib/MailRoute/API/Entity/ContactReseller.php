@@ -141,11 +141,6 @@ class ContactReseller extends \MailRoute\API\ActiveEntity
 		$this->fields['reseller'] = $reseller;
 	}
 
-	public function getResourceUri()
-	{
-		return $this->fields['resource_uri'];
-	}
-
 	public function getState()
 	{
 		return $this->fields['state'];

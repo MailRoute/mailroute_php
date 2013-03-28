@@ -40,10 +40,4 @@ class NotificationDomainTask extends \MailRoute\API\ActiveEntity
 	{
 		$this->fields['priority'] = $priority;
 	}
-
-	public function getResourceUri()
-	{
-		return $this->fields['resource_uri'];
-	}
-
 }

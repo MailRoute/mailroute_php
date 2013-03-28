@@ -31,11 +31,6 @@ class OutboundServer extends \MailRoute\API\ActiveEntity
 		$this->fields['id'] = $id;
 	}
 
-	public function getResourceUri()
-	{
-		return $this->fields['resource_uri'];
-	}
-
 	public function getServer()
 	{
 		return $this->fields['server'];

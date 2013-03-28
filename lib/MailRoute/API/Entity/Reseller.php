@@ -27,7 +27,7 @@ class Reseller extends \MailRoute\API\ActiveEntity
 		$Admin  = new Admins($Client);
 		$Admin->setEmail($email);
 		$Admin->setSendWelcome($send_welcome);
-		$Admin->setReseller($Client->getAPIPathPrefix().$this->getApiEntityResource().'/'.$this->getId().'/');
+		$Admin->setReseller($this->getResourceUri());
 		$new_data = $Client->callAPI('admins/reseller/'.$this->getId().'/', 'POST', $Admin->getAPIEntityFields());
 		$Admin->setAPIEntityFields($new_data);
 		return $Admin;
@@ -68,6 +68,14 @@ class Reseller extends \MailRoute\API\ActiveEntity
 	 */
 	public function createContact($Contact)
 	{
+		if (is_object($Contact))
+		{
+			$Contact->setReseller($this->getResourceUri());
+		}
+		else
+		{
+			$Contact['reseller'] = $this->getResourceUri();
+		}
 		return $this->getAPIClient()->API()->ContactReseller()->create($Contact);
 	}
 
@@ -147,11 +155,6 @@ class Reseller extends \MailRoute\API\ActiveEntity
 	public function setName($name)
 	{
 		$this->fields['name'] = $name;
-	}
-
-	public function getResourceUri()
-	{
-		return $this->fields['resource_uri'];
 	}
 
 	public function getUpdatedAt()

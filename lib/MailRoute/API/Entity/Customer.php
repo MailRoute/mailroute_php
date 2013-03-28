@@ -6,6 +6,23 @@ class Customer extends \MailRoute\API\ActiveEntity
 	protected $api_entity_resource = 'customer';
 	protected $fields = array();
 
+	/**
+	 * @param Domain|array $Domain
+	 * @return Domain
+	 */
+	public function createDomain($Domain)
+	{
+		if (is_object($Domain))
+		{
+			$Domain->setCustomer($this->getResourceUri());
+		}
+		else
+		{
+			$Domain['customer'] = $this->getResourceUri();
+		}
+		return $this->getAPIClient()->API()->Domain()->create($Domain);
+	}
+
 	public function getAllowBranding()
 	{
 		return $this->fields['allow_branding'];
@@ -84,11 +101,6 @@ class Customer extends \MailRoute\API\ActiveEntity
 	public function setReseller($reseller)
 	{
 		$this->fields['reseller'] = $reseller;
-	}
-
-	public function getResourceUri()
-	{
-		return $this->fields['resource_uri'];
 	}
 
 	public function getUpdatedAt()

@@ -74,4 +74,18 @@ abstract class ActiveEntity implements IActiveEntity
 	{
 		$this->fields = $fields;
 	}
+
+	public function getResourceUri()
+	{
+		if (empty($this->fields['resource_uri']))
+		{
+			$this->fields['resource_uri'] = $this->getAPIClient()->getAPIPathPrefix().$this->getApiEntityResource().'/'.$this->getId().'/';
+		}
+		return $this->fields['resource_uri'];
+	}
+
+	protected function getId()
+	{
+		return $this->fields['id'];
+	}
 }

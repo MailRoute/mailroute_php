@@ -51,11 +51,6 @@ class DomainAlias extends \MailRoute\API\ActiveEntity
 		$this->fields['name'] = $name;
 	}
 
-	public function getResourceUri()
-	{
-		return $this->fields['resource_uri'];
-	}
-
 	public function getUpdatedAt()
 	{
 		return $this->fields['updated_at'];

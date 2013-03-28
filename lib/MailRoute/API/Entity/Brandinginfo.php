@@ -101,11 +101,6 @@ class Brandinginfo extends \MailRoute\API\ActiveEntity
 		return $this->fields['reseller'];
 	}
 
-	public function getResourceUri()
-	{
-		return $this->fields['resource_uri'];
-	}
-
 	public function getServiceName()
 	{
 		return $this->fields['service_name'];

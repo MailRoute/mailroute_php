@@ -46,11 +46,6 @@ class LocalpartAlias extends \MailRoute\API\ActiveEntity
 		$this->fields['localpart'] = $localpart;
 	}
 
-	public function getResourceUri()
-	{
-		return $this->fields['resource_uri'];
-	}
-
 	public function getType()
 	{
 		return $this->fields['type'];

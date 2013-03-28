@@ -41,11 +41,6 @@ class DomainWithAlias extends \MailRoute\API\ActiveEntity
 		$this->fields['name'] = $name;
 	}
 
-	public function getResourceUri()
-	{
-		return $this->fields['resource_uri'];
-	}
-
 	public function getType()
 	{
 		return $this->fields['type'];

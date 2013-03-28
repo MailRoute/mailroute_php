@@ -41,11 +41,6 @@ class MailServer extends \MailRoute\API\ActiveEntity
 		$this->fields['priority'] = $priority;
 	}
 
-	public function getResourceUri()
-	{
-		return $this->fields['resource_uri'];
-	}
-
 	public function getSaslLogin()
 	{
 		return $this->fields['sasl_login'];
