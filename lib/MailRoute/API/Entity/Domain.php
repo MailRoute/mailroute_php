@@ -15,6 +15,32 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $this->save();
 	}
 
+	/**
+	 * @param string $email
+	 * @return ContactDomain
+	 */
+	public function createContact($email)
+	{
+		$Contact = new ContactDomain($this->getAPIClient());
+		$Contact->setDomain($this->getResourceUri());
+		$Contact->setEmail($email);
+		return $this->getAPIClient()->API()->ContactDomain()->create($Contact);
+	}
+
+	/**
+	 * @param string $server mailServer FQDN or IP address
+	 * @param int $priority  mail server priority
+	 * @return MailServer
+	 */
+	public function createMailServer($server, $priority = 10)
+	{
+		$MailServer = new MailServer($this->getAPIClient());
+		$MailServer->setServer($server);
+		$MailServer->setDomain($this->getResourceUri());
+		$MailServer->setPriority($priority);
+		return $this->getAPIClient()->API()->MailServer()->create($MailServer);
+	}
+
 	public function getActive()
 	{
 		return $this->fields['active'];
