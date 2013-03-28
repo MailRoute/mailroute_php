@@ -13,4 +13,6 @@ interface IClient
 	public function getAPIPathPrefix();
 
 	public function setAPIPathPrefix($api_path_prefix);
+
+	public function setDeleteNotFoundIsError($delete_not_found_is_error = false);
 }

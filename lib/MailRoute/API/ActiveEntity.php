@@ -30,19 +30,7 @@ abstract class ActiveEntity implements IActiveEntity
 		{
 			throw new MailRouteException("Can't delete entity without ID", 400);
 		}
-		try
-		{
-			$result = $this->Client->callAPI($this->getApiEntityResource().'/'.$data['id'], 'DELETE');
-		}
-		catch (MailRouteException $E)
-		{
-			if ($E->getCode() > 299 && $E->getCode()<>404)
-			{
-				throw $E;
-			}
-			return false;
-		}
-		return $result!==false;
+		return $this->Client->callAPI($this->getApiEntityResource().'/'.$data['id'], 'DELETE');
 	}
 
 	public function getApiEntityResource()

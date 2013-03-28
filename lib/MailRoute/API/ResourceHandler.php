@@ -129,18 +129,7 @@ class ResourceHandler implements IResource
 
 	public function delete($id)
 	{
-		try
-		{
-			$this->callAPI('DELETE', $id);
-		}
-		catch (MailRouteException $E)
-		{
-			if ($E->getCode()<>404)
-			{
-				throw $E;
-			}
-		}
-		return true;
+		return $this->callAPI('DELETE', $id);
 	}
 
 	public function limit($limit)

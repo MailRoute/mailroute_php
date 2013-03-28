@@ -20,6 +20,7 @@ class Client implements IClient
 	private $async_mode = false;
 	private $EntityConverter;
 	private $api_path_prefix;
+	private $delete_not_found_is_error = false;
 
 	public function __construct(Config $Config)
 	{
@@ -223,7 +224,11 @@ class Client implements IClient
 			$result = $this->Response;
 			if ($Request->getMethod()==='DELETE')
 			{
-				if ($this->Response->getStatusCode()==404 || $this->Response->getStatusCode() < 300)
+				if ($this->Response->getStatusCode()==404 && !$this->delete_not_found_is_error)
+				{
+					$result = true;
+				}
+				elseif ($this->Response->getStatusCode() < 300)
 				{
 					$result = true;
 				}
@@ -262,6 +267,11 @@ class Client implements IClient
 	protected function getNewSerializer()
 	{
 		return new SerializerJSON();
+	}
+
+	public function setDeleteNotFoundIsError($delete_not_found_is_error = false)
+	{
+		$this->delete_not_found_is_error = $delete_not_found_is_error;
 	}
 
 	protected function getResponse()
