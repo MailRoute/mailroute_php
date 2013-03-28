@@ -63,20 +63,27 @@ class Reseller extends \MailRoute\API\ActiveEntity
 	}
 
 	/**
-	 * @param ContactReseller|array  $Contact
+	 * @param string $email
 	 * @return ContactReseller
 	 */
-	public function createContact($Contact)
+	public function createContact($email)
 	{
-		if (is_object($Contact))
-		{
-			$Contact->setReseller($this->getResourceUri());
-		}
-		else
-		{
-			$Contact['reseller'] = $this->getResourceUri();
-		}
+		$Contact = new ContactReseller($this->getAPIClient());
+		$Contact->setReseller($this->getResourceUri());
+		$Contact->setEmail($email);
 		return $this->getAPIClient()->API()->ContactReseller()->create($Contact);
+	}
+
+	/**
+	 * @param string $name
+	 * @return Customer
+	 */
+	public function createCustomer($name)
+	{
+		$Customer = new Customer($this->Client);
+		$Customer->setReseller($this->getResourceUri());
+		$Customer->setName($name);
+		return $this->getAPIClient()->API()->Customer()->create($Customer);
 	}
 
 	public function getAllowBranding()

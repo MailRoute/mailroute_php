@@ -196,4 +196,42 @@ class TestClient extends ClassTest
 		}
 		$this->assertTrue($Reseller->delete());
 	}
+
+	public function testResellerCreateContact()
+	{
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$result   = $Reseller->createContact('contact@example.com');
+		$this->assertIsObject($result);
+		$this->assertEquals($result->getEmail(), 'contact@example.com');
+		$this->assertTrue($result->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testResellerCreateCustomer()
+	{
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$result   = $Reseller->createCustomer('customer!');
+		$this->assertIsObject($result);
+		$this->assertEquals($result->getName(), 'customer!');
+		$this->assertTrue($result->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testCustomerCreateContact()
+	{
+		$reseller_name = 'test '.microtime(1).'contact';
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer!');
+		$result   = $Customer->createContact('customer@example.com');
+		$this->assertIsObject($result);
+		$this->assertEquals($result->getEmail(), 'customer@example.com');
+		$this->assertTrue($result->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
 }

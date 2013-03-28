@@ -7,20 +7,27 @@ class Customer extends \MailRoute\API\ActiveEntity
 	protected $fields = array();
 
 	/**
-	 * @param Domain|array $Domain
+	 * @param string $name
 	 * @return Domain
 	 */
-	public function createDomain($Domain)
+	public function createDomain($name)
 	{
-		if (is_object($Domain))
-		{
-			$Domain->setCustomer($this->getResourceUri());
-		}
-		else
-		{
-			$Domain['customer'] = $this->getResourceUri();
-		}
+		$Domain = new Domain($this->getAPIClient());
+		$Domain->setCustomer($this->getResourceUri());
+		$Domain->setName($name);
 		return $this->getAPIClient()->API()->Domain()->create($Domain);
+	}
+
+	/**
+	 * @param string $email
+	 * @return ContactCustomer
+	 */
+	public function createContact($email)
+	{
+		$Contact = new ContactCustomer($this->getAPIClient());
+		$Contact->setCustomer($this->getResourceUri());
+		$Contact->setEmail($email);
+		return $this->getAPIClient()->API()->ContactCustomer()->create($Contact);
 	}
 
 	public function getAllowBranding()
