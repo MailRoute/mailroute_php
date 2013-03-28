@@ -4,6 +4,7 @@ namespace MailRoute\API\Tests;
 use Jamm\Tester\ClassTest;
 use MailRoute\API\Entity\ContactReseller;
 use MailRoute\API\Entity\Customer;
+use MailRoute\API\Entity\Domain;
 use MailRoute\API\Entity\Reseller;
 use MailRoute\API\IActiveEntity;
 use MailRoute\API\IClient;
@@ -178,7 +179,7 @@ class TestClient extends ClassTest
 
 	public function testResellerGetContacts()
 	{
-		$reseller_name = 'test '.microtime(1).'contact';
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		for ($i = 0; $i < 5; $i++)
@@ -224,7 +225,7 @@ class TestClient extends ClassTest
 
 	public function testCustomerCreateContact()
 	{
-		$reseller_name = 'test '.microtime(1).'contact';
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
@@ -238,7 +239,7 @@ class TestClient extends ClassTest
 
 	public function testCustomerCreateAdmin()
 	{
-		$reseller_name = 'test '.microtime(1).'contact';
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
@@ -252,7 +253,7 @@ class TestClient extends ClassTest
 
 	public function testCustomerDeleteAdmin()
 	{
-		$reseller_name = 'test '.microtime(1).'contact';
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller  = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer  = $Reseller->createCustomer('customer'.$reseller_name);
@@ -269,5 +270,40 @@ class TestClient extends ClassTest
 		$this->assertTrue($new_list[0]->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testCustomerCreateDomain()
+	{
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$result   = $Customer->createDomain('domain.name');
+		$this->assertIsObject($result);
+		$this->assertEquals($result->getName(), 'domain.name');
+		$this->assertTrue($result->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testDomainMoveToCustomer()
+	{
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller  = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer1 = $Reseller->createCustomer('customer1'.$reseller_name);
+		$Customer2 = $Reseller->createCustomer('customer2'.$reseller_name);
+		$Domain    = $Customer1->createDomain('domain.name');
+		$this->assertEquals($Domain->getCustomer(), $Customer1->getResourceUri());
+		$this->assertEquals($Domain->getCustomer(), $Customer1->getResourceUri());
+		$result = $Domain->moveToCustomer($Customer2);
+		$this->assertTrueStrict($result);
+		/** @var Domain $FreshDomain */
+		$FreshDomain = $this->Client->API()->Domain()->get($Domain->getId());
+		$this->assertEquals($FreshDomain->getCustomer(), $Customer2->getResourceUri());
+		$Domain->delete();
+		$Customer2->delete();
+		$Customer1->delete();
+		$Reseller->delete();
 	}
 }

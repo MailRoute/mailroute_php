@@ -4,7 +4,16 @@ namespace MailRoute\API\Entity;
 class Domain extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'domain';
-	protected $fields = array();
+
+	/**
+	 * @param Customer $Customer
+	 * @return bool
+	 */
+	public function moveToCustomer(Customer $Customer)
+	{
+		$this->setCustomer($Customer->getResourceUri());
+		return $this->save();
+	}
 
 	public function getActive()
 	{
