@@ -41,6 +41,18 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $this->getAPIClient()->API()->MailServer()->create($MailServer);
 	}
 
+	/**
+	 * @param string $server mail server IP Address
+	 * @return OutboundServer
+	 */
+	public function createOutboundServer($server)
+	{
+		$OutboundServer = new OutboundServer($this->getAPIClient());
+		$OutboundServer->setServer($server);
+		$OutboundServer->setDomain($this->getResourceUri());
+		return $this->getAPIClient()->API()->OutboundServer()->create($OutboundServer);
+	}
+
 	public function getActive()
 	{
 		return $this->fields['active'];

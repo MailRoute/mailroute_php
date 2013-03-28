@@ -342,4 +342,21 @@ class TestClient extends ClassTest
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
 	}
+
+	public function testDomainCreateOutboundServer()
+	{
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+
+		$result = $Domain->createOutboundServer('127.0.0.1');
+		$this->assertIsObject($result);
+		$this->assertEquals($result->getServer(), '127.0.0.1');
+		$this->assertTrue($result->delete());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
 }
