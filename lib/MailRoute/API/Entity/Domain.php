@@ -1,6 +1,9 @@
 <?php
 namespace MailRoute\API\Entity;
 
+use MailRoute\API\Exception;
+use MailRoute\API\ValidationException;
+
 class Domain extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'domain';
@@ -69,6 +72,35 @@ class Domain extends \MailRoute\API\ActiveEntity
 		$EmailAccount->setSendWelcome($send_welcome);
 		$EmailAccount->setDomain($this->getResourceUri());
 		return $this->getAPIClient()->API()->EmailAccount()->create($EmailAccount);
+	}
+
+	/**
+	 * @param array $accounts each element of array can have keys as arguments to createEmailAccount method
+	 * @return array of results for each element (can contain exception object as value)
+	 * @throws \MailRoute\API\ValidationException
+	 */
+	public function bulkCreateEmailAccount(array $accounts)
+	{
+		$results = array();
+		foreach ($accounts as $account)
+		{
+			if (!isset($account['localpart']))
+			{
+				throw new ValidationException("localpart is required argument");
+			}
+			try
+			{
+				if (!isset($account['create_opt'])) $account['create_opt'] = 'generate_pwd';
+				if (!isset($account['password'])) $account['password'] = '';
+				if (!isset($account['send_welcome'])) $account['send_welcome'] = false;
+				$results[] = $this->createEmailAccount($account['localpart'], $account['create_opt'], $account['password'], $account['send_welcome']);
+			}
+			catch (Exception $E)
+			{
+				$results[] = $E;
+			}
+		}
+		return $results;
 	}
 
 	public function getActive()

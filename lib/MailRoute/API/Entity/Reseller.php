@@ -1,7 +1,8 @@
 <?php
 namespace MailRoute\API\Entity;
 
-use MailRoute\API\MailRouteException;
+use MailRoute\API\Exception;
+use MailRoute\API\ValidationException;
 
 class Reseller extends \MailRoute\API\ActiveEntity
 {
@@ -14,14 +15,14 @@ class Reseller extends \MailRoute\API\ActiveEntity
 	/**
 	 * @param $email
 	 * @param $send_welcome
-	 * @throws \MailRoute\API\MailRouteException
+	 * @throws \MailRoute\API\Exception
 	 * @return Admins
 	 */
 	public function createAdmin($email, $send_welcome)
 	{
 		if (!$this->getId())
 		{
-			throw new MailRouteException('This method requires ID');
+			throw new ValidationException('This method requires ID');
 		}
 		$Client = $this->getAPIClient();
 		$Admin  = new Admins($Client);
@@ -38,7 +39,7 @@ class Reseller extends \MailRoute\API\ActiveEntity
 	{
 		if (!$this->getId())
 		{
-			throw new MailRouteException('This method requires ID');
+			throw new ValidationException('This method requires ID');
 		}
 		$Admins = $this->getAdmins();
 		foreach ($Admins as $Admin)

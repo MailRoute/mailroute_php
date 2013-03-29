@@ -6,9 +6,9 @@ use MailRoute\API\Entity\ContactReseller;
 use MailRoute\API\Entity\Customer;
 use MailRoute\API\Entity\Domain;
 use MailRoute\API\Entity\Reseller;
+use MailRoute\API\Exception;
 use MailRoute\API\IActiveEntity;
 use MailRoute\API\IClient;
-use MailRoute\API\MailRouteException;
 
 class TestClient extends ClassTest
 {
@@ -97,7 +97,7 @@ class TestClient extends ClassTest
 		{
 			$result = $this->Client->API()->Reseller()->get($Reseller->getId());
 		}
-		catch (MailRouteException $E)
+		catch (Exception $E)
 		{
 			$result = false;
 		}

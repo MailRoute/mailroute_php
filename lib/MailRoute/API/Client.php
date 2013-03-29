@@ -153,16 +153,18 @@ class Client implements IClient
 			{
 				return $Response;
 			}
-			throw new MailRouteException('Can not get response', 500);
+			throw new Exception('Can not get response', 500);
 		}
 		/** @var IResponse $Response */
 		if ($Response->isStatusError())
 		{
+			$exception_response = NULL;
 			if ($message = $Response->getBody())
 			{
 				if (is_array($message))
 				{
-					$message = current($message);
+					$exception_response = $message;
+					$message            = current($message);
 				}
 				if (is_array($message))
 				{
@@ -173,7 +175,14 @@ class Client implements IClient
 			{
 				$message = 'Error';
 			}
-			throw new MailRouteException($message, $Response->getStatusCode());
+			if ($Response->getStatusCode() < 500)
+			{
+				throw new Exception($message, $Response->getStatusCode(), $exception_response);
+			}
+			else
+			{
+				throw new ValidationException($message, $Response->getStatusCode(), $exception_response);
+			}
 		}
 		return $Response->getBody();
 	}

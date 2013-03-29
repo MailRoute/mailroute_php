@@ -17,7 +17,7 @@ abstract class ActiveEntity implements IActiveEntity
 		$data = $this->getAPIEntityFields();
 		if (empty($data['id']))
 		{
-			throw new MailRouteException("Can't save entity without ID", 400);
+			throw new ValidationException("Can't save entity without ID", 400);
 		}
 		$result = $this->Client->callAPI($this->getApiEntityResource().'/'.$data['id'], 'PUT', $data);
 		return (!empty($result));
@@ -28,7 +28,7 @@ abstract class ActiveEntity implements IActiveEntity
 		$data = $this->getAPIEntityFields();
 		if (empty($data['id']))
 		{
-			throw new MailRouteException("Can't delete entity without ID", 400);
+			throw new ValidationException("Can't delete entity without ID", 400);
 		}
 		return $this->Client->callAPI($this->getApiEntityResource().'/'.$data['id'], 'DELETE');
 	}

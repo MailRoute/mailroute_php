@@ -1,7 +1,7 @@
 <?php
 namespace MailRoute\API\Entity;
 
-use MailRoute\API\MailRouteException;
+use MailRoute\API\ValidationException;
 
 class Customer extends \MailRoute\API\ActiveEntity
 {
@@ -37,7 +37,7 @@ class Customer extends \MailRoute\API\ActiveEntity
 	{
 		if (!$this->getId())
 		{
-			throw new MailRouteException('This method requires ID');
+			throw new ValidationException('This method requires ID');
 		}
 		$Admin = new Admins($this->getAPIClient());
 		$Admin->setEmail($email);
@@ -52,7 +52,7 @@ class Customer extends \MailRoute\API\ActiveEntity
 	{
 		if (!$this->getId())
 		{
-			throw new MailRouteException('This method requires ID');
+			throw new ValidationException('This method requires ID');
 		}
 		$Admins = $this->getAdmins();
 		foreach ($Admins as $Admin)
