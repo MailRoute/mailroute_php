@@ -379,4 +379,24 @@ class TestClient extends ClassTest
 		$this->assertTrue($Reseller->delete());
 	}
 
+	public function testDomainCreateAlias()
+	{
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+
+		$name   = 'domain'.md5(microtime(1).__LINE__).'.name';
+		$result = $Domain->createAlias($name);
+		$this->assertIsObject($result);
+		$this->assertEquals($result->getName(), $name);
+
+		$this->assertTrue($result->delete());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+
+	}
+
 }

@@ -103,6 +103,18 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $results;
 	}
 
+	/**
+	 * @param string $name
+	 * @return DomainAlias
+	 */
+	public function createAlias($name)
+	{
+		$Alias = new DomainAlias($this->getAPIClient());
+		$Alias->setDomain($this->getResourceUri());
+		$Alias->setName($name);
+		return $this->getAPIClient()->API()->DomainAlias()->create($Alias);
+	}
+
 	public function getActive()
 	{
 		return $this->fields['active'];

@@ -164,11 +164,10 @@ class Client implements IClient
 				if (is_array($message))
 				{
 					$exception_response = $message;
-					$message            = current($message);
-				}
-				if (is_array($message))
-				{
-					$message = print_r($message, 1);
+					while (is_array($message))
+					{
+						$message = current($message);
+					}
 				}
 			}
 			else
