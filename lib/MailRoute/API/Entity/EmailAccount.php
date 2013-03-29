@@ -1,10 +1,45 @@
 <?php
 namespace MailRoute\API\Entity;
 
+use MailRoute\API\Exception;
+
 class EmailAccount extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'email_account';
 	protected $fields = array();
+
+	/**
+	 * @param $localpart
+	 * @return LocalpartAlias
+	 */
+	public function addAlias($localpart)
+	{
+		$Alias = new LocalpartAlias($this->getAPIClient());
+		$Alias->setEmailAccount($this->getResourceUri());
+		$Alias->setLocalpart($localpart);
+		return $this->getAPIClient()->API()->LocalpartAlias()->create($Alias);
+	}
+
+	/**
+	 * @param array $localparts
+	 * @return array of results
+	 */
+	public function bulkAddAlias(array $localparts)
+	{
+		$results = array();
+		foreach ($localparts as $localpart)
+		{
+			try
+			{
+				$results[] = $this->addAlias($localpart);
+			}
+			catch (Exception $E)
+			{
+				$results[] = $E;
+			}
+		}
+		return $results;
+	}
 
 	public function getChangePwd()
 	{
