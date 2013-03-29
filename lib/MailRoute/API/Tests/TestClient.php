@@ -436,4 +436,26 @@ class TestClient extends ClassTest
 		$this->assertTrue($Reseller->delete());
 	}
 
+	public function testEmailAccountAddToBlackList()
+	{
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+		$localpart    = substr(md5(microtime(1).__LINE__), 5);
+		$EmailAccount = $Domain->createEmailAccount($localpart);
+
+		$blacklisted_email = $localpart.'@example.com';
+		$result            = $EmailAccount->addToBlackList($blacklisted_email);
+		$this->assertIsObject($result);
+		$this->assertEquals($result->getEmail(), $blacklisted_email);
+		$this->assertEquals($result->getEmailAccount(), $EmailAccount->getResourceUri());
+		$this->assertTrue($result->delete());
+		$this->assertTrue($EmailAccount->delete());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
 }

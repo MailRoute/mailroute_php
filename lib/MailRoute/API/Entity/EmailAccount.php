@@ -41,6 +41,32 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 		return $results;
 	}
 
+	/**
+	 * @param $email
+	 * @return Wblist
+	 */
+	public function addToBlackList($email)
+	{
+		$WBList = new Wblist($this->getAPIClient());
+		$WBList->setEmailAccount($this->getResourceUri());
+		$WBList->setEmail($email);
+		$WBList->setWb('b');
+		return $this->getAPIClient()->API()->Wblist()->create($WBList);
+	}
+
+	/**
+	 * @param $email
+	 * @return Wblist
+	 */
+	public function addToWhiteList($email)
+	{
+		$WBList = new Wblist($this->getAPIClient());
+		$WBList->setEmailAccount($this->getResourceUri());
+		$WBList->setEmail($email);
+		$WBList->setWb('w');
+		return $this->getAPIClient()->API()->Wblist()->create($WBList);
+	}
+
 	public function getChangePwd()
 	{
 		return $this->fields['change_pwd'];
