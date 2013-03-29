@@ -115,6 +115,32 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $this->getAPIClient()->API()->DomainAlias()->create($Alias);
 	}
 
+	/**
+	 * @param string $email
+	 * @return Wblist
+	 */
+	public function addToBlackList($email)
+	{
+		$BlackList = new Wblist($this->getAPIClient());
+		$BlackList->setEmail($email);
+		$BlackList->setDomain($this->getResourceUri());
+		$BlackList->setWb('b');
+		return $this->getAPIClient()->API()->Wblist()->create($BlackList);
+	}
+
+	/**
+	 * @param string $email
+	 * @return Wblist
+	 */
+	public function addToWhiteList($email)
+	{
+		$WhiteList = new Wblist($this->getAPIClient());
+		$WhiteList->setEmail($email);
+		$WhiteList->setDomain($this->getResourceUri());
+		$WhiteList->setWb('w');
+		return $this->getAPIClient()->API()->Wblist()->create($WhiteList);
+	}
+
 	public function getActive()
 	{
 		return $this->fields['active'];

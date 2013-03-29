@@ -399,4 +399,21 @@ class TestClient extends ClassTest
 
 	}
 
+	public function testDomainAddToBlackList()
+	{
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+
+		$email  = substr(md5(microtime(1).__LINE__), 5).'@example.com';
+		$result = $Domain->addToBlackList($email);
+		$this->assertIsObject($result);
+		$this->assertTrue($result->delete());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
 }

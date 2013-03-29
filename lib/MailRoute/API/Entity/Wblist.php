@@ -46,4 +46,14 @@ class Wblist extends \MailRoute\API\ActiveEntity
 		$this->fields['wb'] = $wb;
 	}
 
+	public function getEmail()
+	{
+		return $this->fields['email'];
+	}
+
+	public function setEmail($email)
+	{
+		$this->fields['email'] = $email;
+	}
+
 }
