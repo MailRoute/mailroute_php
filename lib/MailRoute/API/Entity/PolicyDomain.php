@@ -6,6 +6,11 @@ class PolicyDomain extends \MailRoute\API\ActiveEntity
 	protected $api_entity_resource = 'policy_domain';
 	protected $fields = array();
 
+	public function getDefaultPolicy()
+	{
+		return $this->getAPIClient()->API()->PolicyDomain()->get('default_policy');
+	}
+
 	public function getAddrExtensionBadHeader()
 	{
 		return $this->fields['addr_extension_bad_header'];

@@ -379,6 +379,32 @@ class TestClient extends ClassTest
 		$this->assertTrue($Reseller->delete());
 	}
 
+	public function testDomainBulkCreateEmailAccount()
+	{
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+
+		$localparts = array();
+		for ($i = 0; $i < 5; $i++)
+		{
+			$localparts[] = array('localpart' => $i);
+		}
+		$result = $Domain->bulkCreateEmailAccount($localparts);
+		$this->assertIsObject($result[0]);
+		$this->assertIsObject($result[0]);
+		foreach ($result as $key => $EmailAccount)
+		{
+			$this->assertEquals($EmailAccount->getLocalpart(), $key);
+			$this->assertTrue($EmailAccount->delete());
+		}
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
 	public function testDomainCreateAlias()
 	{
 		$reseller_name = 'test '.microtime(1).__FUNCTION__;
@@ -416,6 +442,23 @@ class TestClient extends ClassTest
 		$this->assertTrue($Reseller->delete());
 	}
 
+	public function testDomainAddToWhiteList()
+	{
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+
+		$email  = substr(md5(microtime(1).__LINE__), 5).'@example.com';
+		$result = $Domain->addToWhiteList($email);
+		$this->assertIsObject($result);
+		$this->assertTrue($result->delete());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
 	public function testEmailAccountAddAlias()
 	{
 		$reseller_name = 'test '.microtime(1).__FUNCTION__;
@@ -430,6 +473,40 @@ class TestClient extends ClassTest
 		$this->assertEquals($result->getLocalpart(), $localpart.'alias');
 		$this->assertEquals($result->getEmailAccount(), $EmailAccount->getResourceUri());
 		$this->assertTrue($result->delete());
+		$this->assertTrue($EmailAccount->delete());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testEmailAccountBulkAddAlias()
+	{
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+		$localpart    = substr(md5(microtime(1).__LINE__), 5);
+		$EmailAccount = $Domain->createEmailAccount($localpart);
+		$aliases      = array();
+		for ($i = 0; $i < 3; $i++)
+		{
+			$aliases[] = $localpart.'alias'.$i;
+		}
+		$result = $EmailAccount->bulkAddAlias($aliases);
+		$this->assertIsArray($result);
+		$this->assertIsObject($result[0]);
+		foreach ($result as $key => $LocalpartAlias)
+		{
+			if (is_a($LocalpartAlias, 'MailRoute\\API\\Exception'))
+			{
+				$this->assertTrue(false)->addCommentary('Exception: '.print_r($LocalpartAlias->getResponse(), 1));
+				continue;
+			}
+			$this->assertEquals($LocalpartAlias->getLocalpart(), $localpart.'alias'.$key);
+			$this->assertEquals($LocalpartAlias->getEmailAccount(), $EmailAccount->getResourceUri());
+			$this->assertTrue($LocalpartAlias->delete());
+		}
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
@@ -456,6 +533,33 @@ class TestClient extends ClassTest
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testEmailAccountAddToWhiteList()
+	{
+		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+		$localpart    = substr(md5(microtime(1).__LINE__), 5);
+		$EmailAccount = $Domain->createEmailAccount($localpart);
+
+		$whitelisted_email = $localpart.'@example.com';
+		$result            = $EmailAccount->addToWhiteList($whitelisted_email);
+		$this->assertIsObject($result);
+		$this->assertEquals($result->getEmail(), $whitelisted_email);
+		$this->assertEquals($result->getEmailAccount(), $EmailAccount->getResourceUri());
+		$this->assertTrue($result->delete());
+		$this->assertTrue($EmailAccount->delete());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testPolicyDomainGetDefaultPolicy()
+	{
+		//$PolicyDomain = $this->Client->API()->PolicyDomain()->create(array());
 	}
 
 }

@@ -22,7 +22,7 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 
 	/**
 	 * @param array $localparts
-	 * @return array of results
+	 * @return LocalpartAlias[]
 	 */
 	public function bulkAddAlias(array $localparts)
 	{

@@ -76,7 +76,7 @@ class Domain extends \MailRoute\API\ActiveEntity
 
 	/**
 	 * @param array $accounts each element of array can have keys as arguments to createEmailAccount method
-	 * @return array of results for each element (can contain exception object as value)
+	 * @return EmailAccount[] of results for each element (can contain exception object as value)
 	 * @throws \MailRoute\API\ValidationException
 	 */
 	public function bulkCreateEmailAccount(array $accounts)
