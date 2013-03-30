@@ -19,7 +19,7 @@ class TestClient extends ClassTest
 	{
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
-		//$this->skipAllExcept('testPolicyDomainGetDefaultPolicy');
+		//$this->skipAllExcept('testEmailAccountMakeAliasesFrom');
 	}
 
 	public function testGetRootSchema()
@@ -570,5 +570,37 @@ class TestClient extends ClassTest
 //		$PolicyDomains = $this->Client->API()->PolicyDomain()->fetchList();
 //		print_r($PolicyDomains);
 //	}
+
+	public function testEmailAccountMakeAliasesFrom()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
+		$EmailAccount = $Domain->createEmailAccount($localpart);
+
+		$to_aliases = array();
+		foreach (range(1, 5) as $i)
+		{
+			$to_aliases[] = $Domain->createEmailAccount($localpart.$i);
+		}
+
+		try
+		{
+			$result = $EmailAccount->makeAliasesFrom($to_aliases);
+			$this->assertTrue($result);
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(false)->addCommentary($E->getResponse());
+		}
+
+		$this->assertTrue($EmailAccount->delete());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
 
 }

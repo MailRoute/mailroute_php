@@ -67,6 +67,21 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 		return $this->getAPIClient()->API()->Wblist()->create($WBList);
 	}
 
+	/**
+	 * @param EmailAccount[] $EmailAccounts
+	 * @return bool
+	 */
+	public function makeAliasesFrom(array $EmailAccounts)
+	{
+		$data = array();
+		foreach ($EmailAccounts as $EmailAccount)
+		{
+			$data[] = $EmailAccount->getResourceUri();
+		}
+		$result = $this->getAPIClient()->callAPI($this->getApiEntityResource().'/'.$this->getId().'/users_to_alias/', 'POST', $data);
+		return ($result!==false);
+	}
+
 	public function getChangePwd()
 	{
 		return $this->fields['change_pwd'];
