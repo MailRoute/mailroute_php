@@ -19,6 +19,7 @@ class TestClient extends ClassTest
 	{
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
+		//$this->skipAllExcept('testPolicyDomainGetDefaultPolicy');
 	}
 
 	public function testGetRootSchema()
@@ -59,7 +60,7 @@ class TestClient extends ClassTest
 
 	public function testResellerPOST()
 	{
-		$reseller_name = 'test '.microtime(1);
+		$reseller_name = 'test '.microtime(1).mt_rand(1000, 9999);
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$this->assertTrue(is_object($Reseller));
@@ -73,7 +74,7 @@ class TestClient extends ClassTest
 	{
 		$email = 'test@example.com';
 		/** @var Reseller $Reseller */
-		$Reseller = $this->Client->API()->Reseller()->create(array('name' => 'test contactReseller '.microtime(1)));
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => 'test contactReseller '.microtime(1).mt_rand(1000, 9999)));
 		/** @var ContactReseller $ContactReseller */
 		$Item = new ContactReseller($this->Client);
 		$Item->setEmail($email);
@@ -86,7 +87,7 @@ class TestClient extends ClassTest
 
 	public function testResellerDELETE()
 	{
-		$reseller_name = 'test '.microtime(1).'_del';
+		$reseller_name = 'test '.microtime(1).mt_rand(1000, 9999).'_del';
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$this->assertTrue(is_object($Reseller));
@@ -106,7 +107,7 @@ class TestClient extends ClassTest
 
 	public function testResellerPUT()
 	{
-		$reseller_name = 'test '.microtime(1).'_put';
+		$reseller_name = 'test '.microtime(1).mt_rand(1000, 9999).'_put';
 		/** @var Reseller $Reseller */
 		$NewReseller = new Reseller($this->Client);
 		$NewReseller->setName($reseller_name);
@@ -138,7 +139,7 @@ class TestClient extends ClassTest
 
 	public function testSearch()
 	{
-		$reseller_name = 'test '.microtime(1);
+		$reseller_name = 'test '.microtime(1).mt_rand(1000, 9999);
 		/** @var IActiveEntity[] $resellers */
 		$resellers   = array();
 		$NewReseller = new Reseller($this->Client);
@@ -157,7 +158,7 @@ class TestClient extends ClassTest
 
 	public function testCreateAndDeleteAdmin()
 	{
-		$reseller_name = 'test '.microtime(1).'create_admin';
+		$reseller_name = 'test '.microtime(1).mt_rand(1000, 9999).'create_admin';
 		$NewReseller   = new Reseller($this->Client);
 		$NewReseller->setName($reseller_name);
 		/** @var Reseller $Reseller */
@@ -180,12 +181,12 @@ class TestClient extends ClassTest
 
 	public function testResellerGetContacts()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1000, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		for ($i = 0; $i < 5; $i++)
 		{
-			$ContactReseller = $this->Client->API()->ContactReseller()->create(array(
+			$this->Client->API()->ContactReseller()->create(array(
 				'reseller' => $this->Client->getAPIPathPrefix().$Reseller->getApiEntityResource().'/'.$Reseller->getId().'/',
 				'email'    => 'reseller_contact@example.com'
 			));
@@ -202,7 +203,7 @@ class TestClient extends ClassTest
 
 	public function testResellerCreateContact()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1000, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$result   = $Reseller->createContact('contact@example.com');
@@ -214,7 +215,7 @@ class TestClient extends ClassTest
 
 	public function testResellerCreateCustomer()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1000, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$result   = $Reseller->createCustomer('customer'.$reseller_name);
@@ -226,7 +227,7 @@ class TestClient extends ClassTest
 
 	public function testCustomerCreateContact()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
@@ -240,7 +241,7 @@ class TestClient extends ClassTest
 
 	public function testCustomerCreateAdmin()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
@@ -254,7 +255,7 @@ class TestClient extends ClassTest
 
 	public function testCustomerDeleteAdmin()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller  = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer  = $Reseller->createCustomer('customer'.$reseller_name);
@@ -275,11 +276,11 @@ class TestClient extends ClassTest
 
 	public function testCustomerCreateDomain()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
-		$d        = 'domain'.md5(microtime(1).__LINE__).'.name';
+		$d        = 'domain'.md5(microtime(1).mt_rand(1, 9999).mt_rand(1, 9999).__LINE__).'.name';
 		$result   = $Customer->createDomain($d);
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getName(), $d);
@@ -290,12 +291,12 @@ class TestClient extends ClassTest
 
 	public function testDomainMoveToCustomer()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller  = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer1 = $Reseller->createCustomer('customer1'.$reseller_name);
 		$Customer2 = $Reseller->createCustomer('customer2'.$reseller_name);
-		$Domain    = $Customer1->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+		$Domain    = $Customer1->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
 		$this->assertEquals($Domain->getCustomer(), $Customer1->getResourceUri());
 		$this->assertEquals($Domain->getCustomer(), $Customer1->getResourceUri());
 		$result = $Domain->moveToCustomer($Customer2);
@@ -311,11 +312,11 @@ class TestClient extends ClassTest
 
 	public function testDomainCreateContact()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
 
 		$email  = 'domain.contact.'.md5($Domain->getResourceUri()).'@example.com';
 		$result = $Domain->createContact($email);
@@ -329,11 +330,11 @@ class TestClient extends ClassTest
 
 	public function testDomainCreateMailServer()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
 
 		$result = $Domain->createMailServer('127.0.0.1');
 		$this->assertIsObject($result);
@@ -346,11 +347,11 @@ class TestClient extends ClassTest
 
 	public function testDomainCreateOutboundServer()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
 
 		$result = $Domain->createOutboundServer('127.0.0.1');
 		$this->assertIsObject($result);
@@ -363,13 +364,13 @@ class TestClient extends ClassTest
 
 	public function testDomainCreateEmailAccount()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
 
-		$lp     = substr(md5(microtime(1).__LINE__), 5);
+		$lp     = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
 		$result = $Domain->createEmailAccount($lp);
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getLocalpart(), $lp);
@@ -381,11 +382,11 @@ class TestClient extends ClassTest
 
 	public function testDomainBulkCreateEmailAccount()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
 
 		$localparts = array();
 		for ($i = 0; $i < 5; $i++)
@@ -397,6 +398,12 @@ class TestClient extends ClassTest
 		$this->assertIsObject($result[0]);
 		foreach ($result as $key => $EmailAccount)
 		{
+			if (is_a($EmailAccount, 'MailRoute\\API\\Exception'))
+			{
+				/** @var Exception $EmailAccount */
+				$this->assertTrue(false)->addCommentary('Exception: '.print_r($EmailAccount->getResponse(), 1));
+				continue;
+			}
 			$this->assertEquals($EmailAccount->getLocalpart(), $key);
 			$this->assertTrue($EmailAccount->delete());
 		}
@@ -407,13 +414,13 @@ class TestClient extends ClassTest
 
 	public function testDomainCreateAlias()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
 
-		$name   = 'domain'.md5(microtime(1).__LINE__).'.name';
+		$name   = 'domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name';
 		$result = $Domain->createAlias($name);
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getName(), $name);
@@ -427,13 +434,13 @@ class TestClient extends ClassTest
 
 	public function testDomainAddToBlackList()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
 
-		$email  = substr(md5(microtime(1).__LINE__), 5).'@example.com';
+		$email  = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5).'@example.com';
 		$result = $Domain->addToBlackList($email);
 		$this->assertIsObject($result);
 		$this->assertTrue($result->delete());
@@ -444,13 +451,13 @@ class TestClient extends ClassTest
 
 	public function testDomainAddToWhiteList()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
+		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
 
-		$email  = substr(md5(microtime(1).__LINE__), 5).'@example.com';
+		$email  = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5).'@example.com';
 		$result = $Domain->addToWhiteList($email);
 		$this->assertIsObject($result);
 		$this->assertTrue($result->delete());
@@ -461,12 +468,12 @@ class TestClient extends ClassTest
 
 	public function testEmailAccountAddAlias()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
-		$localpart    = substr(md5(microtime(1).__LINE__), 5);
+		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
 		$EmailAccount = $Domain->createEmailAccount($localpart);
 		$result       = $EmailAccount->addAlias($localpart.'alias');
 		$this->assertIsObject($result);
@@ -481,12 +488,12 @@ class TestClient extends ClassTest
 
 	public function testEmailAccountBulkAddAlias()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
-		$localpart    = substr(md5(microtime(1).__LINE__), 5);
+		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
 		$EmailAccount = $Domain->createEmailAccount($localpart);
 		$aliases      = array();
 		for ($i = 0; $i < 3; $i++)
@@ -500,6 +507,7 @@ class TestClient extends ClassTest
 		{
 			if (is_a($LocalpartAlias, 'MailRoute\\API\\Exception'))
 			{
+				/** @var Exception $LocalpartAlias */
 				$this->assertTrue(false)->addCommentary('Exception: '.print_r($LocalpartAlias->getResponse(), 1));
 				continue;
 			}
@@ -515,12 +523,12 @@ class TestClient extends ClassTest
 
 	public function testEmailAccountAddToBlackList()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
-		$localpart    = substr(md5(microtime(1).__LINE__), 5);
+		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
 		$EmailAccount = $Domain->createEmailAccount($localpart);
 
 		$blacklisted_email = $localpart.'@example.com';
@@ -537,12 +545,12 @@ class TestClient extends ClassTest
 
 	public function testEmailAccountAddToWhiteList()
 	{
-		$reseller_name = 'test '.microtime(1).__FUNCTION__;
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).__LINE__).'.name');
-		$localpart    = substr(md5(microtime(1).__LINE__), 5);
+		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
 		$EmailAccount = $Domain->createEmailAccount($localpart);
 
 		$whitelisted_email = $localpart.'@example.com';
@@ -557,9 +565,10 @@ class TestClient extends ClassTest
 		$this->assertTrue($Reseller->delete());
 	}
 
-	public function testPolicyDomainGetDefaultPolicy()
-	{
-		//$PolicyDomain = $this->Client->API()->PolicyDomain()->create(array());
-	}
+//	public function testPolicyDomainGetDefaultPolicy()
+//	{
+//		$PolicyDomains = $this->Client->API()->PolicyDomain()->fetchList();
+//		print_r($PolicyDomains);
+//	}
 
 }
