@@ -162,11 +162,6 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 		return $this->fields['notification_task'];
 	}
 
-	public function getPassword()
-	{
-		return $this->fields['password'];
-	}
-
 	public function setPassword($password)
 	{
 		$this->fields['password'] = $password;
