@@ -7,9 +7,13 @@ abstract class ActiveEntity implements IActiveEntity
 	protected $fields = array();
 	protected $Client;
 
-	public function __construct(IClient $Client)
+	public function __construct(IClient $Client, array $data = array())
 	{
 		$this->Client = $Client;
+		if (!empty($data))
+		{
+			$this->setAPIEntityFields($data);
+		}
 	}
 
 	public function save()
