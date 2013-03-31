@@ -153,12 +153,12 @@ class Client implements IClient
 			{
 				return $Response;
 			}
-			throw new Exception('Can not get response', 500);
+			throw new ServerErrorException('Can not get response', 500);
 		}
 		/** @var IResponse $Response */
 		if ($Response->isStatusError())
 		{
-			$exception_response = NULL;
+			$exception_response = $Response->getBody();
 			if ($message = $Response->getBody())
 			{
 				if (is_array($message))
@@ -170,17 +170,28 @@ class Client implements IClient
 					}
 				}
 			}
-			else
-			{
-				$message = 'Error';
-			}
 			if ($Response->getStatusCode() < 500)
 			{
-				throw new Exception($message, $Response->getStatusCode(), $exception_response);
+				if ($Response->getStatusCode()==401)
+				{
+					throw new UnauthorizedException($message, 401, $exception_response);
+				}
+				elseif ($Response->getStatusCode()==403)
+				{
+					throw new AccessDeniedException($message, 403, $exception_response);
+				}
+				elseif ($Response->getStatusCode()==404)
+				{
+					throw new NotFoundException($message, 404, $exception_response);
+				}
+				else
+				{
+					throw new ValidationException($message, $Response->getStatusCode(), $exception_response);
+				}
 			}
 			else
 			{
-				throw new ValidationException($message, $Response->getStatusCode(), $exception_response);
+				throw new ServerErrorException($message, $Response->getStatusCode(), $exception_response);
 			}
 		}
 		return $Response->getBody();
