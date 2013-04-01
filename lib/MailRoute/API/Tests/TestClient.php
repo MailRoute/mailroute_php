@@ -157,7 +157,7 @@ class TestClient extends ClassTest
 		}
 	}
 
-	public function testCreateAndDeleteAdmin()
+	public function testResellerCreateAndDeleteAdmin()
 	{
 		$reseller_name = 'test '.microtime(1).mt_rand(1000, 9999).'create_admin';
 		$NewReseller   = new Reseller($this->Client);
@@ -166,12 +166,12 @@ class TestClient extends ClassTest
 		$Reseller = $this->Client->API()->Reseller()->create($NewReseller);
 		try
 		{
-			$Admin = $Reseller->createAdmin('test@example.com', 'welcome');
+			$Admin = $Reseller->createAdmin('test@example.com', 1);
 		}
-		catch (\Exception $E)
+		catch (Exception $E)
 		{
-			$this->assertTrue(false);
-			//->addCommentary(print_r($this->Client->getRequestMock()->getLog(), 1))
+			$this->assertTrue(false)->addCommentary(print_r($E->getResponse(), 1));
+			print_r($this->Client);
 			return false;
 		}
 		$this->assertIsObject($Admin);
@@ -654,6 +654,31 @@ class TestClient extends ClassTest
 		}
 		$this->assertEquals($result, 1);
 
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testDomainDeleteContact()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$email    = 'domain.contact.'.md5($Domain->getResourceUri()).'@example.com';
+		$Contact  = $Domain->createContact($email);
+		$result   = $Domain->deleteContact($email);
+		$this->assertEquals($result, 1);
+		try
+		{
+			$this->Client->API()->ContactDomain()->get($Contact->getId());
+			$this->assertTrue(false)->addCommentary('was not deleted');
+		}
+		catch (NotFoundException $E)
+		{
+			$this->assertTrue(true);
+		}
+		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
 	}

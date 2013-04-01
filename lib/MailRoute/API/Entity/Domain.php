@@ -30,6 +30,23 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $this->getAPIClient()->API()->ContactDomain()->create($Contact);
 	}
 
+	public function deleteContact($email)
+	{
+		/** @var ContactDomain[] $Contacts */
+		$Contacts = $this->getAPIClient()->API()->ContactDomain()->
+				filter(array('email' => $email, 'domain' => $this->getId()))->fetchList();
+		if (empty($Contacts))
+		{
+			return true;
+		}
+		$deleted = 0;
+		foreach ($Contacts as $Contact)
+		{
+			$deleted += $Contact->delete();
+		}
+		return $deleted;
+	}
+
 	/**
 	 * @param string $server mailServer FQDN or IP address
 	 * @param int $priority  mail server priority
