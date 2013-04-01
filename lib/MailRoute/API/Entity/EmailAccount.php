@@ -84,29 +84,25 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 
 	public function useDomainPolicy()
 	{
-		$this->setUseDomainPolicy(true);
-		return $this->save();
+		$Client      = $this->getAPIClient();
+		$policy_data = $Client->callAPI(substr($this->getPolicy(), strlen($Client->getAPIPathPrefix())), 'GET');
+		$Policy      = new PolicyUser($Client, $policy_data);
+		$Policy->setUseDomainPolicy(true);
+		return $Policy->save();
 	}
 
 	public function useSelfPolicy()
 	{
-		$this->setUseDomainPolicy(false);
-		return $this->save();
+		$Client      = $this->getAPIClient();
+		$policy_data = $Client->callAPI(substr($this->getPolicy(), strlen($Client->getAPIPathPrefix())), 'GET');
+		$Policy      = new PolicyUser($Client, $policy_data);
+		$Policy->setUseDomainPolicy(false);
+		return $Policy->save();
 	}
 
 	public function regenerateApiKey()
 	{
 		return $this->getAPIClient()->callAPI($this->getApiEntityResource().'/'.$this->getId().'/regenerate_api_key', 'POST');
-	}
-
-	public function setUseDomainPolicy($use_domain_policy)
-	{
-		$this->fields['use_domain_policy'] = $use_domain_policy;
-	}
-
-	public function getUseDomainPolicy()
-	{
-		return $this->fields['use_domain_policy'];
 	}
 
 	public function getChangePwd()

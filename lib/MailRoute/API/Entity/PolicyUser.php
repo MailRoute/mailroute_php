@@ -6,6 +6,16 @@ class PolicyUser extends \MailRoute\API\ActiveEntity
 	protected $api_entity_resource = 'policy_user';
 	protected $fields = array();
 
+	public function setUseDomainPolicy($use_domain_policy)
+	{
+		$this->fields['use_domain_policy'] = $use_domain_policy;
+	}
+
+	public function getUseDomainPolicy()
+	{
+		return $this->fields['use_domain_policy'];
+	}
+
 	public function getAddrExtensionBadHeader()
 	{
 		return $this->fields['addr_extension_bad_header'];

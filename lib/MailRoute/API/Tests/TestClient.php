@@ -5,6 +5,8 @@ use Jamm\Tester\ClassTest;
 use MailRoute\API\Entity\ContactReseller;
 use MailRoute\API\Entity\Customer;
 use MailRoute\API\Entity\Domain;
+use MailRoute\API\Entity\EmailAccount;
+use MailRoute\API\Entity\PolicyUser;
 use MailRoute\API\Entity\Reseller;
 use MailRoute\API\Exception;
 use MailRoute\API\IActiveEntity;
@@ -719,5 +721,63 @@ class TestClient extends ClassTest
 		$this->assertTrue($Reseller->delete());
 
 	}
+
+	public function testEmailAccountUseDomainPolicy()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
+		$EmailAccount = $Domain->createEmailAccount($localpart);
+
+		try
+		{
+			$result = $EmailAccount->useDomainPolicy();
+		}
+		catch (Exception $E)
+		{
+			print_r($this->Client);
+			print_r($E->getResponse());
+			return false;
+		}
+		$this->assertTrue($result);
+		/** @var EmailAccount $EmailAccount */
+		$Policy    = new PolicyUser($this->Client);
+		$policy_id = trim(substr($EmailAccount->getPolicy(), strlen($this->Client->getAPIPathPrefix())+strlen($Policy->getApiEntityResource())), '/');
+		/** @var PolicyUser $Policy */
+		$Policy = $this->Client->API()->PolicyUser()->get($policy_id);
+		print_r($this->Client->getResponse());
+		$this->assertTrue($Policy->getUseDomainPolicy());
+
+		$this->assertTrue($EmailAccount->delete());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
+//	public function testEmailAccountUseSelfPolicy()
+//	{
+//		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+//		/** @var Reseller $Reseller */
+//		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+//		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
+//		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+//		$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
+//		$EmailAccount = $Domain->createEmailAccount($localpart);
+//
+//		$result = $EmailAccount->useSelfPolicy();
+//		$this->assertTrue($result);
+//		/** @var EmailAccount $EmailAccount */
+//		$EmailAccount = $this->Client->API()->EmailAccount()->get($EmailAccount->getId());
+//		print_r($this->Client->getResponse());
+//		$this->assertTrue(!$EmailAccount->getUseDomainPolicy());
+//
+//		$this->assertTrue($EmailAccount->delete());
+//		$this->assertTrue($Domain->delete());
+//		$this->assertTrue($Customer->delete());
+//		$this->assertTrue($Reseller->delete());
+//	}
 
 }
