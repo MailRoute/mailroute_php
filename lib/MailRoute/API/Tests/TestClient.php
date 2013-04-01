@@ -171,7 +171,6 @@ class TestClient extends ClassTest
 		catch (Exception $E)
 		{
 			$this->assertTrue(false)->addCommentary(print_r($E->getResponse(), 1));
-			print_r($this->Client);
 			return false;
 		}
 		$this->assertIsObject($Admin);
