@@ -82,6 +82,28 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 		return ($result!==false);
 	}
 
+	public function useDomainPolicy()
+	{
+		$this->setUseDomainPolicy(true);
+		return $this->save();
+	}
+
+	public function useSelfPolicy()
+	{
+		$this->setUseDomainPolicy(false);
+		return $this->save();
+	}
+
+	public function setUseDomainPolicy($use_domain_policy)
+	{
+		$this->fields['use_domain_policy'] = $use_domain_policy;
+	}
+
+	public function getUseDomainPolicy()
+	{
+		return $this->fields['use_domain_policy'];
+	}
+
 	public function getChangePwd()
 	{
 		return $this->fields['change_pwd'];

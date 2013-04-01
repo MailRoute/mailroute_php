@@ -158,6 +158,23 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $this->getAPIClient()->API()->Wblist()->create($WhiteList);
 	}
 
+	public function getActivePolicy()
+	{
+		//TODO 
+		if (!$this->getPolicy())
+		{
+			throw new Exception("Policy doesn't exist");
+		}
+		if ($this->getActive())
+		{
+			$PolicyDomain = new PolicyDomain($this->Client);
+			$policy_id    = trim(substr($this->getPolicy(),
+					strlen($this->getAPIClient()->getAPIPathPrefix())+strlen($PolicyDomain->getApiEntityResource())+1), '/');
+			$PolicyDomain = $this->getAPIClient()->API()->PolicyDomain()->get($policy_id);
+			return $PolicyDomain;
+		}
+	}
+
 	public function getActive()
 	{
 		return $this->fields['active'];
