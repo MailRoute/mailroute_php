@@ -64,6 +64,23 @@ class Reseller extends \MailRoute\API\ActiveEntity
 		return $this->getAPIClient()->API()->ContactReseller()->create($Contact);
 	}
 
+	public function deleteContact($email)
+	{
+		/** @var ContactReseller[] $Contacts */
+		$Contacts = $this->getAPIClient()->API()->ContactReseller()->
+				filter(array('email' => $email, 'reseller' => $this->getId()))->fetchList();
+		if (empty($Contacts))
+		{
+			return true;
+		}
+		$deleted = 0;
+		foreach ($Contacts as $Contact)
+		{
+			$deleted += $Contact->delete();
+		}
+		return $deleted;
+	}
+
 	/**
 	 * @param string $name
 	 * @return Customer

@@ -9,6 +9,7 @@ use MailRoute\API\Entity\Reseller;
 use MailRoute\API\Exception;
 use MailRoute\API\IActiveEntity;
 use MailRoute\API\IClient;
+use MailRoute\API\NotFoundException;
 
 class TestClient extends ClassTest
 {
@@ -19,7 +20,7 @@ class TestClient extends ClassTest
 	{
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
-		//$this->skipAllExcept('testEmailAccountMakeAliasesFrom');
+		$this->skipAllExceptLast();
 	}
 
 	public function testGetRootSchema()
@@ -600,6 +601,36 @@ class TestClient extends ClassTest
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testResellerDeleteContact()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1000, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$email    = 'contact@example.com';
+		$Contact  = $Reseller->createContact($email);
+		try
+		{
+			$result = $Reseller->deleteContact($email);
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(false)->addCommentary(print_r($E->getResponse(), 1));
+			$Reseller->delete();
+			return false;
+		}
+		$this->assertEquals($result, 1);
+		try
+		{
+			$this->Client->API()->ContactReseller()->get($Contact->getId());
+			$this->assertTrue(false)->addCommentary('was not deleted');
+		}
+		catch (NotFoundException $Exception)
+		{
+			$this->assertTrue(true);
+		}
 		$this->assertTrue($Reseller->delete());
 	}
 
