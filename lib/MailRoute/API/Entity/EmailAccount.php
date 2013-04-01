@@ -94,6 +94,11 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 		return $this->save();
 	}
 
+	public function regenerateApiKey()
+	{
+		return $this->getAPIClient()->callAPI($this->getApiEntityResource().'/'.$this->getId().'/regenerate_api_key', 'POST');
+	}
+
 	public function setUseDomainPolicy($use_domain_policy)
 	{
 		$this->fields['use_domain_policy'] = $use_domain_policy;
