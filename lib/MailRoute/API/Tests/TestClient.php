@@ -20,7 +20,7 @@ class TestClient extends ClassTest
 	{
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
-		$this->skipAllExceptLast();
+		//$this->skipAllExceptLast();
 	}
 
 	public function testGetRootSchema()
@@ -634,4 +634,27 @@ class TestClient extends ClassTest
 		$this->assertTrue($Reseller->delete());
 	}
 
+	public function testCustomerDeleteContact()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$email    = 'customer@example.com';
+		$Contact  = $Customer->createContact($email);
+		$result   = $Customer->deleteContact($email);
+		try
+		{
+			$this->Client->API()->ContactCustomer()->get($Contact->getId());
+			$this->assertTrue(false)->addCommentary('was not deleted');
+		}
+		catch (NotFoundException $Exception)
+		{
+			$this->assertTrue(true);
+		}
+		$this->assertEquals($result, 1);
+
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
 }
