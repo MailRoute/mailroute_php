@@ -80,4 +80,9 @@ abstract class ActiveEntity implements IActiveEntity
 	{
 		return $this->fields['id'];
 	}
+
+	protected function getDataFromResourceURI($URI)
+	{
+		return $this->Client->callAPI(substr($URI, strlen($this->Client->getAPIPathPrefix())), 'GET');
+	}
 }

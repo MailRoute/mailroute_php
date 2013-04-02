@@ -122,11 +122,54 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 		else
 		{
 			$Client       = $this->getAPIClient();
-			$domain_data  = $Client->callAPI(substr($this->getDomain(), strlen($Client->getAPIPathPrefix())), 'GET');
+			$domain_data  = $this->getDataFromResourceURI($this->getDomain());
 			$Domain       = new Domain($Client, $domain_data);
-			$policy_data  = $Client->callAPI(substr($Domain->getPolicy(), strlen($Client->getAPIPathPrefix())), 'GET');
+			$policy_data  = $this->getDataFromResourceURI($Domain->getPolicy());
 			$DomainPolicy = new PolicyDomain($Client, $policy_data);
 			return $DomainPolicy;
+		}
+	}
+
+	public function useDomainNotification()
+	{
+		$NotificationTask = $this->getNotificationAccountTaskObject();
+		if (!$NotificationTask->getEnableDefault())
+		{
+			$NotificationTask->setEnableDefault(1);
+			return $NotificationTask->save();
+		}
+		return true;
+	}
+
+	public function useSelfNotification()
+	{
+		$NotificationTask = $this->getNotificationAccountTaskObject();
+		if ($NotificationTask->getEnableDefault())
+		{
+			$NotificationTask->setEnableDefault(0);
+			return $NotificationTask->save();
+		}
+		return true;
+	}
+
+	/**
+	 * @return NotificationAccountTask|NotificationDomainTask
+	 */
+	public function getActiveNotification()
+	{
+		$NotificationTask = $this->getNotificationAccountTaskObject();
+		if ($NotificationTask->getEnableDefault())
+		{
+			$Client            = $this->getAPIClient();
+			$domain_data       = $this->getDataFromResourceURI($this->getDomain());
+			$Domain            = new Domain($Client, $domain_data);
+			$notification_data = $this->getDataFromResourceURI($Domain->getNotificationTask());
+			$NotificationTask  = new NotificationDomainTask($Client, $notification_data);
+			return $NotificationTask;
+		}
+		else
+		{
+			return $NotificationTask;
 		}
 	}
 
@@ -251,9 +294,19 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 	protected function getAccountPolicy()
 	{
 		$Client      = $this->getAPIClient();
-		$policy_data = $Client->callAPI(substr($this->getPolicy(), strlen($Client->getAPIPathPrefix())), 'GET');
+		$policy_data = $this->getDataFromResourceURI($this->getPolicy());
 		$Policy      = new PolicyUser($Client, $policy_data);
 		return $Policy;
+	}
+
+	/**
+	 * @return NotificationAccountTask
+	 */
+	protected function getNotificationAccountTaskObject()
+	{
+		$notification_data = $this->getDataFromResourceURI($this->getNotificationTask());
+		$NotificationTask  = new NotificationAccountTask($this->getAPIClient(), $notification_data);
+		return $NotificationTask;
 	}
 
 }

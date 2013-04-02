@@ -21,6 +21,16 @@ class NotificationAccountTask extends \MailRoute\API\ActiveEntity
 		$this->fields['enabled'] = $enabled;
 	}
 
+	public function getEnableDefault()
+	{
+		return $this->fields['enable_default'];
+	}
+
+	public function setEnableDefault($enable_default)
+	{
+		$this->fields['enable_default'] = $enable_default;
+	}
+
 	public function getId()
 	{
 		return $this->fields['id'];

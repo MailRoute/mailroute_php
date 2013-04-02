@@ -803,4 +803,29 @@ class TestClient extends ClassTest
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
 	}
+
+	public function testEmailAccountUseDomainNotification()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
+		$EmailAccount = $Domain->createEmailAccount($localpart);
+
+		$this->assertTrue($EmailAccount->useDomainNotification());
+		$result = $EmailAccount->getActiveNotification();
+		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\NotificationDomainTask');
+
+		$this->assertTrue($EmailAccount->useSelfNotification());
+		$result = $EmailAccount->getActiveNotification();
+		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\NotificationAccountTask');
+
+		$this->assertTrue($EmailAccount->delete());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+
+	}
 }
