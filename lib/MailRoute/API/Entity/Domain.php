@@ -168,14 +168,14 @@ class Domain extends \MailRoute\API\ActiveEntity
 		$this->fields['active'] = $active;
 	}
 
-	public function getBounceUnlisted()
+	public function getUserlistComplete()
 	{
-		return $this->fields['bounce_unlisted'];
+		return $this->fields['userlist_complete'];
 	}
 
-	public function setBounceUnlisted($bounce_unlisted)
+	public function setUserlistComplete($userlist_complete)
 	{
-		$this->fields['bounce_unlisted'] = $bounce_unlisted;
+		$this->fields['userlist_complete'] = $userlist_complete;
 	}
 
 	public function getContacts()
