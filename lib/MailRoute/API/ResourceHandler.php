@@ -85,8 +85,10 @@ class ResourceHandler implements IResource
 		{
 			$data = $this->getArrayFromInputObject($data);
 		}
+		$Entity = $this->getActiveEntity();
+		$Entity->parseCreateData($data);
 		$result = $this->callAPI('POST', '', $data);
-		$Entity = $this->getActiveEntity($result);
+		$Entity->setAPIEntityFields($result);
 		return $Entity;
 	}
 

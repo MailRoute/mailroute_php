@@ -2,6 +2,7 @@
 namespace MailRoute\API\Entity;
 
 use MailRoute\API\Exception;
+use MailRoute\API\NotFoundException;
 
 class EmailAccount extends \MailRoute\API\ActiveEntity
 {
@@ -170,6 +171,36 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 		else
 		{
 			return $NotificationTask;
+		}
+	}
+
+	public function parseCreateData(&$data)
+	{
+		if (!isset($data['create_opt']))
+		{
+			$data['create_opt'] = 'generate_pwd';
+		}
+		if (isset($data['email']) && strpos($data['email'], '@')!==false)
+		{
+			list($localpart, $domain) = explode('@', $data['email']);
+			if (!empty($localpart))
+			{
+				$data['localpart'] = $localpart;
+			}
+			if (!empty($domain) && empty($data['domain']))
+			{
+				/** @var Domain[] $Domains */
+				$Domains = $this->getAPIClient()->API()->Domain()->filter(array('name' => $domain))->limit(1)->fetchList();
+				if (!empty($Domains))
+				{
+					$DomainEntity   = $Domains[0];
+					$data['domain'] = $DomainEntity->getResourceUri();
+				}
+				else
+				{
+					throw new NotFoundException('Domain '.$domain.' was not found', 404);
+				}
+			}
 		}
 	}
 

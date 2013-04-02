@@ -85,4 +85,9 @@ abstract class ActiveEntity implements IActiveEntity
 	{
 		return $this->Client->callAPI(substr($URI, strlen($this->Client->getAPIPathPrefix())), 'GET');
 	}
+
+	public function parseCreateData(&$data)
+	{
+
+	}
 }

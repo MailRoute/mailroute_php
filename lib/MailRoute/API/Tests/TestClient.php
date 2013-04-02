@@ -828,4 +828,39 @@ class TestClient extends ClassTest
 		$this->assertTrue($Reseller->delete());
 
 	}
+
+	public function testEmailAccountCreate()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller    = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer    = $Reseller->createCustomer('customer'.$reseller_name);
+		$domain_name = 'domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name';
+		$Domain      = $Customer->createDomain($domain_name);
+		/** @var EmailAccount $result */
+		$result = $this->Client->API()->EmailAccount()->create(array('email' => 'email@'.$domain_name));
+		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\EmailAccount');
+		$this->assertEquals($result->getLocalpart(), 'email');
+		$this->assertEquals($result->getDomain(), $Domain->getResourceUri());
+
+		$result = $this->Client->API()->EmailAccount()->create(array('email' => 'email2@example.com', 'domain' => $Domain->getResourceUri()));
+		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\EmailAccount');
+		$this->assertEquals($result->getLocalpart(), 'email2');
+		$this->assertEquals($result->getDomain(), $Domain->getResourceUri());
+
+		try
+		{
+			$this->Client->API()->EmailAccount()->create(array('email' => 'email@not_existing_example.com'));
+			$this->assertTrue(false)->addCommentary('exception expected');
+		}
+		catch (NotFoundException $E)
+		{
+			$this->assertTrue(true);
+		}
+
+		$this->assertTrue($result->delete());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
 }
