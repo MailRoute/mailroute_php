@@ -84,25 +84,50 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 
 	public function useDomainPolicy()
 	{
-		$Client      = $this->getAPIClient();
-		$policy_data = $Client->callAPI(substr($this->getPolicy(), strlen($Client->getAPIPathPrefix())), 'GET');
-		$Policy      = new PolicyUser($Client, $policy_data);
-		$Policy->setUseDomainPolicy(true);
-		return $Policy->save();
+		$Policy = $this->getAccountPolicy();
+		if (!$Policy->getUseDomainPolicy())
+		{
+			$Policy->setUseDomainPolicy(true);
+			return $Policy->save();
+		}
+		return true;
 	}
 
 	public function useSelfPolicy()
 	{
-		$Client      = $this->getAPIClient();
-		$policy_data = $Client->callAPI(substr($this->getPolicy(), strlen($Client->getAPIPathPrefix())), 'GET');
-		$Policy      = new PolicyUser($Client, $policy_data);
-		$Policy->setUseDomainPolicy(false);
-		return $Policy->save();
+		$Policy = $this->getAccountPolicy();
+		if ($Policy->getUseDomainPolicy())
+		{
+			$Policy->setUseDomainPolicy(false);
+			return $Policy->save();
+		}
+		return true;
 	}
 
 	public function regenerateApiKey()
 	{
 		return $this->getAPIClient()->callAPI($this->getApiEntityResource().'/'.$this->getId().'/regenerate_api_key', 'POST');
+	}
+
+	/**
+	 * @return PolicyDomain|PolicyUser
+	 */
+	public function getActivePolicy()
+	{
+		$AccountPolicy = $this->getAccountPolicy();
+		if (!$AccountPolicy->getUseDomainPolicy())
+		{
+			return $AccountPolicy;
+		}
+		else
+		{
+			$Client       = $this->getAPIClient();
+			$domain_data  = $Client->callAPI(substr($this->getDomain(), strlen($Client->getAPIPathPrefix())), 'GET');
+			$Domain       = new Domain($Client, $domain_data);
+			$policy_data  = $Client->callAPI(substr($Domain->getPolicy(), strlen($Client->getAPIPathPrefix())), 'GET');
+			$DomainPolicy = new PolicyDomain($Client, $policy_data);
+			return $DomainPolicy;
+		}
 	}
 
 	public function getChangePwd()
@@ -218,6 +243,17 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 	public function getUpdatedAt()
 	{
 		return $this->fields['updated_at'];
+	}
+
+	/**
+	 * @return PolicyUser
+	 */
+	protected function getAccountPolicy()
+	{
+		$Client      = $this->getAPIClient();
+		$policy_data = $Client->callAPI(substr($this->getPolicy(), strlen($Client->getAPIPathPrefix())), 'GET');
+		$Policy      = new PolicyUser($Client, $policy_data);
+		return $Policy;
 	}
 
 }

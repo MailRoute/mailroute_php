@@ -781,4 +781,26 @@ class TestClient extends ClassTest
 		$this->assertTrue($Reseller->delete());
 	}
 
+	public function testEmailAccountGetActivePolicy()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
+		$EmailAccount = $Domain->createEmailAccount($localpart);
+		$Domain->setUserlistComplete(1);
+		$Domain->save();
+		$EmailAccount->useDomainPolicy();
+		$result = $EmailAccount->getActivePolicy();
+		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\PolicyDomain');
+		$EmailAccount->useSelfPolicy();
+		$result = $EmailAccount->getActivePolicy();
+		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\PolicyUser');
+		$this->assertTrue($EmailAccount->delete());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
 }
