@@ -22,8 +22,7 @@ class TestClient extends ClassTest
 	{
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
-		$this->skipAllExceptLast();
-		$this->skipTest('testDomainGetActivePolicy');
+		//$this->skipAllExceptLast();
 	}
 
 	public function testGetRootSchema()
@@ -680,23 +679,6 @@ class TestClient extends ClassTest
 		{
 			$this->assertTrue(true);
 		}
-		$this->assertTrue($Domain->delete());
-		$this->assertTrue($Customer->delete());
-		$this->assertTrue($Reseller->delete());
-	}
-
-	public function testDomainGetActivePolicy()
-	{
-		//TODO
-		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
-		/** @var Reseller $Reseller */
-		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
-		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
-
-		$result = $Domain->getActivePolicy();
-		$this->assertIsObject($result);
-
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
