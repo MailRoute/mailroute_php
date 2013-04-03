@@ -503,20 +503,7 @@ class TestClient extends ClassTest
 			$aliases[] = $localpart.'alias'.$i;
 		}
 		$result = $EmailAccount->bulkAddAlias($aliases);
-		$this->assertIsArray($result);
-		$this->assertIsObject($result[0]);
-		foreach ($result as $key => $LocalpartAlias)
-		{
-			if (is_a($LocalpartAlias, 'MailRoute\\API\\Exception'))
-			{
-				/** @var Exception $LocalpartAlias */
-				$this->assertTrue(false)->addCommentary('Exception: '.print_r($LocalpartAlias->getResponse(), 1));
-				continue;
-			}
-			$this->assertEquals($LocalpartAlias->getLocalpart(), $localpart.'alias'.$key);
-			$this->assertEquals($LocalpartAlias->getEmailAccount(), $EmailAccount->getResourceUri());
-			$this->assertTrue($LocalpartAlias->delete());
-		}
+		$this->assertTrueStrict($result);
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
@@ -888,7 +875,6 @@ class TestClient extends ClassTest
 		{
 			$result = false;
 		}
-		print_r($this->Client);
 		$this->assertTrue($result);
 		foreach ($id_list as $id)
 		{

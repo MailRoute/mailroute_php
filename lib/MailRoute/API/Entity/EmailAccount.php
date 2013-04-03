@@ -1,7 +1,6 @@
 <?php
 namespace MailRoute\API\Entity;
 
-use MailRoute\API\Exception;
 use MailRoute\API\NotFoundException;
 
 class EmailAccount extends \MailRoute\API\ActiveEntity
@@ -23,23 +22,12 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 
 	/**
 	 * @param array $localparts
-	 * @return LocalpartAlias[]
+	 * @return boolean
 	 */
 	public function bulkAddAlias(array $localparts)
 	{
-		$results = array();
-		foreach ($localparts as $localpart)
-		{
-			try
-			{
-				$results[] = $this->addAlias($localpart);
-			}
-			catch (Exception $E)
-			{
-				$results[] = $E;
-			}
-		}
-		return $results;
+		$result = $this->getAPIClient()->callAPI($this->getApiEntityResource().'/'.$this->getId().'/mass_add_aliases/', 'POST', $localparts);
+		return ($result!==false);
 	}
 
 	/**
