@@ -96,5 +96,4 @@ abstract class ActiveEntity implements IActiveEntity
 		return $this->Client->callAPI($this->getApiEntityResource().
 				'/mass_delete/?id__in='.implode(',', $id_list), 'DELETE');
 	}
-
 }

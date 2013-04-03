@@ -902,5 +902,34 @@ class TestClient extends ClassTest
 				$this->assertTrue(true);
 			}
 		}
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testEmailAccountMassAdd()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller   = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer   = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain     = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$localparts = array();
+		foreach (range(1, 3) as $i)
+		{
+			$localparts[] = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5).$i;
+		}
+		try
+		{
+			$result = $this->Client->API()->EmailAccount()->bulkCreate(array('localparts' => $localparts, 'domain' => $Domain->getResourceUri()));
+		}
+		catch (Exception $E)
+		{
+			$result = false;
+		}
+		$this->assertTrue($result);
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
 	}
 }

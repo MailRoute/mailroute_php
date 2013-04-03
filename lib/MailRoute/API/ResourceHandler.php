@@ -217,4 +217,11 @@ class ResourceHandler implements IResource
 	{
 		$this->EntityConverter = $EntityConverter;
 	}
+
+	public function bulkCreate($data)
+	{
+		$result = $this->callAPI('POST', 'mass_add/', $data);
+		return ($result!==false);
+	}
+
 }

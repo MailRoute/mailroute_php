@@ -53,4 +53,6 @@ interface IResource
 	 * @return IActiveEntity[]
 	 */
 	public function search($word);
+
+	public function bulkCreate($data);
 }
