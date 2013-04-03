@@ -340,4 +340,8 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 		return $NotificationTask;
 	}
 
+	public function massDelete(array $id_list)
+	{
+		return parent::massDelete($id_list);
+	}
 }

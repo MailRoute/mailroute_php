@@ -206,7 +206,7 @@ class Client implements IClient
 	private function SendAPIQuery($url_request_part, $method, $arguments)
 	{
 		$url = rtrim($this->api_url, '/').'/'.ltrim(str_replace('//', '/', $url_request_part), '/');
-		if (substr($url, -1)!='/')
+		if (substr($url, -1)!='/' && $method!='DELETE')
 		{
 			$url .= '/';
 		}
@@ -214,7 +214,7 @@ class Client implements IClient
 		$Request->setMethod($method);
 		if (!empty($arguments))
 		{
-			if (!in_array($method, array('GET', 'HEAD', 'OPTIONS')))
+			if (!in_array($method, array('GET', 'HEAD', 'OPTIONS', 'DELETE')))
 			{
 				if (count($arguments)==1 && key($arguments)===0)
 				{

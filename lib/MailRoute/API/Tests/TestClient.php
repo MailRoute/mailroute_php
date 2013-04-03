@@ -22,7 +22,7 @@ class TestClient extends ClassTest
 	{
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
-		//$this->skipAllExceptLast();
+		$this->skipAllExceptLast();
 	}
 
 	public function testGetRootSchema()
@@ -862,5 +862,44 @@ class TestClient extends ClassTest
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testEmailAccountMassDelete()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
+		$EmailAccount = $Domain->createEmailAccount($localpart);
+		$id_list[]    = $EmailAccount->getId();
+		foreach (range(1, 3) as $i)
+		{
+			$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).$i.__LINE__), 5);
+			$EmailAccount = $Domain->createEmailAccount($localpart);
+			$id_list[]    = $EmailAccount->getId();
+		}
+		try
+		{
+			$result = $EmailAccount->massDelete($id_list);
+		}
+		catch (Exception $E)
+		{
+			$result = false;
+		}
+		$this->assertTrue($result);
+		foreach ($id_list as $id)
+		{
+			try
+			{
+				$result = $this->Client->API()->EmailAccount()->get($id);
+				$this->assertTrue(!$result);
+			}
+			catch (NotFoundException $E)
+			{
+				$this->assertTrue(true);
+			}
+		}
 	}
 }

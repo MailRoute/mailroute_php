@@ -90,4 +90,11 @@ abstract class ActiveEntity implements IActiveEntity
 	{
 
 	}
+
+	protected function massDelete(array $id_list)
+	{
+		return $this->Client->callAPI($this->getApiEntityResource().
+				'/mass_delete/?id__in='.implode(',', $id_list), 'DELETE');
+	}
+
 }
