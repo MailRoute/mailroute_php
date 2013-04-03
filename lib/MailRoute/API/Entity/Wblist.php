@@ -56,4 +56,8 @@ class Wblist extends \MailRoute\API\ActiveEntity
 		$this->fields['email'] = $email;
 	}
 
+	public function massDelete(array $id_list)
+	{
+		return parent::massDelete($id_list);
+	}
 }
