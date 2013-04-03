@@ -2,6 +2,7 @@
 namespace MailRoute\API\Tests;
 
 use Jamm\Tester\ClassTest;
+use MailRoute\API\AntiSpamMode;
 use MailRoute\API\Entity\ContactReseller;
 use MailRoute\API\Entity\Customer;
 use MailRoute\API\Entity\Domain;
@@ -554,11 +555,26 @@ class TestClient extends ClassTest
 		$this->assertTrue($Reseller->delete());
 	}
 
-//	public function testPolicyDomainGetDefaultPolicy()
-//	{
-//		$PolicyDomains = $this->Client->API()->PolicyDomain()->fetchList();
-//		print_r($PolicyDomains);
-//	}
+	public function testPolicyDomainGetDefaultPolicy()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
+		$EmailAccount = $Domain->createEmailAccount($localpart);
+		$EmailAccount->useDomainPolicy();
+		/** @var EmailAccount $EmailAccount */
+		$EmailAccount = $this->Client->API()->EmailAccount()->get($EmailAccount->getId());
+		$Policy       = $EmailAccount->getActivePolicy();
+		$result       = $Policy->getDefaultPolicy();
+		$this->assertIsObject($result);
+		$EmailAccount->delete();
+		$Domain->delete();
+		$Customer->delete();
+		$Reseller->delete();
+	}
 
 	public function testEmailAccountMakeAliasesFrom()
 	{
@@ -917,5 +933,46 @@ class TestClient extends ClassTest
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testPolicyEnableDisableMethods()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
+		$EmailAccount = $Domain->createEmailAccount($localpart);
+		$EmailAccount->useDomainPolicy();
+		/** @var EmailAccount $EmailAccount */
+		$EmailAccount = $this->Client->API()->EmailAccount()->get($EmailAccount->getId());
+		$Policy       = $EmailAccount->getActivePolicy();
+		$this->assertTrue($Policy->enableBadHdrFilter());
+		$this->assertEquals($Policy->getBypassHeaderChecks(), 'Y');
+		$this->assertTrue($Policy->disableBadHdrFilter());
+		$this->assertEquals($Policy->getBypassHeaderChecks(), 'N');
+
+		$this->assertTrue($Policy->enableBannedFilter());
+		$this->assertEquals($Policy->getBypassBannedChecks(), 'Y');
+		$this->assertTrue($Policy->disableBannedFilter());
+		$this->assertEquals($Policy->getBypassBannedChecks(), 'N');
+
+		$this->assertTrue($Policy->enableSpamFiltering());
+		$this->assertEquals($Policy->getBypassSpamChecks(), 'Y');
+		$this->assertTrue($Policy->disableSpamFiltering());
+		$this->assertEquals($Policy->getBypassSpamChecks(), 'N');
+
+		$this->assertTrue($Policy->enableVirusFiltering());
+		$this->assertEquals($Policy->getBypassVirusChecks(), 'Y');
+		$this->assertTrue($Policy->disableVirusFiltering());
+		$this->assertEquals($Policy->getBypassVirusChecks(), 'N');
+
+		$this->assertTrue($Policy->setAntiSpamMode(AntiSpamMode::lenient));
+
+		$EmailAccount->delete();
+		$Domain->delete();
+		$Customer->delete();
+		$Reseller->delete();
 	}
 }
