@@ -55,7 +55,6 @@ class Client implements IClient
 
 	protected function getResourceHandler($entity)
 	{
-		$entity  = strtolower($entity);
 		$Handler = new ResourceHandler($this, $entity);
 		return $Handler;
 	}
@@ -206,7 +205,7 @@ class Client implements IClient
 	private function SendAPIQuery($url_request_part, $method, $arguments)
 	{
 		$url = rtrim($this->api_url, '/').'/'.ltrim(str_replace('//', '/', $url_request_part), '/');
-		if (substr($url, -1)!='/' && $method!='DELETE')
+		if (substr($url, -1)!='/' && strpos($url, '?')===false)
 		{
 			$url .= '/';
 		}

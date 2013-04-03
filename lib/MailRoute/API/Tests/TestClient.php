@@ -22,7 +22,7 @@ class TestClient extends ClassTest
 	{
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
-		$this->skipAllExceptLast();
+		//$this->skipAllExceptLast();
 	}
 
 	public function testGetRootSchema()
@@ -888,6 +888,7 @@ class TestClient extends ClassTest
 		{
 			$result = false;
 		}
+		print_r($this->Client);
 		$this->assertTrue($result);
 		foreach ($id_list as $id)
 		{
