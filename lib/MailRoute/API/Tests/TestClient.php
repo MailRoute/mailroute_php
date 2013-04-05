@@ -975,4 +975,33 @@ class TestClient extends ClassTest
 		$Customer->delete();
 		$Reseller->delete();
 	}
+
+	public function testResellerGetCustomers()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$this->assertEquals(count($Reseller->getCustomers()), 0);
+		$Reseller->createCustomer('customer1'.$reseller_name);
+		$Reseller->createCustomer('customer2'.$reseller_name);
+		$Reseller->createCustomer('customer3'.$reseller_name);
+		$result = $Reseller->getCustomers();
+		$this->assertEquals(count($result), 3);
+		$this->assertIsObject($result[0]);
+		foreach ($result as $Customer)
+		{
+			$this->assertTrue($Customer->delete());
+		}
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testResellerGetBrandingInfo()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$result   = $Reseller->getBrandingInfo();
+		$this->assertIsObject($result);
+		$Reseller->delete();
+	}
 }

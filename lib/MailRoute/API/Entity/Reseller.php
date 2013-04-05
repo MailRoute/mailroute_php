@@ -2,6 +2,7 @@
 namespace MailRoute\API\Entity;
 
 use MailRoute\API\Exception;
+use MailRoute\API\NotFoundException;
 use MailRoute\API\ValidationException;
 
 class Reseller extends \MailRoute\API\ActiveEntity
@@ -11,6 +12,8 @@ class Reseller extends \MailRoute\API\ActiveEntity
 	/** @var Admins[] */
 	private $admins;
 	private $contacts;
+	private $customers;
+	private $branding_info;
 
 	/**
 	 * @param $email
@@ -113,9 +116,21 @@ class Reseller extends \MailRoute\API\ActiveEntity
 		$this->fields['allow_customer_branding'] = $allow_customer_branding;
 	}
 
+	/**
+	 * @return Brandinginfo
+	 */
 	public function getBrandingInfo()
 	{
-		return $this->fields['branding_info'];
+		if (empty($this->branding_info))
+		{
+			if (!empty($this->fields['branding_info']))
+			{
+				$data                = $this->getDataFromResourceURI($this->fields['branding_info']);
+				$BrandingInfo        = new Brandinginfo($this->getAPIClient(), $data);
+				$this->branding_info = $BrandingInfo;
+			}
+		}
+		return $this->branding_info;
 	}
 
 	/**
@@ -146,9 +161,23 @@ class Reseller extends \MailRoute\API\ActiveEntity
 		return $this->fields['created_at'];
 	}
 
+	/**
+	 * @return Customer[]
+	 */
 	public function getCustomers()
 	{
-		return $this->fields['customers'];
+		if (empty($this->customers))
+		{
+			try
+			{
+				$this->customers = $this->getAPIClient()->API()->Customer()->filter(array('reseller' => $this->getId()))->fetchList();
+			}
+			catch (NotFoundException $Exception)
+			{
+				return array();
+			}
+		}
+		return $this->customers;
 	}
 
 	public function getId()
