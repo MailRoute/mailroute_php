@@ -327,9 +327,16 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $this->outbound_servers;
 	}
 
+	protected $Policy;
+
 	public function getPolicy()
 	{
-		return $this->fields['policy'];
+		if (empty($this->Policy) && !empty($this->fields['policy']))
+		{
+			$data         = $this->getDataFromResourceURI($this->fields['policy']);
+			$this->Policy = new PolicyDomain($this->getAPIClient(), $data);
+		}
+		return $this->Policy;
 	}
 
 	public function getUpdatedAt()
