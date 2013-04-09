@@ -21,9 +21,16 @@ class DomainAlias extends \MailRoute\API\ActiveEntity
 		return $this->fields['created_at'];
 	}
 
+	protected $Domain;
+
 	public function getDomain()
 	{
-		return $this->fields['domain'];
+		if (empty($this->Domain) && !empty($this->fields['domain']))
+		{
+			$data         = $this->getDataFromResourceURI($this->fields['domain']);
+			$this->Domain = new Domain($this->getAPIClient(), $data);
+		}
+		return $this->Domain;
 	}
 
 	public function setDomain($domain)

@@ -113,8 +113,7 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 			$Client       = $this->getAPIClient();
 			$domain_data  = $this->getDataFromResourceURI($this->getDomain());
 			$Domain       = new Domain($Client, $domain_data);
-			$policy_data  = $this->getDataFromResourceURI($Domain->getPolicy());
-			$DomainPolicy = new PolicyDomain($Client, $policy_data);
+			$DomainPolicy = $Domain->getPolicy();
 			return $DomainPolicy;
 		}
 	}
@@ -149,11 +148,10 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 		$NotificationTask = $this->getNotificationAccountTaskObject();
 		if ($NotificationTask->getEnableDefault())
 		{
-			$Client            = $this->getAPIClient();
-			$domain_data       = $this->getDataFromResourceURI($this->getDomain());
-			$Domain            = new Domain($Client, $domain_data);
-			$notification_data = $this->getDataFromResourceURI($Domain->getNotificationTask());
-			$NotificationTask  = new NotificationDomainTask($Client, $notification_data);
+			$Client           = $this->getAPIClient();
+			$domain_data      = $this->getDataFromResourceURI($this->getDomain());
+			$Domain           = new Domain($Client, $domain_data);
+			$NotificationTask = $Domain->getNotificationTask();
 			return $NotificationTask;
 		}
 		else

@@ -1228,4 +1228,37 @@ class TestClient extends ClassTest
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
 	}
+
+	public function testDomainGetNotificationTask()
+	{
+		$x             = mt_rand(1, 9999);
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain   = $Customer->createDomain($x.'example.com');
+		$result   = $Domain->getNotificationTask();
+		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\NotificationDomainTask');
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testDomainAliasGetDomain()
+	{
+		$x             = mt_rand(1, 9999);
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain   = $Customer->createDomain($x.'example.com');
+		$Alias    = $Domain->createAlias($x.'alias.example.com');
+		$result   = $Alias->getDomain();
+		$this->assertInstanceOf($result, get_class($Domain));
+		$this->assertEquals($result->getName(), $x.'example.com');
+		$Alias->delete();
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
 }

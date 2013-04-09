@@ -298,9 +298,19 @@ class Domain extends \MailRoute\API\ActiveEntity
 		$this->fields['name'] = $name;
 	}
 
+	protected $NotificationTask;
+
+	/**
+	 * @return NotificationDomainTask
+	 */
 	public function getNotificationTask()
 	{
-		return $this->fields['notification_task'];
+		if (empty($this->NotificationTask))
+		{
+			$data                   = $this->getDataFromResourceURI($this->fields['notification_task']);
+			$this->NotificationTask = new NotificationDomainTask($this->getAPIClient(), $data);
+		}
+		return $this->NotificationTask;
 	}
 
 	public function getOutboundEnabled()
