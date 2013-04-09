@@ -1065,4 +1065,19 @@ class TestClient extends ClassTest
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
 	}
+
+	public function testDomainGetCustomer()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain   = $Customer->createDomain('example.com');
+		$result   = $Domain->getCustomer();
+		$this->assertInstanceOf($result, get_class($Customer));
+		$this->assertEquals($result->getName(), $Customer->getName());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
 }

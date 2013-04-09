@@ -128,12 +128,12 @@ class Customer extends ActiveEntity
 				{
 					$Domain = new Domain($this->getAPIClient());
 					$Domain->setAPIEntityFields($domain_data);
+					$Domain->setCustomer($this);
 					$this->domains[] = $Domain;
 				}
 			}
 		}
 		return $this->domains;
-		//return $this->fields['domains'];
 	}
 
 	public function getId()
