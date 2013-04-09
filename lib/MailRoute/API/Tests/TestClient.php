@@ -1050,16 +1050,17 @@ class TestClient extends ClassTest
 
 	public function testCustomerGetDomains()
 	{
+		$x             = mt_rand(1, 9999);
 		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
-		$Customer->createDomain('example.com');
-		$Customer->createDomain('example1.com');
+		$Customer->createDomain($x.'example.com');
+		$Customer->createDomain($x.'example1.com');
 		$result = $Customer->getDomains();
 		$this->assertIsArray($result);
 		$this->assertIsObject($result[0]);
-		$this->assertEquals($result[1]->getName(), 'example1.com');
+		$this->assertEquals($result[1]->getName(), $x.'example1.com');
 		$result[0]->delete();
 		$result[1]->delete();
 		$this->assertTrue($Customer->delete());
@@ -1072,7 +1073,7 @@ class TestClient extends ClassTest
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain   = $Customer->createDomain('example.com');
+		$Domain   = $Customer->createDomain(mt_rand(1, 9999).'example.com');
 		$result   = $Domain->getCustomer();
 		$this->assertInstanceOf($result, get_class($Customer));
 		$this->assertEquals($result->getName(), $Customer->getName());
@@ -1083,16 +1084,17 @@ class TestClient extends ClassTest
 
 	public function testDomainGetDomainAliases()
 	{
+		$x             = mt_rand(1, 9999);
 		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain   = $Customer->createDomain('example.com');
-		$Domain->createAlias('alias1example.com');
-		$Domain->createAlias('alias2example.com');
+		$Domain   = $Customer->createDomain($x.'example.com');
+		$Domain->createAlias($x.'alias1example.com');
+		$Domain->createAlias($x.'alias2example.com');
 		$result = $Domain->getDomainAliases();
 		$this->assertInstanceOf($result[0], 'MailRoute\\API\\Entity\\DomainAlias');
-		$this->assertEquals($result[1]->getName(), 'alias2example.com');
+		$this->assertEquals($result[1]->getName(), $x.'alias2example.com');
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
