@@ -123,7 +123,7 @@ class Reseller extends ActiveEntity
 	 */
 	public function getContacts()
 	{
-		return parent::getContacts(new ContactReseller($this->getAPIClient()));
+		return parent::getEntityContacts(new ContactReseller($this->getAPIClient()));
 	}
 
 	public function getCreatedAt()

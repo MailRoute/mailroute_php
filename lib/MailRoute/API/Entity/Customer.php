@@ -104,7 +104,7 @@ class Customer extends ActiveEntity
 	 */
 	public function getContacts()
 	{
-		return parent::getContacts(new ContactCustomer($this->getAPIClient()));
+		return parent::getEntityContacts(new ContactCustomer($this->getAPIClient()));
 	}
 
 	public function getCreatedAt()

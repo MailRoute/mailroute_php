@@ -300,8 +300,8 @@ class TestClient extends ClassTest
 		$Customer1 = $Reseller->createCustomer('customer1'.$reseller_name);
 		$Customer2 = $Reseller->createCustomer('customer2'.$reseller_name);
 		$Domain    = $Customer1->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
-		$this->assertEquals($Domain->getCustomer(), $Customer1->getResourceUri());
-		$this->assertEquals($Domain->getCustomer(), $Customer1->getResourceUri());
+		$this->assertEquals($Domain->getCustomer()->getResourceUri(), $Customer1->getResourceUri());
+		$this->assertEquals($Domain->getCustomer()->getResourceUri(), $Customer1->getResourceUri());
 		$result = $Domain->moveToCustomer($Customer2);
 		$this->assertTrueStrict($result);
 		/** @var Domain $FreshDomain */

@@ -99,7 +99,7 @@ abstract class ActiveEntity implements IActiveEntity
 		return $this->admins;
 	}
 
-	protected function getContacts(ActiveEntity $ContactEntity)
+	protected function getEntityContacts(ActiveEntity $ContactEntity)
 	{
 		if (empty($this->contacts))
 		{
