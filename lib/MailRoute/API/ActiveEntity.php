@@ -3,6 +3,7 @@ namespace MailRoute\API;
 
 use MailRoute\API\Entity\Admins;
 use MailRoute\API\Entity\Brandinginfo;
+use MailRoute\API\Entity\Domain;
 
 abstract class ActiveEntity implements IActiveEntity
 {
@@ -12,6 +13,7 @@ abstract class ActiveEntity implements IActiveEntity
 	protected $BrandingInfo;
 	protected $contacts;
 	protected $admins;
+	protected $Domain;
 
 	public function __construct(IClient $Client, array $data = array())
 	{
@@ -85,6 +87,16 @@ abstract class ActiveEntity implements IActiveEntity
 	protected function getId()
 	{
 		return $this->fields['id'];
+	}
+
+	protected function getDomain()
+	{
+		if (empty($this->Domain) && !empty($this->fields['domain']))
+		{
+			$data         = $this->getDataFromResourceURI($this->fields['domain']);
+			$this->Domain = new Domain($this->getAPIClient(), $data);
+		}
+		return $this->Domain;
 	}
 
 	/**
