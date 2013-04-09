@@ -180,9 +180,12 @@ class Domain extends \MailRoute\API\ActiveEntity
 		$this->fields['userlist_complete'] = $userlist_complete;
 	}
 
+	/**
+	 * @return ContactDomain[]
+	 */
 	public function getContacts()
 	{
-		return $this->fields['contacts'];
+		return parent::getEntityContacts(new ContactDomain($this->getAPIClient()));
 	}
 
 	public function getCreatedAt()
