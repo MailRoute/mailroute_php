@@ -12,7 +12,7 @@ class PolicyDomain extends Policy
 
 	public function getDomain()
 	{
-		return $this->fields['domain'];
+		return parent::getDomain();
 	}
 
 }
