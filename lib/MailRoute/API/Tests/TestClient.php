@@ -24,6 +24,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		//$this->skipAllExceptLast();
+
 	}
 
 	public function testGetRootSchema()
