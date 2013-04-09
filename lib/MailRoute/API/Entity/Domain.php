@@ -310,9 +310,18 @@ class Domain extends \MailRoute\API\ActiveEntity
 		$this->fields['outbound_enabled'] = $outbound_enabled;
 	}
 
+	protected $outbound_servers;
+
+	/**
+	 * @return OutboundServer[]
+	 */
 	public function getOutboundServers()
 	{
-		return $this->fields['outbound_servers'];
+		if (empty($this->outbound_servers))
+		{
+			$this->outbound_servers = $this->getAPIClient()->API()->OutboundServer()->filter(array('domain' => $this->getId()))->fetchList();
+		}
+		return $this->outbound_servers;
 	}
 
 	public function getPolicy()
