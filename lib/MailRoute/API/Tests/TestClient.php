@@ -1171,4 +1171,25 @@ class TestClient extends ClassTest
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
 	}
+
+	public function testDomainGetBlackList()
+	{
+		$x             = mt_rand(1, 9999);
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller   = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer   = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain     = $Customer->createDomain($x.'example.com');
+		$BlackList1 = $Domain->addToBlackList($x.'contact1@example.com');
+		$BlackList2 = $Domain->addToBlackList($x.'contact2@example.com');
+		$WhiteList  = $Domain->addToWhiteList($x.'contact3@example.com');
+		$result     = $Domain->getBlackList();
+		$this->assertEquals(get_class($result[0]), get_class($BlackList1));
+		$this->assertEquals($result[1]->getEmail(), $BlackList2->getEmail());
+		$this->assertEquals($result[1]->getWb(), 'b');
+		$this->assertEquals(count($result), 2);
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
 }

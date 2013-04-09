@@ -337,4 +337,18 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $this->fields['updated_at'];
 	}
 
+	protected $black_list;
+
+	/**
+	 * @return Wblist[]
+	 */
+	public function getBlackList()
+	{
+		if (empty($this->black_list))
+		{
+			$this->black_list = $this->getAPIClient()->API()->Wblist()->filter(array('wb' => 'b', 'domain' => $this->getId()))->fetchList();
+		}
+		return $this->black_list;
+	}
+
 }
