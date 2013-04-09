@@ -225,10 +225,16 @@ class Domain extends \MailRoute\API\ActiveEntity
 		$this->fields['deliveryport'] = $deliveryport;
 	}
 
+	/**
+	 * @return DomainAlias[]
+	 */
 	public function getDomainAliases()
 	{
-
-		return $this->fields['domain_aliases'];
+		if (empty($this->domain_aliases))
+		{
+			$this->domain_aliases = $this->getAPIClient()->API()->DomainAlias()->filter(array('domain' => $this->getId()))->fetchList();
+		}
+		return $this->domain_aliases;
 	}
 
 	public function getEmailAccounts()
