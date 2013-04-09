@@ -8,6 +8,7 @@ class Domain extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'domain';
 	protected $Customer;
+	protected $domain_aliases;
 
 	/**
 	 * @param Customer $Customer
@@ -226,6 +227,7 @@ class Domain extends \MailRoute\API\ActiveEntity
 
 	public function getDomainAliases()
 	{
+
 		return $this->fields['domain_aliases'];
 	}
 

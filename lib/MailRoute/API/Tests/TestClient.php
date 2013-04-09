@@ -306,7 +306,7 @@ class TestClient extends ClassTest
 		$this->assertTrueStrict($result);
 		/** @var Domain $FreshDomain */
 		$FreshDomain = $this->Client->API()->Domain()->get($Domain->getId());
-		$this->assertEquals($FreshDomain->getCustomer(), $Customer2->getResourceUri());
+		$this->assertEquals($FreshDomain->getCustomer()->getResourceUri(), $Customer2->getResourceUri());
 		$Domain->delete();
 		$Customer2->delete();
 		$Customer1->delete();
