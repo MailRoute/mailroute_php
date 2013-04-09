@@ -351,4 +351,18 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $this->black_list;
 	}
 
+	protected $white_list;
+
+	/**
+	 * @return Wblist[]
+	 */
+	public function getWhiteList()
+	{
+		if (empty($this->white_list))
+		{
+			$this->white_list = $this->getAPIClient()->API()->Wblist()->filter(array('wb' => 'w', 'domain' => $this->getId()))->fetchList();
+		}
+		return $this->white_list;
+	}
+
 }
