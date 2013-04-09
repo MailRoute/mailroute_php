@@ -11,7 +11,6 @@ class Reseller extends ActiveEntity
 	protected $fields = array();
 	/** @var Admins[] */
 	private $admins;
-	private $contacts;
 	private $customers;
 
 	/**
@@ -125,22 +124,7 @@ class Reseller extends ActiveEntity
 	 */
 	public function getContacts()
 	{
-		if (empty($this->contacts))
-		{
-			$Client         = $this->getAPIClient();
-			$this->contacts = array();
-			$contacts       = $Client->callAPI($this->getApiEntityResource().'/'.$this->getId().'/contacts', 'GET');
-			if (!empty($contacts['objects']))
-			{
-				foreach ($contacts['objects'] as $contact_data)
-				{
-					$Contact = new ContactReseller($Client);
-					$Contact->setAPIEntityFields($contact_data);
-					$this->contacts[] = $Contact;
-				}
-			}
-		}
-		return $this->contacts;
+		return parent::getContacts(new ContactReseller($this->getAPIClient()));
 	}
 
 	public function getCreatedAt()

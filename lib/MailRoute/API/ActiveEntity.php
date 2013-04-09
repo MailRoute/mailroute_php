@@ -9,6 +9,7 @@ abstract class ActiveEntity implements IActiveEntity
 	protected $fields = array();
 	protected $Client;
 	protected $BrandingInfo;
+	protected $contacts;
 
 	public function __construct(IClient $Client, array $data = array())
 	{
@@ -82,6 +83,26 @@ abstract class ActiveEntity implements IActiveEntity
 	protected function getId()
 	{
 		return $this->fields['id'];
+	}
+
+	protected function getContacts(ActiveEntity $ContactEntity)
+	{
+		if (empty($this->contacts))
+		{
+			$Client         = $this->getAPIClient();
+			$this->contacts = array();
+			$contacts       = $Client->callAPI($this->getApiEntityResource().'/'.$this->getId().'/contacts', 'GET');
+			if (!empty($contacts['objects']))
+			{
+				foreach ($contacts['objects'] as $contact_data)
+				{
+					$Contact = clone $ContactEntity;
+					$Contact->setAPIEntityFields($contact_data);
+					$this->contacts[] = $Contact;
+				}
+			}
+		}
+		return $this->contacts;
 	}
 
 	/**

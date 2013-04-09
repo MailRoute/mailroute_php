@@ -1,15 +1,15 @@
 <?php
 namespace MailRoute\API\Entity;
 
+use MailRoute\API\ActiveEntity;
 use MailRoute\API\ValidationException;
 
-class Customer extends \MailRoute\API\ActiveEntity
+class Customer extends ActiveEntity
 {
 	private $admins;
 	protected $api_entity_resource = 'customer';
 	protected $fields = array();
 	private $Reseller;
-	private $contacts;
 	private $domains;
 
 	/**
@@ -100,9 +100,12 @@ class Customer extends \MailRoute\API\ActiveEntity
 		return parent::getBrandingInfo();
 	}
 
+	/**
+	 * @return ContactCustomer[]
+	 */
 	public function getContacts()
 	{
-		return $this->fields['contacts'];
+		return parent::getContacts(new ContactCustomer($this->getAPIClient()));
 	}
 
 	public function getCreatedAt()

@@ -1029,4 +1029,22 @@ class TestClient extends ClassTest
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
 	}
+
+	public function testCustomerGetContacts()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$Customer->createContact('c1@example.com');
+		$Customer->createContact('c2@example.com');
+		$result = $Customer->getContacts();
+		$this->assertIsArray($result);
+		$this->assertIsObject($result[0]);
+		$this->assertEquals($result[1]->getEmail(), 'c2@example.com');
+		$result[0]->delete();
+		$result[1]->delete();
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
 }
