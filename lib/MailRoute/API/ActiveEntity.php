@@ -1,11 +1,14 @@
 <?php
 namespace MailRoute\API;
 
+use MailRoute\API\Entity\Brandinginfo;
+
 abstract class ActiveEntity implements IActiveEntity
 {
 	protected $api_entity_resource = '';
 	protected $fields = array();
 	protected $Client;
+	protected $BrandingInfo;
 
 	public function __construct(IClient $Client, array $data = array())
 	{
@@ -79,6 +82,23 @@ abstract class ActiveEntity implements IActiveEntity
 	protected function getId()
 	{
 		return $this->fields['id'];
+	}
+
+	/**
+	 * @return Brandinginfo
+	 */
+	protected function getBrandingInfo()
+	{
+		if (empty($this->BrandingInfo))
+		{
+			if (!empty($this->fields['branding_info']))
+			{
+				$data               = $this->getDataFromResourceURI($this->fields['branding_info']);
+				$BrandingInfo       = new Brandinginfo($this->getAPIClient(), $data);
+				$this->BrandingInfo = $BrandingInfo;
+			}
+		}
+		return $this->BrandingInfo;
 	}
 
 	protected function getDataFromResourceURI($URI)

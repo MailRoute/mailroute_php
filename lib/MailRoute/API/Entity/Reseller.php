@@ -1,11 +1,11 @@
 <?php
 namespace MailRoute\API\Entity;
 
-use MailRoute\API\Exception;
+use MailRoute\API\ActiveEntity;
 use MailRoute\API\NotFoundException;
 use MailRoute\API\ValidationException;
 
-class Reseller extends \MailRoute\API\ActiveEntity
+class Reseller extends ActiveEntity
 {
 	protected $api_entity_resource = 'reseller';
 	protected $fields = array();
@@ -13,12 +13,11 @@ class Reseller extends \MailRoute\API\ActiveEntity
 	private $admins;
 	private $contacts;
 	private $customers;
-	private $branding_info;
 
 	/**
 	 * @param $email
 	 * @param $send_welcome
-	 * @throws \MailRoute\API\Exception
+	 * @throws \MailRoute\API\ValidationException
 	 * @return Admins
 	 */
 	public function createAdmin($email, $send_welcome)
@@ -116,21 +115,9 @@ class Reseller extends \MailRoute\API\ActiveEntity
 		$this->fields['allow_customer_branding'] = $allow_customer_branding;
 	}
 
-	/**
-	 * @return Brandinginfo
-	 */
 	public function getBrandingInfo()
 	{
-		if (empty($this->branding_info))
-		{
-			if (!empty($this->fields['branding_info']))
-			{
-				$data                = $this->getDataFromResourceURI($this->fields['branding_info']);
-				$BrandingInfo        = new Brandinginfo($this->getAPIClient(), $data);
-				$this->branding_info = $BrandingInfo;
-			}
-		}
-		return $this->branding_info;
+		return parent::getBrandingInfo();
 	}
 
 	/**

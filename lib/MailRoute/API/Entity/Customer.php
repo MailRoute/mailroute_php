@@ -8,7 +8,7 @@ class Customer extends \MailRoute\API\ActiveEntity
 	private $admins;
 	protected $api_entity_resource = 'customer';
 	protected $fields = array();
-	private $reseller;
+	private $Reseller;
 	private $contacts;
 	private $domains;
 
@@ -97,7 +97,7 @@ class Customer extends \MailRoute\API\ActiveEntity
 
 	public function getBrandingInfo()
 	{
-		return $this->fields['branding_info'];
+		return parent::getBrandingInfo();
 	}
 
 	public function getContacts()
@@ -157,12 +157,12 @@ class Customer extends \MailRoute\API\ActiveEntity
 
 	public function getReseller()
 	{
-		if (empty($this->reseller))
+		if (empty($this->Reseller))
 		{
 			$data           = $this->getDataFromResourceURI($this->fields['reseller']);
-			$this->reseller = new Reseller($this->getAPIClient(), $data);
+			$this->Reseller = new Reseller($this->getAPIClient(), $data);
 		}
-		return $this->reseller;
+		return $this->Reseller;
 	}
 
 	public function setReseller($reseller)
