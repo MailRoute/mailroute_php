@@ -1099,4 +1099,22 @@ class TestClient extends ClassTest
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
 	}
+
+	public function testDomainGetEmailAccounts()
+	{
+		$x             = mt_rand(1, 9999);
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain   = $Customer->createDomain($x.'example.com');
+		$Domain->createEmailAccount($x.'lc');
+		$Domain->createEmailAccount($x.'lc2');
+		$result = $Domain->getEmailAccounts();
+		$this->assertInstanceOf($result[0], 'MailRoute\\API\\Entity\\EmailAccount');
+		$this->assertEquals($result[1]->getLocalpart(), $x.'lc2');
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
 }

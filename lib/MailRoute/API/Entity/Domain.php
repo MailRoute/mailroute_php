@@ -237,9 +237,18 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $this->domain_aliases;
 	}
 
+	protected $email_accounts;
+
+	/**
+	 * @return EmailAccount[]
+	 */
 	public function getEmailAccounts()
 	{
-		return $this->fields['email_accounts'];
+		if (empty($this->email_accounts))
+		{
+			$this->email_accounts = $this->getAPIClient()->API()->EmailAccount()->filter(array('domain' => $this->getId()))->fetchList();
+		}
+		return $this->email_accounts;
 	}
 
 	public function getHoldEmail()
