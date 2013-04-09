@@ -1,6 +1,7 @@
 <?php
 namespace MailRoute\API;
 
+use MailRoute\API\Entity\Admins;
 use MailRoute\API\Entity\Brandinginfo;
 
 abstract class ActiveEntity implements IActiveEntity
@@ -10,6 +11,7 @@ abstract class ActiveEntity implements IActiveEntity
 	protected $Client;
 	protected $BrandingInfo;
 	protected $contacts;
+	protected $admins;
 
 	public function __construct(IClient $Client, array $data = array())
 	{
@@ -83,6 +85,18 @@ abstract class ActiveEntity implements IActiveEntity
 	protected function getId()
 	{
 		return $this->fields['id'];
+	}
+
+	/**
+	 * @return Admins[]
+	 */
+	protected function getAdmins()
+	{
+		if ($this->admins===NULL)
+		{
+			$this->admins = $this->getAPIClient()->API()->Admins()->get($this->getApiEntityResource().'/'.$this->getId());
+		}
+		return $this->admins;
 	}
 
 	protected function getContacts(ActiveEntity $ContactEntity)

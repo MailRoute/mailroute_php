@@ -6,7 +6,6 @@ use MailRoute\API\ValidationException;
 
 class Customer extends ActiveEntity
 {
-	private $admins;
 	protected $api_entity_resource = 'customer';
 	protected $fields = array();
 	private $Reseller;
@@ -113,9 +112,28 @@ class Customer extends ActiveEntity
 		return $this->fields['created_at'];
 	}
 
+	/**
+	 * @return Domain[]
+	 */
 	public function getDomains()
 	{
-		return $this->fields['domains'];
+		if (empty($this->domains))
+		{
+			$Client        = $this->getAPIClient();
+			$this->domains = array();
+			$domains       = $Client->callAPI($this->getApiEntityResource().'/'.$this->getId().'/domains', 'GET');
+			if (!empty($domains['objects']))
+			{
+				foreach ($domains['objects'] as $domain_data)
+				{
+					$Domain = new Domain($this->getAPIClient());
+					$Domain->setAPIEntityFields($domain_data);
+					$this->domains[] = $Domain;
+				}
+			}
+		}
+		return $this->domains;
+		//return $this->fields['domains'];
 	}
 
 	public function getId()
@@ -178,15 +196,8 @@ class Customer extends ActiveEntity
 		return $this->fields['updated_at'];
 	}
 
-	/**
-	 * @return Admins[]
-	 */
 	public function getAdmins()
 	{
-		if ($this->admins===NULL)
-		{
-			$this->admins = $this->getAPIClient()->API()->Admins()->get($this->getApiEntityResource().'/'.$this->getId());
-		}
-		return $this->admins;
+		return parent::getAdmins();
 	}
 }

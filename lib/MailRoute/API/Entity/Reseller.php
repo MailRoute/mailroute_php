@@ -10,7 +10,6 @@ class Reseller extends ActiveEntity
 	protected $api_entity_resource = 'reseller';
 	protected $fields = array();
 	/** @var Admins[] */
-	private $admins;
 	private $customers;
 
 	/**
@@ -176,15 +175,8 @@ class Reseller extends ActiveEntity
 		return $this->fields['updated_at'];
 	}
 
-	/**
-	 * @return Admins[]
-	 */
 	public function getAdmins()
 	{
-		if ($this->admins===NULL)
-		{
-			$this->admins = $this->getAPIClient()->API()->Admins()->get($this->getApiEntityResource().'/'.$this->getId());
-		}
-		return $this->admins;
+		return parent::getAdmins();
 	}
 }
