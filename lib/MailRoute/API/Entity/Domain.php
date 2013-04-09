@@ -271,9 +271,18 @@ class Domain extends \MailRoute\API\ActiveEntity
 		$this->fields['id'] = $id;
 	}
 
+	protected $mail_servers;
+
+	/**
+	 * @return MailServer[]
+	 */
 	public function getMailServers()
 	{
-		return $this->fields['mail_servers'];
+		if (empty($this->mail_servers))
+		{
+			$this->mail_servers = $this->getAPIClient()->API()->MailServer()->filter(array('domain' => $this->getId()))->fetchList();
+		}
+		return $this->mail_servers;
 	}
 
 	public function getName()
