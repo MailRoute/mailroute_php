@@ -8,6 +8,9 @@ class Customer extends \MailRoute\API\ActiveEntity
 	private $admins;
 	protected $api_entity_resource = 'customer';
 	protected $fields = array();
+	private $reseller;
+	private $contacts;
+	private $domains;
 
 	/**
 	 * @param string $name
@@ -154,7 +157,12 @@ class Customer extends \MailRoute\API\ActiveEntity
 
 	public function getReseller()
 	{
-		return $this->fields['reseller'];
+		if (empty($this->reseller))
+		{
+			$data           = $this->getDataFromResourceURI($this->fields['reseller']);
+			$this->reseller = new Reseller($this->getAPIClient(), $data);
+		}
+		return $this->reseller;
 	}
 
 	public function setReseller($reseller)

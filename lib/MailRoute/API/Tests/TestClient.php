@@ -1004,4 +1004,17 @@ class TestClient extends ClassTest
 		$this->assertIsObject($result);
 		$Reseller->delete();
 	}
+
+	public function testCustomerGetReseller()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$result   = $Customer->getReseller();
+		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\Reseller');
+		$this->assertEquals($result->getName(), $reseller_name);
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
 }
