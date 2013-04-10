@@ -9,6 +9,13 @@ class Domain extends \MailRoute\API\ActiveEntity
 	protected $api_entity_resource = 'domain';
 	protected $Customer;
 	protected $domain_aliases;
+	protected $email_accounts;
+	protected $mail_servers;
+	protected $NotificationTask;
+	protected $outbound_servers;
+	protected $Policy;
+	protected $black_list;
+	protected $white_list;
 
 	/**
 	 * @param Customer $Customer
@@ -49,6 +56,11 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $deleted;
 	}
 
+	public function getId()
+	{
+		return $this->fields['id'];
+	}
+
 	/**
 	 * @param string $server mailServer FQDN or IP address
 	 * @param int $priority  mail server priority
@@ -73,24 +85,6 @@ class Domain extends \MailRoute\API\ActiveEntity
 		$OutboundServer->setServer($server);
 		$OutboundServer->setDomain($this->getResourceUri());
 		return $this->getAPIClient()->API()->OutboundServer()->create($OutboundServer);
-	}
-
-	/**
-	 * @param string $localpart the localpart of the email address
-	 * @param string $create_opt
-	 * @param string $password
-	 * @param bool $send_welcome
-	 * @return EmailAccount
-	 */
-	public function createEmailAccount($localpart, $create_opt = 'generate_pwd', $password = '', $send_welcome = false)
-	{
-		$EmailAccount = new EmailAccount($this->getAPIClient());
-		$EmailAccount->setLocalpart($localpart);
-		$EmailAccount->setCreateOpt($create_opt);
-		$EmailAccount->setPassword($password);
-		$EmailAccount->setSendWelcome($send_welcome);
-		$EmailAccount->setDomain($this->getResourceUri());
-		return $this->getAPIClient()->API()->EmailAccount()->create($EmailAccount);
 	}
 
 	/**
@@ -120,6 +114,24 @@ class Domain extends \MailRoute\API\ActiveEntity
 			}
 		}
 		return $results;
+	}
+
+	/**
+	 * @param string $localpart the localpart of the email address
+	 * @param string $create_opt
+	 * @param string $password
+	 * @param bool $send_welcome
+	 * @return EmailAccount
+	 */
+	public function createEmailAccount($localpart, $create_opt = 'generate_pwd', $password = '', $send_welcome = false)
+	{
+		$EmailAccount = new EmailAccount($this->getAPIClient());
+		$EmailAccount->setLocalpart($localpart);
+		$EmailAccount->setCreateOpt($create_opt);
+		$EmailAccount->setPassword($password);
+		$EmailAccount->setSendWelcome($send_welcome);
+		$EmailAccount->setDomain($this->getResourceUri());
+		return $this->getAPIClient()->API()->EmailAccount()->create($EmailAccount);
 	}
 
 	/**
@@ -240,8 +252,6 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $this->domain_aliases;
 	}
 
-	protected $email_accounts;
-
 	/**
 	 * @return EmailAccount[]
 	 */
@@ -264,17 +274,10 @@ class Domain extends \MailRoute\API\ActiveEntity
 		$this->fields['hold_email'] = $hold_email;
 	}
 
-	public function getId()
-	{
-		return $this->fields['id'];
-	}
-
 	public function setId($id)
 	{
 		$this->fields['id'] = $id;
 	}
-
-	protected $mail_servers;
 
 	/**
 	 * @return MailServer[]
@@ -297,8 +300,6 @@ class Domain extends \MailRoute\API\ActiveEntity
 	{
 		$this->fields['name'] = $name;
 	}
-
-	protected $NotificationTask;
 
 	/**
 	 * @return NotificationDomainTask
@@ -323,8 +324,6 @@ class Domain extends \MailRoute\API\ActiveEntity
 		$this->fields['outbound_enabled'] = $outbound_enabled;
 	}
 
-	protected $outbound_servers;
-
 	/**
 	 * @return OutboundServer[]
 	 */
@@ -336,8 +335,6 @@ class Domain extends \MailRoute\API\ActiveEntity
 		}
 		return $this->outbound_servers;
 	}
-
-	protected $Policy;
 
 	public function getPolicy()
 	{
@@ -354,8 +351,6 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $this->fields['updated_at'];
 	}
 
-	protected $black_list;
-
 	/**
 	 * @return Wblist[]
 	 */
@@ -367,8 +362,6 @@ class Domain extends \MailRoute\API\ActiveEntity
 		}
 		return $this->black_list;
 	}
-
-	protected $white_list;
 
 	/**
 	 * @return Wblist[]

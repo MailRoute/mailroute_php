@@ -23,7 +23,7 @@ class TestClient extends ClassTest
 	{
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
-		//$this->skipAllExceptLast();
+		$this->skipAllExceptLast();
 	}
 
 	public function testGetRootSchema()
@@ -829,7 +829,6 @@ class TestClient extends ClassTest
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
-
 	}
 
 	public function testEmailAccountCreate()

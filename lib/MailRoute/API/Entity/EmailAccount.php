@@ -1,13 +1,18 @@
 <?php
 namespace MailRoute\API\Entity;
 
+use MailRoute\API\ActiveEntity;
 use MailRoute\API\NotFoundException;
 
-class EmailAccount extends \MailRoute\API\ActiveEntity
+class EmailAccount extends ActiveEntity
 {
 	protected $api_entity_resource = 'email_account';
 	protected $fields = array();
 	protected $PolicyUser;
+	protected $Contact;
+	protected $NotificationTask;
+	protected $black_list;
+	protected $white_list;
 
 	/**
 	 * @param $localpart
@@ -29,6 +34,11 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 	{
 		$result = $this->getAPIClient()->callAPI($this->getApiEntityResource().'/'.$this->getId().'/mass_add_aliases/', 'POST', $localparts);
 		return ($result!==false);
+	}
+
+	public function getId()
+	{
+		return $this->fields['id'];
 	}
 
 	/**
@@ -83,6 +93,19 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 		return true;
 	}
 
+	/**
+	 * @return PolicyUser
+	 */
+	public function getPolicy()
+	{
+		if (empty($this->PolicyUser) && !empty($this->fields['policy']))
+		{
+			$policy_data      = $this->getDataFromResourceURI($this->fields['policy']);
+			$this->PolicyUser = new PolicyUser($this->getAPIClient(), $policy_data);
+		}
+		return $this->PolicyUser;
+	}
+
 	public function useSelfPolicy()
 	{
 		$Policy = $this->getPolicy();
@@ -117,6 +140,11 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 		}
 	}
 
+	public function getDomain()
+	{
+		return parent::getDomain();
+	}
+
 	public function useDomainNotification()
 	{
 		$NotificationTask = $this->getNotificationTask();
@@ -126,6 +154,16 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 			return $NotificationTask->save();
 		}
 		return true;
+	}
+
+	public function getNotificationTask()
+	{
+		if (empty($this->NotificationTask) && !empty($this->fields['notification_task']))
+		{
+			$data                   = $this->getDataFromResourceURI($this->fields['notification_task']);
+			$this->NotificationTask = new NotificationAccountTask($this->getAPIClient(), $data);
+		}
+		return $this->NotificationTask;
 	}
 
 	public function useSelfNotification()
@@ -187,6 +225,30 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 		}
 	}
 
+	/**
+	 * @return Wblist[]
+	 */
+	public function getBlackList()
+	{
+		if (empty($this->black_list))
+		{
+			$this->black_list = $this->getAPIClient()->API()->Wblist()->filter(array('wb' => 'b', 'email_account' => $this->getId()))->fetchList();
+		}
+		return $this->black_list;
+	}
+
+	/**
+	 * @return Wblist[]
+	 */
+	public function getWhiteList()
+	{
+		if (empty($this->white_list))
+		{
+			$this->white_list = $this->getAPIClient()->API()->Wblist()->filter(array('wb' => 'w', 'email_account' => $this->getId()))->fetchList();
+		}
+		return $this->white_list;
+	}
+
 	public function getChangePwd()
 	{
 		return $this->fields['change_pwd'];
@@ -207,11 +269,6 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 		$this->fields['confirm_password'] = $confirm_password;
 	}
 
-	public function getContact()
-	{
-		return $this->fields['contact'];
-	}
-
 	public function getCreateOpt()
 	{
 		return $this->fields['create_opt'];
@@ -227,19 +284,9 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 		return $this->fields['created_at'];
 	}
 
-	public function getDomain()
-	{
-		return parent::getDomain();
-	}
-
 	public function setDomain($domain)
 	{
 		$this->fields['domain'] = $domain;
-	}
-
-	public function getId()
-	{
-		return $this->fields['id'];
 	}
 
 	public function setId($id)
@@ -260,18 +307,6 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 	public function getLocalpartAliases()
 	{
 		return $this->fields['localpart_aliases'];
-	}
-
-	protected $NotificationTask;
-
-	public function getNotificationTask()
-	{
-		if (empty($this->NotificationTask) && !empty($this->fields['notification_task']))
-		{
-			$data                   = $this->getDataFromResourceURI($this->fields['notification_task']);
-			$this->NotificationTask = new NotificationAccountTask($this->getAPIClient(), $data);
-		}
-		return $this->NotificationTask;
 	}
 
 	public function setPassword($password)
@@ -302,19 +337,6 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 	public function getUpdatedAt()
 	{
 		return $this->fields['updated_at'];
-	}
-
-	/**
-	 * @return PolicyUser
-	 */
-	public function getPolicy()
-	{
-		if (empty($this->PolicyUser) && !empty($this->fields['policy']))
-		{
-			$policy_data      = $this->getDataFromResourceURI($this->fields['policy']);
-			$this->PolicyUser = new PolicyUser($this->getAPIClient(), $policy_data);
-		}
-		return $this->PolicyUser;
 	}
 
 	public function massDelete(array $id_list)
