@@ -4,6 +4,7 @@ namespace MailRoute\API;
 use MailRoute\API\Entity\Admins;
 use MailRoute\API\Entity\Brandinginfo;
 use MailRoute\API\Entity\Domain;
+use MailRoute\API\Entity\EmailAccount;
 
 abstract class ActiveEntity implements IActiveEntity
 {
@@ -14,6 +15,7 @@ abstract class ActiveEntity implements IActiveEntity
 	protected $contacts;
 	protected $admins;
 	protected $Domain;
+	protected $EmailAccount;
 
 	public function __construct(IClient $Client, array $data = array())
 	{
@@ -162,5 +164,15 @@ abstract class ActiveEntity implements IActiveEntity
 	{
 		return $this->Client->callAPI($this->getApiEntityResource().
 				'/mass_delete/?id__in='.implode(',', $id_list), 'DELETE');
+	}
+
+	protected function getEmailAccount()
+	{
+		if (empty($this->EmailAccount) && !empty($this->fields['email_account']))
+		{
+			$data               = $this->getDataFromResourceURI($this->fields['email_account']);
+			$this->EmailAccount = new EmailAccount($this->getAPIClient(), $data);
+		}
+		return $this->EmailAccount;
 	}
 }

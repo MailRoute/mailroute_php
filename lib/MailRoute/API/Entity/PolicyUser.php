@@ -17,6 +17,6 @@ class PolicyUser extends Policy
 
 	public function getEmailAccount()
 	{
-		return $this->fields['email_account'];
+		return parent::getEmailAccount();
 	}
 }

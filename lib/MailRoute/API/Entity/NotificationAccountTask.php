@@ -8,7 +8,7 @@ class NotificationAccountTask extends \MailRoute\API\ActiveEntity
 
 	public function getEmailAccount()
 	{
-		return $this->fields['email_account'];
+		return parent::getEmailAccount();
 	}
 
 	public function getEnabled()

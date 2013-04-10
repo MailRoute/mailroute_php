@@ -24,7 +24,6 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		//$this->skipAllExceptLast();
-
 	}
 
 	public function testGetRootSchema()
@@ -482,7 +481,7 @@ class TestClient extends ClassTest
 		$result       = $EmailAccount->addAlias($localpart.'alias');
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getLocalpart(), $localpart.'alias');
-		$this->assertEquals($result->getEmailAccount(), $EmailAccount->getResourceUri());
+		$this->assertEquals($result->getEmailAccount()->getId(), $EmailAccount->getId());
 		$this->assertTrue($result->delete());
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
@@ -526,7 +525,7 @@ class TestClient extends ClassTest
 		$result            = $EmailAccount->addToBlackList($blacklisted_email);
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getEmail(), $blacklisted_email);
-		$this->assertEquals($result->getEmailAccount(), $EmailAccount->getResourceUri());
+		$this->assertEquals($result->getEmailAccount()->getResourceUri(), $EmailAccount->getResourceUri());
 		$this->assertTrue($result->delete());
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
@@ -548,7 +547,7 @@ class TestClient extends ClassTest
 		$result            = $EmailAccount->addToWhiteList($whitelisted_email);
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getEmail(), $whitelisted_email);
-		$this->assertEquals($result->getEmailAccount(), $EmailAccount->getResourceUri());
+		$this->assertEquals($result->getEmailAccount()->getResourceUri(), $EmailAccount->getResourceUri());
 		$this->assertTrue($result->delete());
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
