@@ -8,7 +8,7 @@ class Wblist extends \MailRoute\API\ActiveEntity
 
 	public function getDomain()
 	{
-		return $this->fields['domain'];
+		return parent::getDomain();
 	}
 
 	public function setDomain($domain)

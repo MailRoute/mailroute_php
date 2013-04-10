@@ -844,12 +844,12 @@ class TestClient extends ClassTest
 		$result = $this->Client->API()->EmailAccount()->create(array('email' => 'email@'.$domain_name));
 		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\EmailAccount');
 		$this->assertEquals($result->getLocalpart(), 'email');
-		$this->assertEquals($result->getDomain(), $Domain->getResourceUri());
+		$this->assertEquals($result->getDomain()->getResourceUri(), $Domain->getResourceUri());
 
 		$result = $this->Client->API()->EmailAccount()->create(array('email' => 'email2@example.com', 'domain' => $Domain->getResourceUri()));
 		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\EmailAccount');
 		$this->assertEquals($result->getLocalpart(), 'email2');
-		$this->assertEquals($result->getDomain(), $Domain->getResourceUri());
+		$this->assertEquals($result->getDomain()->getResourceUri(), $Domain->getResourceUri());
 
 		try
 		{
