@@ -23,7 +23,7 @@ class TestClient extends ClassTest
 	{
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
-		$this->skipAllExceptLast();
+		//$this->skipAllExceptLast();
 	}
 
 	public function testGetRootSchema()
@@ -1256,6 +1256,29 @@ class TestClient extends ClassTest
 		$this->assertInstanceOf($result, get_class($Domain));
 		$this->assertEquals($result->getName(), $x.'example.com');
 		$Alias->delete();
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testEmailAccountGetBlackList()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
+		$EmailAccount = $Domain->createEmailAccount($localpart);
+		$EmailAccount->addToBlackList('bl1@example.com');
+		$EmailAccount->addToBlackList('bl2@example.com');
+		$result = $EmailAccount->getBlackList();
+		$this->assertIsArray($result);
+		$this->assertEquals(count($result), 2);
+		$this->assertIsObject($result[0]);
+		$this->assertEquals($result[1]->getEmail(), 'bl2@example.com');
+		$this->assertEquals($result[1]->getWb(), 'b');
+		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
