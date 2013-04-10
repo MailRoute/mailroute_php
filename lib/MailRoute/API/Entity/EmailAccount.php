@@ -7,6 +7,7 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'email_account';
 	protected $fields = array();
+	protected $PolicyUser;
 
 	/**
 	 * @param $localpart
@@ -73,7 +74,7 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 
 	public function useDomainPolicy()
 	{
-		$Policy = $this->getAccountPolicy();
+		$Policy = $this->getPolicy();
 		if (!$Policy->getUseDomainPolicy())
 		{
 			$Policy->setUseDomainPolicy(true);
@@ -84,7 +85,7 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 
 	public function useSelfPolicy()
 	{
-		$Policy = $this->getAccountPolicy();
+		$Policy = $this->getPolicy();
 		if ($Policy->getUseDomainPolicy())
 		{
 			$Policy->setUseDomainPolicy(false);
@@ -103,7 +104,7 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 	 */
 	public function getActivePolicy()
 	{
-		$AccountPolicy = $this->getAccountPolicy();
+		$AccountPolicy = $this->getPolicy();
 		if (!$AccountPolicy->getUseDomainPolicy())
 		{
 			return $AccountPolicy;
@@ -118,7 +119,7 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 
 	public function useDomainNotification()
 	{
-		$NotificationTask = $this->getNotificationAccountTaskObject();
+		$NotificationTask = $this->getNotificationTask();
 		if (!$NotificationTask->getEnableDefault())
 		{
 			$NotificationTask->setEnableDefault(1);
@@ -129,7 +130,7 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 
 	public function useSelfNotification()
 	{
-		$NotificationTask = $this->getNotificationAccountTaskObject();
+		$NotificationTask = $this->getNotificationTask();
 		if ($NotificationTask->getEnableDefault())
 		{
 			$NotificationTask->setEnableDefault(0);
@@ -143,7 +144,7 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 	 */
 	public function getActiveNotification()
 	{
-		$NotificationTask = $this->getNotificationAccountTaskObject();
+		$NotificationTask = $this->getNotificationTask();
 		if ($NotificationTask->getEnableDefault())
 		{
 			$Domain           = $this->getDomain();
@@ -261,19 +262,21 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 		return $this->fields['localpart_aliases'];
 	}
 
+	protected $NotificationTask;
+
 	public function getNotificationTask()
 	{
-		return $this->fields['notification_task'];
+		if (empty($this->NotificationTask) && !empty($this->fields['notification_task']))
+		{
+			$data                   = $this->getDataFromResourceURI($this->fields['notification_task']);
+			$this->NotificationTask = new NotificationAccountTask($this->getAPIClient(), $data);
+		}
+		return $this->NotificationTask;
 	}
 
 	public function setPassword($password)
 	{
 		$this->fields['password'] = $password;
-	}
-
-	public function getPolicy()
-	{
-		return $this->fields['policy'];
 	}
 
 	public function getPriority()
@@ -304,22 +307,14 @@ class EmailAccount extends \MailRoute\API\ActiveEntity
 	/**
 	 * @return PolicyUser
 	 */
-	protected function getAccountPolicy()
+	public function getPolicy()
 	{
-		$Client      = $this->getAPIClient();
-		$policy_data = $this->getDataFromResourceURI($this->getPolicy());
-		$Policy      = new PolicyUser($Client, $policy_data);
-		return $Policy;
-	}
-
-	/**
-	 * @return NotificationAccountTask
-	 */
-	protected function getNotificationAccountTaskObject()
-	{
-		$notification_data = $this->getDataFromResourceURI($this->getNotificationTask());
-		$NotificationTask  = new NotificationAccountTask($this->getAPIClient(), $notification_data);
-		return $NotificationTask;
+		if (empty($this->PolicyUser) && !empty($this->fields['policy']))
+		{
+			$policy_data      = $this->getDataFromResourceURI($this->fields['policy']);
+			$this->PolicyUser = new PolicyUser($this->getAPIClient(), $policy_data);
+		}
+		return $this->PolicyUser;
 	}
 
 	public function massDelete(array $id_list)

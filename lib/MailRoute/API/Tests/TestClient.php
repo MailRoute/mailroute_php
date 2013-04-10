@@ -734,7 +734,7 @@ class TestClient extends ClassTest
 		$this->assertTrue($result);
 		/** @var EmailAccount $EmailAccount */
 		$Policy    = new PolicyUser($this->Client);
-		$policy_id = trim(substr($EmailAccount->getPolicy(), strlen($this->Client->getAPIPathPrefix())+strlen($Policy->getApiEntityResource())), '/');
+		$policy_id = $EmailAccount->getPolicy()->getId();
 		/** @var PolicyUser $Policy */
 		$Policy = $this->Client->API()->PolicyUser()->get($policy_id);
 		$this->assertTrue($Policy->getUseDomainPolicy());
@@ -773,7 +773,7 @@ class TestClient extends ClassTest
 		$this->assertTrue($result);
 		/** @var EmailAccount $EmailAccount */
 		$Policy    = new PolicyUser($this->Client);
-		$policy_id = trim(substr($EmailAccount->getPolicy(), strlen($this->Client->getAPIPathPrefix())+strlen($Policy->getApiEntityResource())), '/');
+		$policy_id = $EmailAccount->getPolicy()->getId();
 		/** @var PolicyUser $Policy */
 		$Policy = $this->Client->API()->PolicyUser()->get($policy_id);
 		$this->assertTrue(!$Policy->getUseDomainPolicy());
