@@ -1292,7 +1292,20 @@ class TestClient extends ClassTest
 		$Contact  = $Reseller->createContact('c@example.com');
 		$result   = $Contact->getReseller();
 		$this->assertEquals($result->getResourceUri(), $Reseller->getResourceUri());
+		$Contact->delete();
+		$Reseller->delete();
+	}
 
+	public function testContactCustomerGetCustomer()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
+		$Contact  = $Customer->createContact('x@example.com');
+		$result   = $Contact->getCustomer();
+		$this->assertEquals($result->getResourceUri(), $Customer->getResourceUri());
+		$Customer->delete();
 		$Reseller->delete();
 	}
 }
