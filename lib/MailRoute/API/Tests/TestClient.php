@@ -729,7 +729,7 @@ class TestClient extends ClassTest
 		}
 		$this->assertTrue($result);
 		$SelfPolicy = $EmailAccount->getPolicy();
-		$this->assertTrue(!$SelfPolicy->getUseDomainPolicy());
+		$this->assertTrue($SelfPolicy->getUseDomainPolicy());
 		$Policy = $EmailAccount->getActivePolicy();
 		$this->assertEquals($Policy->getResourceUri(), $Domain->getPolicy()->getResourceUri());
 		$this->assertInstanceOf($Policy, 'MailRoute\\API\\Entity\\PolicyDomain');
@@ -966,7 +966,6 @@ class TestClient extends ClassTest
 
 		$this->assertTrue($Policy->setAntiSpamMode(AntiSpamMode::lenient));
 
-		$this->assertTrue($Policy->delete());
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
