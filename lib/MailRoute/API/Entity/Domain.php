@@ -11,7 +11,7 @@ class Domain extends \MailRoute\API\ActiveEntity
 	protected $domain_aliases;
 	protected $email_accounts;
 	protected $mail_servers;
-	protected $NotificationTask;
+	protected $notification_tasks;
 	protected $outbound_servers;
 	protected $Policy;
 	protected $black_list;
@@ -302,16 +302,19 @@ class Domain extends \MailRoute\API\ActiveEntity
 	}
 
 	/**
-	 * @return NotificationDomainTask
+	 * @return NotificationDomainTask[]
 	 */
-	public function getNotificationTask()
+	public function getNotificationTasks()
 	{
-		if (empty($this->NotificationTask))
+		if (empty($this->notification_tasks) && !empty($this->fields['notification_tasks']))
 		{
-			$data                   = $this->getDataFromResourceURI($this->fields['notification_task']);
-			$this->NotificationTask = new NotificationDomainTask($this->getAPIClient(), $data);
+			foreach ($this->fields['notification_tasks'] as $data_uri)
+			{
+				$data                       = $this->getDataFromResourceURI($data_uri);
+				$this->notification_tasks[] = new NotificationDomainTask($this->getAPIClient(), $data);
+			}
 		}
-		return $this->NotificationTask;
+		return $this->notification_tasks;
 	}
 
 	public function getOutboundEnabled()

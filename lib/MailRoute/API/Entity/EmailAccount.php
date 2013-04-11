@@ -10,9 +10,10 @@ class EmailAccount extends ActiveEntity
 	protected $fields = array();
 	protected $PolicyUser;
 	protected $Contact;
-	protected $NotificationTask;
+	protected $notification_tasks;
 	protected $black_list;
 	protected $white_list;
+	protected $localpart_aliases;
 
 	/**
 	 * @param $localpart
@@ -32,7 +33,7 @@ class EmailAccount extends ActiveEntity
 	 */
 	public function bulkAddAlias(array $localparts)
 	{
-		$result = $this->getAPIClient()->callAPI($this->getApiEntityResource().'/'.$this->getId().'/mass_add_aliases/', 'POST', $localparts);
+		$result = $this->getAPIClient()->callAPI($this->getApiEntityResource().'/'.$this->getId().'/mass_add_aliases/', 'POST', array('aliases' => $localparts));
 		return ($result!==false);
 	}
 
@@ -145,54 +146,58 @@ class EmailAccount extends ActiveEntity
 		return parent::getDomain();
 	}
 
-	public function useDomainNotification()
+	public function useDomainNotifications()
 	{
-		$NotificationTask = $this->getNotificationTask();
-		if (!$NotificationTask->getEnableDefault())
+		if (empty($this->fields['use_domain_notifications']))
 		{
-			$NotificationTask->setEnableDefault(1);
-			return $NotificationTask->save();
+			$this->fields['use_domain_notifications'] = 1;
+			return $this->save();
 		}
 		return true;
 	}
 
-	public function getNotificationTask()
+	public function useSelfNotifications()
 	{
-		if (empty($this->NotificationTask) && !empty($this->fields['notification_task']))
+		if (!empty($this->fields['use_domain_notifications']))
 		{
-			$data                   = $this->getDataFromResourceURI($this->fields['notification_task']);
-			$this->NotificationTask = new NotificationAccountTask($this->getAPIClient(), $data);
-		}
-		return $this->NotificationTask;
-	}
-
-	public function useSelfNotification()
-	{
-		$NotificationTask = $this->getNotificationTask();
-		if ($NotificationTask->getEnableDefault())
-		{
-			$NotificationTask->setEnableDefault(0);
-			return $NotificationTask->save();
+			$this->fields['use_domain_notifications'] = 0;
+			return $this->save();
 		}
 		return true;
 	}
 
 	/**
-	 * @return NotificationAccountTask|NotificationDomainTask
+	 * @return NotificationAccountTask[]|NotificationDomainTask[]
 	 */
-	public function getActiveNotification()
+	public function getActiveNotificationTasks()
 	{
-		$NotificationTask = $this->getNotificationTask();
-		if ($NotificationTask->getEnableDefault())
+		if ($this->fields['use_domain_notifications'])
 		{
-			$Domain           = $this->getDomain();
-			$NotificationTask = $Domain->getNotificationTask();
-			return $NotificationTask;
+			$Domain             = $this->getDomain();
+			$notification_tasks = $Domain->getNotificationTasks();
+			return $notification_tasks;
 		}
 		else
 		{
-			return $NotificationTask;
+			return $this->getNotificationTasks();
 		}
+	}
+
+	/**
+	 * @return NotificationAccountTask[]
+	 */
+	public function getNotificationTasks()
+	{
+		if (empty($this->notification_tasks) && !empty($this->fields['notification_tasks']))
+		{
+			$data_list = $this->fields['notification_tasks'];
+			foreach ($data_list as $data_uri)
+			{
+				$data                       = $this->getDataFromResourceURI($data_uri);
+				$this->notification_tasks[] = new NotificationAccountTask($this->getAPIClient(), $data);
+			}
+		}
+		return $this->notification_tasks;
 	}
 
 	public function parseCreateData(&$data)
@@ -304,9 +309,16 @@ class EmailAccount extends ActiveEntity
 		$this->fields['localpart'] = $localpart;
 	}
 
+	/**
+	 * @return LocalpartAlias[]
+	 */
 	public function getLocalpartAliases()
 	{
-		return $this->fields['localpart_aliases'];
+		if (empty($this->localpart_aliases))
+		{
+			$this->localpart_aliases = $this->getAPIClient()->API()->LocalpartAlias()->filter(array('email_account' => $this->getId()))->fetchList();
+		}
+		return $this->localpart_aliases;
 	}
 
 	public function setPassword($password)

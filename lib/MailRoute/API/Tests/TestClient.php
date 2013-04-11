@@ -7,7 +7,6 @@ use MailRoute\API\Entity\ContactReseller;
 use MailRoute\API\Entity\Customer;
 use MailRoute\API\Entity\Domain;
 use MailRoute\API\Entity\EmailAccount;
-use MailRoute\API\Entity\PolicyUser;
 use MailRoute\API\Entity\Reseller;
 use MailRoute\API\Exception;
 use MailRoute\API\IActiveEntity;
@@ -24,6 +23,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		//$this->skipAllExceptLast();
+		$this->skipTest('testEmailAccountUseDomainNotification');
 	}
 
 	public function testGetRootSchema()
@@ -58,7 +58,7 @@ class TestClient extends ClassTest
 		$this->assertTrue(count($result)==5)->addCommentary(print_r($result, 1));
 		foreach ($resellers as $Reseller)
 		{
-			$Reseller->delete();
+			$this->assertTrue($Reseller->delete());
 		}
 	}
 
@@ -71,7 +71,7 @@ class TestClient extends ClassTest
 		$this->assertEquals($Reseller->getName(), $reseller_name);
 		$result = $this->Client->API()->Reseller()->filter(array('name' => $reseller_name))->fetchList();
 		$this->assertIsArray($result);
-		$Reseller->delete();
+		$this->assertTrue($Reseller->delete());
 	}
 
 	public function testContactResellerPOST()
@@ -86,7 +86,8 @@ class TestClient extends ClassTest
 		$ContactReseller = $this->Client->API()->ContactReseller()->create($Item);
 		$this->assertTrue(is_object($ContactReseller));
 		$this->assertEquals($ContactReseller->getEmail(), $email);
-		$ContactReseller->delete();
+		$this->assertTrue($ContactReseller->delete());
+		$this->assertTrue($Reseller->delete());
 	}
 
 	public function testResellerDELETE()
@@ -138,7 +139,7 @@ class TestClient extends ClassTest
 		}
 		$Reseller = $this->Client->API()->Reseller()->get($Reseller->getId());
 		$this->assertEquals($Reseller->getName(), $reseller_name.'_saved', true);
-		$Reseller->delete();
+		$this->assertTrue($Reseller->delete());
 	}
 
 	public function testSearch()
@@ -156,7 +157,7 @@ class TestClient extends ClassTest
 		$this->assertIsObject($result[0]);
 		foreach ($resellers as $Reseller)
 		{
-			$Reseller->delete();
+			$this->assertTrue($Reseller->delete());
 		}
 	}
 
@@ -307,10 +308,10 @@ class TestClient extends ClassTest
 		/** @var Domain $FreshDomain */
 		$FreshDomain = $this->Client->API()->Domain()->get($Domain->getId());
 		$this->assertEquals($FreshDomain->getCustomer()->getResourceUri(), $Customer2->getResourceUri());
-		$Domain->delete();
-		$Customer2->delete();
-		$Customer1->delete();
-		$Reseller->delete();
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer2->delete());
+		$this->assertTrue($Customer1->delete());
+		$this->assertTrue($Reseller->delete());
 	}
 
 	public function testDomainCreateContact()
@@ -505,6 +506,13 @@ class TestClient extends ClassTest
 		}
 		$result = $EmailAccount->bulkAddAlias($aliases);
 		$this->assertTrueStrict($result);
+		$aliases = $EmailAccount->getLocalpartAliases();
+		$this->assertIsObject($aliases[0]);
+		foreach ($aliases as $Alias)
+		{
+			$this->assertEquals($Alias->getEmailAccount()->getResourceUri(), $EmailAccount->getResourceUri());
+			$this->assertTrue($Alias->delete());
+		}
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
@@ -553,27 +561,6 @@ class TestClient extends ClassTest
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
-	}
-
-	public function testPolicyDomainGetDefaultPolicy()
-	{
-		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
-		/** @var Reseller $Reseller */
-		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
-		$Customer     = $Reseller->createCustomer('customer'.$reseller_name);
-		$Domain       = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
-		$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
-		$EmailAccount = $Domain->createEmailAccount($localpart);
-		$EmailAccount->useDomainPolicy();
-		/** @var EmailAccount $EmailAccount */
-		$EmailAccount = $this->Client->API()->EmailAccount()->get($EmailAccount->getId());
-		$Policy       = $EmailAccount->getActivePolicy();
-		$result       = $Policy->getDefaultPolicy();
-		$this->assertIsObject($result);
-		$EmailAccount->delete();
-		$Domain->delete();
-		$Customer->delete();
-		$Reseller->delete();
 	}
 
 	public function testEmailAccountMakeAliasesFrom()
@@ -732,12 +719,11 @@ class TestClient extends ClassTest
 			return false;
 		}
 		$this->assertTrue($result);
-		/** @var EmailAccount $EmailAccount */
-		$Policy    = new PolicyUser($this->Client);
-		$policy_id = $EmailAccount->getPolicy()->getId();
-		/** @var PolicyUser $Policy */
-		$Policy = $this->Client->API()->PolicyUser()->get($policy_id);
-		$this->assertTrue($Policy->getUseDomainPolicy());
+		$SelfPolicy = $EmailAccount->getPolicy();
+		$this->assertTrue(!$SelfPolicy->getUseDomainPolicy());
+		$Policy = $EmailAccount->getActivePolicy();
+		$this->assertEquals($Policy->getResourceUri(), $Domain->getPolicy()->getResourceUri());
+		$this->assertInstanceOf($Policy, 'MailRoute\\API\\Entity\\PolicyDomain');
 
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
@@ -771,12 +757,11 @@ class TestClient extends ClassTest
 			return false;
 		}
 		$this->assertTrue($result);
-		/** @var EmailAccount $EmailAccount */
-		$Policy    = new PolicyUser($this->Client);
-		$policy_id = $EmailAccount->getPolicy()->getId();
-		/** @var PolicyUser $Policy */
-		$Policy = $this->Client->API()->PolicyUser()->get($policy_id);
-		$this->assertTrue(!$Policy->getUseDomainPolicy());
+		$SelfPolicy = $EmailAccount->getPolicy();
+		$this->assertTrue(!$SelfPolicy->getUseDomainPolicy());
+		$Policy = $EmailAccount->getActivePolicy();
+		$this->assertTrue($Policy->getResourceUri()!=$Domain->getPolicy()->getResourceUri());
+		$this->assertInstanceOf($Policy, 'MailRoute\\API\\Entity\\PolicyUser');
 
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
@@ -798,6 +783,7 @@ class TestClient extends ClassTest
 		$EmailAccount->useDomainPolicy();
 		$result = $EmailAccount->getActivePolicy();
 		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\PolicyDomain');
+		$this->assertEquals($result->getResourceUri(), $Domain->getPolicy()->getResourceUri());
 		$EmailAccount->useSelfPolicy();
 		$result = $EmailAccount->getActivePolicy();
 		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\PolicyUser');
@@ -817,13 +803,15 @@ class TestClient extends ClassTest
 		$localpart    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
 		$EmailAccount = $Domain->createEmailAccount($localpart);
 
-		$this->assertTrue($EmailAccount->useDomainNotification());
-		$result = $EmailAccount->getActiveNotification();
-		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\NotificationDomainTask');
+		$this->assertTrue($EmailAccount->useDomainNotifications());
+		$result = $EmailAccount->getActiveNotificationTasks();
+		$this->assertIsArray($result);
+		$this->assertInstanceOf($result[0], 'MailRoute\\API\\Entity\\NotificationDomainTask');
 
-		$this->assertTrue($EmailAccount->useSelfNotification());
-		$result = $EmailAccount->getActiveNotification();
-		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\NotificationAccountTask');
+		$this->assertTrue($EmailAccount->useSelfNotifications());
+		$result = $EmailAccount->getActiveNotificationTasks();
+		$this->assertIsArray($result);
+		$this->assertInstanceOf($result[0], 'MailRoute\\API\\Entity\\NotificationAccountTask');
 
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
@@ -969,10 +957,11 @@ class TestClient extends ClassTest
 
 		$this->assertTrue($Policy->setAntiSpamMode(AntiSpamMode::lenient));
 
-		$EmailAccount->delete();
-		$Domain->delete();
-		$Customer->delete();
-		$Reseller->delete();
+		$this->assertTrue($Policy->delete());
+		$this->assertTrue($EmailAccount->delete());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
 	}
 
 	public function testResellerGetCustomers()
@@ -1041,8 +1030,8 @@ class TestClient extends ClassTest
 		$this->assertIsArray($result);
 		$this->assertIsObject($result[0]);
 		$this->assertEquals($result[1]->getEmail(), 'c2@example.com');
-		$result[0]->delete();
-		$result[1]->delete();
+		$this->assertTrue($result[0]->delete());
+		$this->assertTrue($result[1]->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
 	}
@@ -1060,8 +1049,8 @@ class TestClient extends ClassTest
 		$this->assertIsArray($result);
 		$this->assertIsObject($result[0]);
 		$this->assertEquals($result[1]->getName(), $x.'example1.com');
-		$result[0]->delete();
-		$result[1]->delete();
+		$this->assertTrue($result[0]->delete());
+		$this->assertTrue($result[1]->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
 	}
@@ -1094,6 +1083,10 @@ class TestClient extends ClassTest
 		$result = $Domain->getDomainAliases();
 		$this->assertInstanceOf($result[0], 'MailRoute\\API\\Entity\\DomainAlias');
 		$this->assertEquals($result[1]->getName(), $x.'alias2example.com');
+		foreach ($result as $Alias)
+		{
+			$this->assertTrue($Alias->delete());
+		}
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
@@ -1112,6 +1105,10 @@ class TestClient extends ClassTest
 		$result = $Domain->getEmailAccounts();
 		$this->assertInstanceOf($result[0], 'MailRoute\\API\\Entity\\EmailAccount');
 		$this->assertEquals($result[1]->getLocalpart(), $x.'lc2');
+		foreach ($result as $EmailAccount)
+		{
+			$this->assertTrue($EmailAccount->delete());
+		}
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
@@ -1130,6 +1127,8 @@ class TestClient extends ClassTest
 		$result      = $Domain->getMailServers();
 		$this->assertEquals(get_class($result[0]), get_class($MailServer1));
 		$this->assertEquals($result[1]->getServer(), $MailServer2->getServer());
+		$this->assertTrue($MailServer1->delete());
+		$this->assertTrue($MailServer2->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
@@ -1148,6 +1147,8 @@ class TestClient extends ClassTest
 		$result          = $Domain->getOutboundServers();
 		$this->assertEquals(get_class($result[0]), get_class($OutBoundServer1));
 		$this->assertEquals($result[1]->getServer(), $OutBoundServer2->getServer());
+		$this->assertTrue($OutBoundServer1->delete());
+		$this->assertTrue($OutBoundServer2->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
@@ -1166,6 +1167,8 @@ class TestClient extends ClassTest
 		$result   = $Domain->getContacts();
 		$this->assertEquals(get_class($result[0]), get_class($Contact1));
 		$this->assertEquals($result[1]->getEmail(), $Contact2->getEmail());
+		$this->assertTrue($Contact1->delete());
+		$this->assertTrue($Contact2->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
@@ -1187,6 +1190,11 @@ class TestClient extends ClassTest
 		$this->assertEquals($result[1]->getEmail(), $BlackList2->getEmail());
 		$this->assertEquals($result[1]->getWb(), 'b');
 		$this->assertEquals(count($result), 2);
+		$this->assertTrue($WhiteList->delete());
+		foreach ($result as $entity)
+		{
+			$this->assertTrue($entity->delete());
+		}
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
@@ -1208,6 +1216,11 @@ class TestClient extends ClassTest
 		$this->assertEquals($result[1]->getEmail(), $WhiteList2->getEmail());
 		$this->assertEquals($result[1]->getWb(), 'w');
 		$this->assertEquals(count($result), 2);
+		$this->assertTrue($BlackList->delete());
+		foreach ($result as $entity)
+		{
+			$this->assertTrue($entity->delete());
+		}
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
@@ -1236,8 +1249,9 @@ class TestClient extends ClassTest
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
 		$Domain   = $Customer->createDomain($x.'example.com');
-		$result   = $Domain->getNotificationTask();
-		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\NotificationDomainTask');
+		$result   = $Domain->getNotificationTasks();
+		$this->assertIsArray($result);
+		$this->assertInstanceOf($result[0], 'MailRoute\\API\\Entity\\NotificationDomainTask');
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
@@ -1255,7 +1269,7 @@ class TestClient extends ClassTest
 		$result   = $Alias->getDomain();
 		$this->assertInstanceOf($result, get_class($Domain));
 		$this->assertEquals($result->getName(), $x.'example.com');
-		$Alias->delete();
+		$this->assertTrue($Alias->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
@@ -1278,6 +1292,10 @@ class TestClient extends ClassTest
 		$this->assertIsObject($result[0]);
 		$this->assertEquals($result[1]->getEmail(), 'bl2@example.com');
 		$this->assertEquals($result[1]->getWb(), 'b');
+		foreach ($result as $entity)
+		{
+			$this->assertTrue($entity->delete());
+		}
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
@@ -1292,8 +1310,8 @@ class TestClient extends ClassTest
 		$Contact  = $Reseller->createContact('c@example.com');
 		$result   = $Contact->getReseller();
 		$this->assertEquals($result->getResourceUri(), $Reseller->getResourceUri());
-		$Contact->delete();
-		$Reseller->delete();
+		$this->assertTrue($Contact->delete());
+		$this->assertTrue($Reseller->delete());
 	}
 
 	public function testContactCustomerGetCustomer()
@@ -1305,7 +1323,7 @@ class TestClient extends ClassTest
 		$Contact  = $Customer->createContact('x@example.com');
 		$result   = $Contact->getCustomer();
 		$this->assertEquals($result->getResourceUri(), $Customer->getResourceUri());
-		$Customer->delete();
-		$Reseller->delete();
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
 	}
 }
