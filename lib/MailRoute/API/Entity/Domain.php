@@ -172,6 +172,23 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $this->getAPIClient()->API()->Wblist()->create($WhiteList);
 	}
 
+	/**
+	 * @param \DateTimeZone $Timezone
+	 * @param array $days_of_week array of days (at least one day should be set), where values is the first 3 letters of day name (sun, mon, tue...)
+	 * @param int $hour
+	 * @param int $minute
+	 * @return NotificationDomainTask
+	 * @throws \MailRoute\API\ValidationException
+	 */
+	public function addNotificationTask(\DateTimeZone $Timezone, array $days_of_week, $hour = 3, $minute = 0)
+	{
+		$data         = array('enabled' => 1, 'domain' => $this->getResourceUri(), 'hour' => $hour, 'minute' => $minute, 'timezone' => $Timezone->getName());
+		$days         = $this->getValidatedDaysOfWeek($days_of_week);
+		$data         = array_merge($data, $days);
+		$Notification = $this->getAPIClient()->API()->NotificationDomainTask()->create($data);
+		return $Notification;
+	}
+
 	public function getActive()
 	{
 		return $this->fields['active'];

@@ -175,4 +175,33 @@ abstract class ActiveEntity implements IActiveEntity
 		}
 		return $this->EmailAccount;
 	}
+
+	/**
+	 * @param array $days_of_week
+	 * @return array
+	 * @throws \MailRoute\API\ValidationException
+	 */
+	protected function getValidatedDaysOfWeek(array $days_of_week)
+	{
+		if (empty($days_of_week))
+		{
+			throw new ValidationException("At least one day should be selected");
+		}
+		$week = array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');
+		$days = array();
+		foreach ($days_of_week as $day)
+		{
+			$day = substr(strtolower($day), 0, 3);
+			if (!in_array($day, $week))
+			{
+				continue;
+			}
+			$days[$day] = 1;
+		}
+		if (empty($days))
+		{
+			throw new ValidationException("At least one day should be selected");
+		}
+		return $days;
+	}
 }

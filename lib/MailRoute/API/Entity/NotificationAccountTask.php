@@ -11,6 +11,11 @@ class NotificationAccountTask extends \MailRoute\API\ActiveEntity
 		return parent::getEmailAccount();
 	}
 
+	public function setEmailAccount($email_account_uri)
+	{
+		$this->fields['email_account'] = $email_account_uri;
+	}
+
 	public function getEnabled()
 	{
 		return $this->fields['enabled'];
@@ -34,11 +39,6 @@ class NotificationAccountTask extends \MailRoute\API\ActiveEntity
 	public function getId()
 	{
 		return $this->fields['id'];
-	}
-
-	public function setId($id)
-	{
-		$this->fields['id'] = $id;
 	}
 
 	public function getPriority()

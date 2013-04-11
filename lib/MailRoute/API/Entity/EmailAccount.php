@@ -3,6 +3,7 @@ namespace MailRoute\API\Entity;
 
 use MailRoute\API\ActiveEntity;
 use MailRoute\API\NotFoundException;
+use MailRoute\API\ValidationException;
 
 class EmailAccount extends ActiveEntity
 {
@@ -35,6 +36,23 @@ class EmailAccount extends ActiveEntity
 	{
 		$result = $this->getAPIClient()->callAPI($this->getApiEntityResource().'/'.$this->getId().'/mass_add_aliases/', 'POST', array('aliases' => $localparts));
 		return ($result!==false);
+	}
+
+	/**
+	 * @param \DateTimeZone $Timezone
+	 * @param array $days_of_week array of days (at least one day should be set), where values is the first 3 letters of day name (sun, mon, tue...)
+	 * @param int $hour
+	 * @param int $minute
+	 * @return NotificationAccountTask
+	 * @throws \MailRoute\API\ValidationException
+	 */
+	public function addNotificationTask(\DateTimeZone $Timezone, array $days_of_week, $hour = 3, $minute = 0)
+	{
+		$data         = array('enabled' => 1, 'email_account' => $this->getResourceUri(), 'hour' => $hour, 'minute' => $minute, 'timezone' => $Timezone->getName());
+		$days         = $this->getValidatedDaysOfWeek($days_of_week);
+		$data         = array_merge($data, $days);
+		$Notification = $this->getAPIClient()->API()->NotificationAccountTask()->create($data);
+		return $Notification;
 	}
 
 	public function getId()

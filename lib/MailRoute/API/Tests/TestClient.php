@@ -26,6 +26,8 @@ class TestClient extends ClassTest
 		$this->skipTest('testEmailAccountUseDomainNotification');
 		$this->skipTest('testDomainGetNotificationTask');
 		$this->skipTest('testEmailAccountBulkAddAlias');
+		$this->skipTest('testEmailAccountAddNotificationTask');
+		$this->skipTest('testDomainAddNotificationTask');
 	}
 
 	public function testGetRootSchema()
@@ -1331,6 +1333,59 @@ class TestClient extends ClassTest
 		$Contact  = $Customer->createContact('x@example.com');
 		$result   = $Contact->getCustomer();
 		$this->assertEquals($result->getResourceUri(), $Customer->getResourceUri());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testEmailAccountAddNotificationTask()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller          = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer          = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain            = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$localpart         = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5);
+		$EmailAccount      = $Domain->createEmailAccount($localpart);
+		$Timezone          = new \DateTimeZone('Europe/London');
+		$NotificationTask1 = $EmailAccount->addNotificationTask($Timezone, array('tue'));
+		$NotificationTask2 = $EmailAccount->addNotificationTask($Timezone, array('tue'));
+		$this->assertIsObject($NotificationTask1);
+		$result = $EmailAccount->getNotificationTasks();
+		$this->assertIsArray($result);
+		$this->assertIsObject($result[0]);
+		$this->assertEquals($result[0]->getResourceUri(), $NotificationTask1->getResourceUri());
+		$this->assertEquals($result[1]->getEmailAccount()->getResourceUri(), $EmailAccount->getResourceUri());
+		foreach ($result as $entity)
+		{
+			$this->assertTrue($entity->delete());
+		}
+		$this->assertTrue($EmailAccount->delete());
+		$this->assertTrue($Domain->delete());
+		$this->assertTrue($Customer->delete());
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testDomainAddNotificationTask()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller          = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Customer          = $Reseller->createCustomer('customer'.$reseller_name);
+		$Domain            = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
+		$Timezone          = new \DateTimeZone('Europe/London');
+		$NotificationTask1 = $Domain->addNotificationTask($Timezone, array('tue'));
+		$NotificationTask2 = $Domain->addNotificationTask($Timezone, array('tue'));
+		$this->assertIsObject($NotificationTask1);
+		$result = $Domain->getNotificationTasks();
+		$this->assertIsArray($result);
+		$this->assertIsObject($result[0]);
+		$this->assertEquals($result[0]->getResourceUri(), $NotificationTask1->getResourceUri());
+		$this->assertEquals($result[1]->getDomain()->getResourceUri(), $Domain->getResourceUri());
+		foreach ($result as $entity)
+		{
+			$this->assertTrue($entity->delete());
+		}
+		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
 	}
