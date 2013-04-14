@@ -23,7 +23,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		//$this->skipAllExceptLast();
-		$this->skipAllExcept(array('testEmailAccountAddNotificationTask',
+		$this->skipTest(array('testEmailAccountAddNotificationTask',
 			'testDomainAddNotificationTask',
 			'testEmailAccountAddNotificationTask',
 			'testEmailAccountBulkAddAlias',
