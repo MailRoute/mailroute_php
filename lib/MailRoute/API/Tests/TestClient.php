@@ -29,7 +29,7 @@ class TestClient extends ClassTest
 			'testDomainGetNotificationTask',
 			'testEmailAccountUseDomainNotification'
 		));
-		//$this->skipAllExcept('testContactResellerPOST');
+		//$this->skipAllExcept('testSearch');
 	}
 
 	public function testGetRootSchema()
@@ -110,6 +110,7 @@ class TestClient extends ClassTest
 		$ContactReseller = $this->Client->API()->ContactReseller()->create($Item);
 		$this->assertTrue(is_object($ContactReseller));
 		$this->assertEquals($ContactReseller->getEmail(), $email);
+		$this->assertEquals($ContactReseller->getReseller()->getResourceUri(), $Reseller->getResourceUri());
 
 		$Item = new ContactReseller($this->Client);
 		$Item->setReseller('not_existing');
@@ -135,7 +136,7 @@ class TestClient extends ClassTest
 		$this->assertTrue(is_object($Reseller));
 		$this->assertEquals($Reseller->getName(), $reseller_name)->addCommentary(print_r($Reseller, 1));
 		$result = $Reseller->delete();
-		$this->assertTrue($result)->addCommentary(gettype($Reseller).': '.print_r($Reseller, 1));
+		$this->assertTrue($result);
 		try
 		{
 			$result = $this->Client->API()->Reseller()->get($Reseller->getId());
@@ -177,21 +178,42 @@ class TestClient extends ClassTest
 		$Reseller = $this->Client->API()->Reseller()->get($Reseller->getId());
 		$this->assertEquals($Reseller->getName(), $reseller_name.'_saved', true);
 		$this->assertTrue($Reseller->delete());
+		$ResellerWithoutID = new Reseller($this->Client);
+		try
+		{
+			$this->Client->API()->Reseller()->update($Reseller);
+			$this->assertTrue(false);
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
+		try
+		{
+			$ResellerWithoutID->save();
+			$this->assertTrue(false);
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 	}
 
 	public function testSearch()
 	{
 		$reseller_name = 'test '.microtime(1).mt_rand(1000, 9999);
-		/** @var IActiveEntity[] $resellers */
+		/** @var Reseller[] $resellers */
 		$resellers   = array();
 		$NewReseller = new Reseller($this->Client);
 		$NewReseller->setName($reseller_name.'1');
 		$resellers[] = $this->Client->API()->Reseller()->create($NewReseller);
 		$NewReseller->setName($reseller_name.'2');
 		$resellers[] = $this->Client->API()->Reseller()->create($NewReseller);
-		$result      = $this->Client->API()->Reseller()->search($reseller_name);
+		/** @var Reseller[] $result */
+		$result = $this->Client->API()->Reseller()->search($reseller_name);
 		$this->assertIsArray($result);
 		$this->assertIsObject($result[0]);
+		$this->assertEquals($result[1]->getResourceURI(), $resellers[1]->getResourceUri());
 		foreach ($resellers as $Reseller)
 		{
 			$this->assertTrue($Reseller->delete());
