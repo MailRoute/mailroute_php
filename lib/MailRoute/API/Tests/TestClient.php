@@ -4,6 +4,7 @@ namespace MailRoute\API\Tests;
 use Jamm\Tester\ClassTest;
 use MailRoute\API\AntiSpamMode;
 use MailRoute\API\Entity\Admins;
+use MailRoute\API\Entity\ContactCustomer;
 use MailRoute\API\Entity\ContactReseller;
 use MailRoute\API\Entity\Customer;
 use MailRoute\API\Entity\Domain;
@@ -31,7 +32,7 @@ class TestClient extends ClassTest
 			'testDomainGetNotificationTask',
 			'testEmailAccountUseDomainNotification'
 		));
-		//$this->skipAllExcept('testResellerCreateContact');
+		//$this->skipAllExcept('testCustomerCreateContact');
 	}
 
 	public function testGetRootSchema()
@@ -311,8 +312,22 @@ class TestClient extends ClassTest
 		$result   = $Reseller->createCustomer('customer'.$reseller_name);
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getName(), 'customer'.$reseller_name);
+		/** @var Customer $Customer */
+		$Customer = $this->Client->API()->Customer()->get($result->getId());
+		$this->assertEquals($Customer->getName(), 'customer'.$reseller_name);
+		$this->assertEquals($Customer->getReseller()->getResourceUri(), $Reseller->getResourceUri());
 		$this->assertTrue($result->delete());
 		$this->assertTrue($Reseller->delete());
+		try
+		{
+			$Customer = $Reseller->createCustomer('');
+			$this->assertTrue(false);
+			$Customer->delete();
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 	}
 
 	public function testCustomerCreateContact()
@@ -324,9 +339,23 @@ class TestClient extends ClassTest
 		$result   = $Customer->createContact('customer@example.com');
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getEmail(), 'customer@example.com');
+		/** @var ContactCustomer $Contact */
+		$Contact = $this->Client->API()->ContactCustomer()->get($result->getId());
+		$this->assertEquals($Contact->getEmail(), $result->getEmail());
+		$this->assertEquals($Contact->getCustomer()->getResourceUri(), $Customer->getResourceUri());
 		$this->assertTrue($result->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
+		try
+		{
+			$Contact = $Customer->createContact('');
+			$this->assertTrue(false);
+			$Contact->delete();
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 	}
 
 	public function testCustomerCreateAdmin()
