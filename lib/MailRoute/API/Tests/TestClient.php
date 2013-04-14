@@ -31,7 +31,7 @@ class TestClient extends ClassTest
 			'testDomainGetNotificationTask',
 			'testEmailAccountUseDomainNotification'
 		));
-		//$this->skipAllExcept('testResellerGetContacts');
+		//$this->skipAllExcept('testResellerCreateContact');
 	}
 
 	public function testGetRootSchema()
@@ -269,6 +269,7 @@ class TestClient extends ClassTest
 		$this->assertIsArray($Contacts);
 		$this->assertIsObject($Contacts[0]);
 		$this->assertEquals($Contacts[0]->getReseller()->getResourceUri(), $Reseller->getResourceUri());
+		$this->assertEquals($Contacts[0]->getEmail(), 'reseller_contact@example.com');
 		foreach ($Contacts as $Contact)
 		{
 			$this->assertTrue($Contact->delete());
@@ -284,8 +285,22 @@ class TestClient extends ClassTest
 		$result   = $Reseller->createContact('contact@example.com');
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getEmail(), 'contact@example.com');
+		$contacts = $Reseller->getContacts();
+		$this->assertEquals(count($contacts), 1);
+		$this->assertEquals($contacts[0]->getEmail(), 'contact@example.com');
+		$this->assertEquals($contacts[0]->getReseller()->getResourceUri(), $Reseller->getResourceUri());
 		$this->assertTrue($result->delete());
 		$this->assertTrue($Reseller->delete());
+		try
+		{
+			$Admin = $Reseller->createAdmin('', 0);
+			$this->assertTrue(false);
+			$this->assertTrue($Admin->delete());
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 	}
 
 	public function testResellerCreateCustomer()
