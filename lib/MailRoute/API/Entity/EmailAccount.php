@@ -97,7 +97,7 @@ class EmailAccount extends ActiveEntity
 		{
 			$data[] = $EmailAccount->getResourceUri();
 		}
-		$result = $this->getAPIClient()->callAPI($this->getApiEntityResource().'/'.$this->getId().'/users_to_alias/', 'POST', $data);
+		$result = $this->getAPIClient()->callAPI($this->getApiEntityResource().'/'.$this->getId().'/users_to_alias/', 'POST', array('accounts' => $data));
 		return ($result!==false);
 	}
 

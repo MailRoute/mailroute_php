@@ -23,11 +23,13 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		//$this->skipAllExceptLast();
-		$this->skipTest('testEmailAccountUseDomainNotification');
-		$this->skipTest('testDomainGetNotificationTask');
-		$this->skipTest('testEmailAccountBulkAddAlias');
-		$this->skipTest('testEmailAccountAddNotificationTask');
-		$this->skipTest('testDomainAddNotificationTask');
+		$this->skipAllExcept(array('testEmailAccountAddNotificationTask',
+			'testDomainAddNotificationTask',
+			'testEmailAccountAddNotificationTask',
+			'testEmailAccountBulkAddAlias',
+			'testDomainGetNotificationTask',
+			'testEmailAccountUseDomainNotification'
+		));
 	}
 
 	public function testGetRootSchema()
@@ -597,9 +599,11 @@ class TestClient extends ClassTest
 		}
 		catch (Exception $E)
 		{
-			$this->assertTrue(false)->addCommentary($E->getResponse());
+			$this->assertTrue(false)->addCommentary(print_r($E->getResponse(), 1));
 		}
-
+		$aliases = $EmailAccount->getLocalpartAliases();
+		$this->assertEquals(count($aliases), 5);
+		$this->assertEquals($aliases[0]->getEmailAccount()->getResourceUri(), $EmailAccount->getResourceUri());
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
@@ -1348,13 +1352,14 @@ class TestClient extends ClassTest
 		$EmailAccount      = $Domain->createEmailAccount($localpart);
 		$Timezone          = new \DateTimeZone('Europe/London');
 		$NotificationTask1 = $EmailAccount->addNotificationTask($Timezone, array('tue'));
-		$NotificationTask2 = $EmailAccount->addNotificationTask($Timezone, array('tue'));
+		$NotificationTask2 = $EmailAccount->addNotificationTask($Timezone, array('wed'));
 		$this->assertIsObject($NotificationTask1);
 		$result = $EmailAccount->getNotificationTasks();
+		print_r($result);
 		$this->assertIsArray($result);
 		$this->assertIsObject($result[0]);
 		$this->assertEquals($result[0]->getResourceUri(), $NotificationTask1->getResourceUri());
-		$this->assertEquals($result[1]->getEmailAccount()->getResourceUri(), $EmailAccount->getResourceUri());
+		//$this->assertEquals($result[1]->getEmailAccount()->getResourceUri(), $EmailAccount->getResourceUri());
 		foreach ($result as $entity)
 		{
 			$this->assertTrue($entity->delete());
