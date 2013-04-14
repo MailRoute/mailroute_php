@@ -31,7 +31,7 @@ class TestClient extends ClassTest
 			'testDomainGetNotificationTask',
 			'testEmailAccountUseDomainNotification'
 		));
-		//$this->skipAllExcept('testResellerCreateAndDeleteAdmin');
+		//$this->skipAllExcept('testResellerGetContacts');
 	}
 
 	public function testGetRootSchema()
@@ -147,7 +147,7 @@ class TestClient extends ClassTest
 		{
 			$result = false;
 		}
-		$this->assertTrue(!$result)->addCommentary(gettype($result).': '.print_r($result, 1));
+		$this->assertTrue(!$result)->addCommentary(gettype($result).': ')->addCommentary($result);
 	}
 
 	public function testResellerPUT()
@@ -268,6 +268,7 @@ class TestClient extends ClassTest
 		$Contacts = $Reseller->getContacts();
 		$this->assertIsArray($Contacts);
 		$this->assertIsObject($Contacts[0]);
+		$this->assertEquals($Contacts[0]->getReseller()->getResourceUri(), $Reseller->getResourceUri());
 		foreach ($Contacts as $Contact)
 		{
 			$this->assertTrue($Contact->delete());
@@ -476,7 +477,7 @@ class TestClient extends ClassTest
 			if (is_a($EmailAccount, 'MailRoute\\API\\Exception'))
 			{
 				/** @var Exception $EmailAccount */
-				$this->assertTrue(false)->addCommentary('Exception: '.print_r($EmailAccount->getResponse(), 1));
+				$this->assertTrue(false)->addCommentary('Exception: ')->addCommentary($EmailAccount->getResponse());
 				continue;
 			}
 			$this->assertEquals($EmailAccount->getLocalpart(), $key);
@@ -1420,9 +1421,8 @@ class TestClient extends ClassTest
 		$NotificationTask2 = $EmailAccount->addNotificationTask($Timezone, array('wed'));
 		$this->assertIsObject($NotificationTask1);
 		$result = $EmailAccount->getNotificationTasks();
-		print_r($result);
-		$this->assertIsArray($result);
-		$this->assertIsObject($result[0]);
+		$this->assertIsArray($result)->addCommentary($result);
+		$this->assertIsObject($result[0])->addCommentary($result[0]);
 		$this->assertEquals($result[0]->getResourceUri(), $NotificationTask1->getResourceUri());
 		//$this->assertEquals($result[1]->getEmailAccount()->getResourceUri(), $EmailAccount->getResourceUri());
 		foreach ($result as $entity)
