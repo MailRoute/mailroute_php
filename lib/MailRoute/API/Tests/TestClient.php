@@ -32,7 +32,7 @@ class TestClient extends ClassTest
 			'testDomainGetNotificationTask',
 			'testEmailAccountUseDomainNotification'
 		));
-		//$this->skipAllExcept('testCustomerCreateAdmin');
+		//$this->skipAllExcept('testCustomerDeleteAdmin');
 	}
 
 	public function testGetRootSchema()
@@ -406,6 +406,15 @@ class TestClient extends ClassTest
 		$this->assertTrue($new_list[0]->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
+		try
+		{
+			$Customer->deleteAdmin('');
+			$this->assertTrue(false);
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 	}
 
 	public function testCustomerCreateDomain()

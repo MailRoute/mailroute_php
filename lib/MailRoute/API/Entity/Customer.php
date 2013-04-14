@@ -72,6 +72,10 @@ class Customer extends ActiveEntity
 		{
 			throw new ValidationException('This method requires ID');
 		}
+		if (empty($email))
+		{
+			throw new ValidationException('Email cannot be empty');
+		}
 		$Admins = $this->getAdmins();
 		foreach ($Admins as $Admin)
 		{
