@@ -5,7 +5,6 @@ class ContactCustomer extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'contact_customer';
 	protected $fields = array();
-	protected $Customer;
 
 	public function getAddress()
 	{
@@ -54,12 +53,7 @@ class ContactCustomer extends \MailRoute\API\ActiveEntity
 
 	public function getCustomer()
 	{
-		if (empty($this->Customer) && !empty($this->fields['customer']))
-		{
-			$data           = $this->getDataFromResourceURI($this->fields['customer']);
-			$this->Customer = new Customer($this->getAPIClient(), $data);
-		}
-		return $this->Customer;
+		return parent::getCustomer();
 	}
 
 	public function setCustomer($customer)

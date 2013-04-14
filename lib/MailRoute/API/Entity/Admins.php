@@ -8,7 +8,15 @@ class Admins extends \MailRoute\API\ActiveEntity
 
 	public function getCustomer()
 	{
-		return $this->fields['customer'];
+		if (empty($this->Customer) && empty($this->fields['customer']))
+		{
+			$elements = explode('/', substr($this->fields['resource_uri'], strlen($this->getAPIClient()->getAPIPathPrefix())));
+			if (isset($elements[1]) && $elements[1]=='customer' && !empty($elements[2]))
+			{
+				$this->Customer = $this->getAPIClient()->API()->Customer()->get($elements[2]);
+			}
+		}
+		return parent::getCustomer();
 	}
 
 	public function setCustomer($customer)

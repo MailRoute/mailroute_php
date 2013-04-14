@@ -32,7 +32,7 @@ class TestClient extends ClassTest
 			'testDomainGetNotificationTask',
 			'testEmailAccountUseDomainNotification'
 		));
-		//$this->skipAllExcept('testCustomerCreateContact');
+		//$this->skipAllExcept('testCustomerCreateAdmin');
 	}
 
 	public function testGetRootSchema()
@@ -367,9 +367,23 @@ class TestClient extends ClassTest
 		$result   = $Customer->createAdmin('admin_customer@example.com');
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getEmail(), 'admin_customer@example.com');
+		/** @var Admins $Admin */
+		$Admin = $this->Client->API()->Admins()->get($result->getId());
+		$this->assertEquals($Admin->getEmail(), $result->getEmail());
+		$this->assertEquals($Admin->getCustomer()->getResourceUri(), $Customer->getResourceUri());
 		$this->assertTrue($result->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
+		try
+		{
+			$Admin = $Customer->createAdmin('');
+			$this->assertTrue(false);
+			$Admin->delete();
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 	}
 
 	public function testCustomerDeleteAdmin()

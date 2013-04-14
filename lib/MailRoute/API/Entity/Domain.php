@@ -7,7 +7,6 @@ use MailRoute\API\ValidationException;
 class Domain extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'domain';
-	protected $Customer;
 	protected $domain_aliases;
 	protected $email_accounts;
 	protected $mail_servers;
@@ -222,17 +221,9 @@ class Domain extends \MailRoute\API\ActiveEntity
 		return $this->fields['created_at'];
 	}
 
-	/**
-	 * @return Customer
-	 */
 	public function getCustomer()
 	{
-		if (empty($this->Customer))
-		{
-			$data           = $this->getDataFromResourceURI($this->fields['customer']);
-			$this->Customer = new Customer($this->getAPIClient(), $data);
-		}
-		return $this->Customer;
+		return parent::getCustomer();
 	}
 
 	public function setCustomer($Customer)

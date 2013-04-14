@@ -23,7 +23,7 @@ class Brandinginfo extends \MailRoute\API\ActiveEntity
 
 	public function getCustomer()
 	{
-		return $this->fields['customer'];
+		return parent::getCustomer();
 	}
 
 	public function getDomain()
