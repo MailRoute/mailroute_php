@@ -98,7 +98,7 @@ class Brandinginfo extends \MailRoute\API\ActiveEntity
 
 	public function getReseller()
 	{
-		return $this->fields['reseller'];
+		return parent::getReseller();
 	}
 
 	public function getServiceName()

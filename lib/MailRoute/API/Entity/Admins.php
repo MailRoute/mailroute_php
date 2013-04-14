@@ -38,6 +38,8 @@ class Admins extends \MailRoute\API\ActiveEntity
 
 	public function getId()
 	{
+		$this->fields['id'] = substr($this->fields['resource_uri'],
+				strlen($this->getAPIClient()->getAPIPathPrefix())+strlen($this->getApiEntityResource())+1);
 		return $this->fields['id'];
 	}
 
@@ -68,7 +70,15 @@ class Admins extends \MailRoute\API\ActiveEntity
 
 	public function getReseller()
 	{
-		return $this->fields['reseller'];
+		if (empty($this->Reseller) && empty($this->fields['reseller']))
+		{
+			$elements = explode('/', substr($this->fields['resource_uri'], strlen($this->getAPIClient()->getAPIPathPrefix())));
+			if (isset($elements[1]) && $elements[1]=='reseller' && !empty($elements[2]))
+			{
+				$this->Reseller = $this->getAPIClient()->API()->Reseller()->get($elements[2]);
+			}
+		}
+		return parent::getReseller();
 	}
 
 	public function setReseller($reseller)

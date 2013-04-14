@@ -3,6 +3,7 @@ namespace MailRoute\API\Tests;
 
 use Jamm\Tester\ClassTest;
 use MailRoute\API\AntiSpamMode;
+use MailRoute\API\Entity\Admins;
 use MailRoute\API\Entity\ContactReseller;
 use MailRoute\API\Entity\Customer;
 use MailRoute\API\Entity\Domain;
@@ -12,6 +13,7 @@ use MailRoute\API\Exception;
 use MailRoute\API\IActiveEntity;
 use MailRoute\API\IClient;
 use MailRoute\API\NotFoundException;
+use MailRoute\API\ValidationException;
 
 class TestClient extends ClassTest
 {
@@ -29,7 +31,7 @@ class TestClient extends ClassTest
 			'testDomainGetNotificationTask',
 			'testEmailAccountUseDomainNotification'
 		));
-		//$this->skipAllExcept('testSearch');
+		//$this->skipAllExcept('testResellerCreateAndDeleteAdmin');
 	}
 
 	public function testGetRootSchema()
@@ -91,7 +93,7 @@ class TestClient extends ClassTest
 		$resellers[] = $this->Client->API()->Reseller()->create(array('name' => $reseller_name.'6'));
 		$result      = $this->Client->API()->Reseller()->offset(1)->limit(5)->fetchList();
 		$this->assertIsArray($result);
-		$this->assertTrue(count($result)==5)->addCommentary(print_r($result, 1));
+		$this->assertTrue(count($result)==5)->addCommentary($result);
 		foreach ($resellers as $Reseller)
 		{
 			$this->assertTrue($Reseller->delete());
@@ -134,7 +136,7 @@ class TestClient extends ClassTest
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$this->assertTrue(is_object($Reseller));
-		$this->assertEquals($Reseller->getName(), $reseller_name)->addCommentary(print_r($Reseller, 1));
+		$this->assertEquals($Reseller->getName(), $reseller_name)->addCommentary($Reseller);
 		$result = $Reseller->delete();
 		$this->assertTrue($result);
 		try
@@ -230,15 +232,24 @@ class TestClient extends ClassTest
 		try
 		{
 			$Admin = $Reseller->createAdmin('test@example.com', 1);
+			$this->assertIsObject($Admin);
+			$this->assertEquals($Admin->getEmail(), 'test@example.com');
+			$this->assertEquals($Admin->getReseller()->getResourceUri(), $Reseller->getResourceUri());
+			$this->assertTrue($Reseller->deleteAdmin('test@example.com'));
 		}
 		catch (Exception $E)
 		{
-			$this->assertTrue(false)->addCommentary(print_r($E->getResponse(), 1));
-			return false;
+			$this->assertTrue(false)->addCommentary($E->getResponse())->addCommentary($this->Client);
 		}
-		$this->assertIsObject($Admin);
-		$this->assertEquals($Admin->getEmail(), 'test@example.com');
-		$this->assertTrue($Reseller->deleteAdmin('test@example.com'));
+		try
+		{
+			$Reseller->createAdmin('--', 0);
+			$this->assertTrue(false);
+		}
+		catch (ValidationException $E)
+		{
+			$this->assertTrue(true);
+		}
 		$this->assertTrue($Reseller->delete());
 	}
 
@@ -329,7 +340,8 @@ class TestClient extends ClassTest
 		$this->assertTrueStrict($result);
 		/** @var Customer $RefreshCustomer */
 		$RefreshCustomer = $this->Client->API()->Customer()->get($Customer->getId());
-		$new_list        = $RefreshCustomer->getAdmins();
+		/** @var Admins[] $new_list */
+		$new_list = $RefreshCustomer->getAdmins();
 		$this->assertEquals(count($new_list), 1, true);
 		$this->assertEquals($new_list[0]->getEmail(), '2'.$adm_email);
 		$this->assertTrue($new_list[0]->delete());
@@ -652,7 +664,7 @@ class TestClient extends ClassTest
 		}
 		catch (Exception $E)
 		{
-			$this->assertTrue(false)->addCommentary(print_r($E->getResponse(), 1));
+			$this->assertTrue(false)->addCommentary($E->getResponse());
 		}
 		$aliases = $EmailAccount->getLocalpartAliases();
 		$this->assertEquals(count($aliases), 5);
@@ -676,7 +688,7 @@ class TestClient extends ClassTest
 		}
 		catch (Exception $E)
 		{
-			$this->assertTrue(false)->addCommentary(print_r($E->getResponse(), 1));
+			$this->assertTrue(false)->addCommentary($E->getResponse());
 			$Reseller->delete();
 			return false;
 		}
@@ -754,7 +766,7 @@ class TestClient extends ClassTest
 
 		$result = $EmailAccount->regenerateApiKey();
 
-		$this->assertTrue($result!==false)->addCommentary(print_r($result, 1));
+		$this->assertTrue($result!==false)->addCommentary($result);
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());

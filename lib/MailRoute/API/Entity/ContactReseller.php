@@ -5,7 +5,6 @@ class ContactReseller extends \MailRoute\API\ActiveEntity
 {
 	protected $api_entity_resource = 'contact_reseller';
 	protected $fields = array();
-	protected $Reseller;
 
 	public function getAddress()
 	{
@@ -134,12 +133,7 @@ class ContactReseller extends \MailRoute\API\ActiveEntity
 
 	public function getReseller()
 	{
-		if (empty($this->Reseller))
-		{
-			$data           = $this->getDataFromResourceURI($this->fields['reseller']);
-			$this->Reseller = new Reseller($this->getAPIClient(), $data);
-		}
-		return $this->Reseller;
+		return parent::getReseller();
 	}
 
 	public function setReseller($reseller)

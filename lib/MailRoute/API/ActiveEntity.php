@@ -5,6 +5,7 @@ use MailRoute\API\Entity\Admins;
 use MailRoute\API\Entity\Brandinginfo;
 use MailRoute\API\Entity\Domain;
 use MailRoute\API\Entity\EmailAccount;
+use MailRoute\API\Entity\Reseller;
 
 abstract class ActiveEntity implements IActiveEntity
 {
@@ -16,6 +17,7 @@ abstract class ActiveEntity implements IActiveEntity
 	protected $admins;
 	protected $Domain;
 	protected $EmailAccount;
+	protected $Reseller;
 
 	public function __construct(IClient $Client, array $data = array())
 	{
@@ -89,6 +91,19 @@ abstract class ActiveEntity implements IActiveEntity
 	protected function getId()
 	{
 		return $this->fields['id'];
+	}
+
+	/**
+	 * @return Reseller
+	 */
+	protected function getReseller()
+	{
+		if (empty($this->Reseller) && !empty($this->fields['reseller']))
+		{
+			$data           = $this->getDataFromResourceURI($this->fields['reseller']);
+			$this->Reseller = new Reseller($this->getAPIClient(), $data);
+		}
+		return $this->Reseller;
 	}
 
 	protected function getDomain()

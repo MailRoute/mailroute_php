@@ -178,12 +178,7 @@ class Customer extends ActiveEntity
 
 	public function getReseller()
 	{
-		if (empty($this->Reseller))
-		{
-			$data           = $this->getDataFromResourceURI($this->fields['reseller']);
-			$this->Reseller = new Reseller($this->getAPIClient(), $data);
-		}
-		return $this->Reseller;
+		return parent::getReseller();
 	}
 
 	public function setReseller($reseller)
