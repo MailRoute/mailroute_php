@@ -8,7 +8,6 @@ class Customer extends ActiveEntity
 {
 	protected $api_entity_resource = 'customer';
 	protected $fields = array();
-	private $Reseller;
 	private $domains;
 
 	/**

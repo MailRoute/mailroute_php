@@ -31,7 +31,7 @@ class TestClient extends ClassTest
 			'testDomainGetNotificationTask',
 			'testEmailAccountUseDomainNotification'
 		));
-		//$this->skipAllExcept('testResellerCreateAndDeleteAdmin');
+		$this->skipAllExcept('testResellerCreateAndDeleteAdmin');
 	}
 
 	public function testGetRootSchema()
@@ -239,7 +239,7 @@ class TestClient extends ClassTest
 		}
 		catch (Exception $E)
 		{
-			$this->assertTrue(false)->addCommentary($E->getResponse())->addCommentary($this->Client);
+			$this->assertTrue(false)->addCommentary($E->getResponse());
 		}
 		try
 		{
