@@ -22,7 +22,6 @@ class TestClient extends ClassTest
 	{
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
-		//$this->skipAllExceptLast();
 		$this->skipTest(array('testEmailAccountAddNotificationTask',
 			'testDomainAddNotificationTask',
 			'testEmailAccountAddNotificationTask',
@@ -30,6 +29,7 @@ class TestClient extends ClassTest
 			'testDomainGetNotificationTask',
 			'testEmailAccountUseDomainNotification'
 		));
+		//$this->skipAllExcept('testContactResellerPOST');
 	}
 
 	public function testGetRootSchema()
@@ -44,6 +44,36 @@ class TestClient extends ClassTest
 		$result = $this->Client->GET('reseller/schema');
 		$this->assertIsArray($result);
 		$this->assertTrue(isset($result['allowed_detail_http_methods']));
+	}
+
+	public function testResellerPOST()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1000, 9999);
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$this->assertTrue(is_object($Reseller));
+		$this->assertEquals($Reseller->getName(), $reseller_name);
+		$result = $this->Client->API()->Reseller()->filter(array('name' => $reseller_name))->fetchList();
+		$this->assertIsArray($result);
+		$this->assertEquals(count($result), 1);
+		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testResellerPOSTDuplicate()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1000, 9999);
+		/** @var Reseller $Reseller */
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		try
+		{
+			$this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+			$this->assertTrue(false)->addCommentary('Duplicate was created successfully');
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
+		$this->assertTrue($Reseller->delete());
 	}
 
 	public function testResellerList()
@@ -68,30 +98,31 @@ class TestClient extends ClassTest
 		}
 	}
 
-	public function testResellerPOST()
-	{
-		$reseller_name = 'test '.microtime(1).mt_rand(1000, 9999);
-		/** @var Reseller $Reseller */
-		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
-		$this->assertTrue(is_object($Reseller));
-		$this->assertEquals($Reseller->getName(), $reseller_name);
-		$result = $this->Client->API()->Reseller()->filter(array('name' => $reseller_name))->fetchList();
-		$this->assertIsArray($result);
-		$this->assertTrue($Reseller->delete());
-	}
-
 	public function testContactResellerPOST()
 	{
 		$email = 'test@example.com';
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => 'test contactReseller '.microtime(1).mt_rand(1000, 9999)));
-		/** @var ContactReseller $ContactReseller */
-		$Item = new ContactReseller($this->Client);
+		$Item     = new ContactReseller($this->Client);
 		$Item->setEmail($email);
 		$Item->setReseller($Reseller->getResourceUri());
+		/** @var ContactReseller $ContactReseller */
 		$ContactReseller = $this->Client->API()->ContactReseller()->create($Item);
 		$this->assertTrue(is_object($ContactReseller));
 		$this->assertEquals($ContactReseller->getEmail(), $email);
+
+		$Item = new ContactReseller($this->Client);
+		$Item->setReseller('not_existing');
+		try
+		{
+			$ContactReseller = $this->Client->API()->ContactReseller()->create($Item);
+			$this->assertTrue(false);
+		}
+		catch (Exception $Exception)
+		{
+			$this->assertTrue(true);
+		}
+
 		$this->assertTrue($ContactReseller->delete());
 		$this->assertTrue($Reseller->delete());
 	}
@@ -524,7 +555,7 @@ class TestClient extends ClassTest
 		}
 		catch (Exception $E)
 		{
-			print_r($this->Client);
+			$this->assertTrue(false)->addCommentary($E->getMessage());
 		}
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
