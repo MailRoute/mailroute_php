@@ -8,6 +8,7 @@ use MailRoute\API\Entity\ContactCustomer;
 use MailRoute\API\Entity\ContactReseller;
 use MailRoute\API\Entity\Customer;
 use MailRoute\API\Entity\Domain;
+use MailRoute\API\Entity\DomainAlias;
 use MailRoute\API\Entity\EmailAccount;
 use MailRoute\API\Entity\MailServer;
 use MailRoute\API\Entity\NotificationAccountTask;
@@ -30,7 +31,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testDomainBulkCreateEmailAccount');
+		//$this->skipAllExcept('testDomainCreateAlias');
 	}
 
 	public function testGetRootSchema()
@@ -643,7 +644,19 @@ class TestClient extends ClassTest
 		$result = $Domain->createAlias($name);
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getName(), $name);
-
+		/** @var DomainAlias $DomainAlias */
+		$DomainAlias = $this->Client->API()->DomainAlias()->get($result->getId());
+		$this->assertEquals($DomainAlias->getDomain()->getResourceUri(), $Domain->getResourceUri());
+		try
+		{
+			$DA = $Domain->createAlias('');
+			$this->assertTrue(false);
+			$DA->delete();
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 		$this->assertTrue($result->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
