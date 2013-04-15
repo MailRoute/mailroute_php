@@ -10,6 +10,7 @@ use MailRoute\API\Entity\Customer;
 use MailRoute\API\Entity\Domain;
 use MailRoute\API\Entity\DomainAlias;
 use MailRoute\API\Entity\EmailAccount;
+use MailRoute\API\Entity\LocalpartAlias;
 use MailRoute\API\Entity\MailServer;
 use MailRoute\API\Entity\NotificationAccountTask;
 use MailRoute\API\Entity\NotificationDomainTask;
@@ -32,7 +33,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testDomainAddToWhiteList');
+		//$this->skipAllExcept('testEmailAccountAddAlias');
 	}
 
 	public function testGetRootSchema()
@@ -745,6 +746,20 @@ class TestClient extends ClassTest
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getLocalpart(), $localpart.'alias');
 		$this->assertEquals($result->getEmailAccount()->getId(), $EmailAccount->getId());
+		/** @var LocalpartAlias $Alias */
+		$Alias = $this->Client->API()->LocalpartAlias()->get($result->getId());
+		$this->assertEquals($Alias->getResourceUri(), $result->getResourceUri());
+		$this->assertEquals($Alias->getLocalpart(), $result->getLocalpart());
+		try
+		{
+			$LA = $EmailAccount->addAlias('');
+			$this->assertTrue(false);
+			$LA->delete();
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 		$this->assertTrue($result->delete());
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
