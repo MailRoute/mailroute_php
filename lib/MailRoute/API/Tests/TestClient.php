@@ -32,7 +32,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testDomainAddToBlackList');
+		//$this->skipAllExcept('testDomainAddToWhiteList');
 	}
 
 	public function testGetRootSchema()
@@ -709,6 +709,23 @@ class TestClient extends ClassTest
 		$email  = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5).'@example.com';
 		$result = $Domain->addToWhiteList($email);
 		$this->assertIsObject($result);
+		$this->assertEquals($result->getWb(), 'w');
+		$this->assertEquals($result->getEmail(), $email);
+		/** @var Wblist $WhiteList */
+		$WhiteList = $this->Client->API()->Wblist()->get($result->getId());
+		$this->assertEquals($WhiteList->getEmail(), $email);
+		$this->assertEquals($WhiteList->getResourceUri(), $result->getResourceUri());
+		$this->assertEquals($WhiteList->getDomain()->getResourceUri(), $Domain->getResourceUri());
+		try
+		{
+			$BL = $Domain->addToWhiteList('');
+			$this->assertTrue(false);
+			$BL->delete();
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 		$this->assertTrue($result->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
