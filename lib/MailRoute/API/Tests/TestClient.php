@@ -28,7 +28,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testDomainMoveToCustomer');
+		//$this->skipAllExcept('testDomainCreateContact');
 	}
 
 	public function testGetRootSchema()
@@ -447,7 +447,6 @@ class TestClient extends ClassTest
 		$Customer2 = $Reseller->createCustomer('customer2'.$reseller_name);
 		$Domain    = $Customer1->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
 		$this->assertEquals($Domain->getCustomer()->getResourceUri(), $Customer1->getResourceUri());
-		$this->assertEquals($Domain->getCustomer()->getResourceUri(), $Customer1->getResourceUri());
 		$result = $Domain->moveToCustomer($Customer2);
 		$this->assertTrueStrict($result);
 		/** @var Domain $FreshDomain */
@@ -480,6 +479,17 @@ class TestClient extends ClassTest
 		$result = $Domain->createContact($email);
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getEmail(), $email);
+		$this->assertEquals($result->getDomain()->getResourceUri(), $Domain->getResourceUri());
+		try
+		{
+			$C = $Domain->createContact('');
+			$this->assertTrue(false);
+			$C->delete();
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 		$this->assertTrue($result->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
