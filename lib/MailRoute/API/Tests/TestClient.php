@@ -12,6 +12,7 @@ use MailRoute\API\Entity\EmailAccount;
 use MailRoute\API\Entity\MailServer;
 use MailRoute\API\Entity\NotificationAccountTask;
 use MailRoute\API\Entity\NotificationDomainTask;
+use MailRoute\API\Entity\OutboundServer;
 use MailRoute\API\Entity\Reseller;
 use MailRoute\API\Exception;
 use MailRoute\API\IActiveEntity;
@@ -29,7 +30,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testDomainCreateMailServer');
+		//$this->skipAllExcept('testDomainCreateOutboundServer');
 	}
 
 	public function testGetRootSchema()
@@ -537,6 +538,19 @@ class TestClient extends ClassTest
 		$result = $Domain->createOutboundServer('127.0.0.1');
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getServer(), '127.0.0.1');
+		/** @var OutboundServer $Server */
+		$Server = $this->Client->API()->OutboundServer()->get($result->getId());
+		$this->assertEquals($Server->getDomain()->getResourceUri(), $Domain->getResourceUri());
+		try
+		{
+			$S = $Domain->createOutboundServer('');
+			$this->assertTrue(false);
+			$S->delete();
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 		$this->assertTrue($result->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
