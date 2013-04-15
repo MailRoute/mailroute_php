@@ -28,7 +28,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testCustomerCreateDomain');
+		//$this->skipAllExcept('testDomainMoveToCustomer');
 	}
 
 	public function testGetRootSchema()
@@ -427,6 +427,7 @@ class TestClient extends ClassTest
 		{
 			$Domain = $Customer->createDomain('');
 			$this->assertTrue(false);
+			$Domain->delete();
 		}
 		catch (Exception $E)
 		{
@@ -452,6 +453,15 @@ class TestClient extends ClassTest
 		/** @var Domain $FreshDomain */
 		$FreshDomain = $this->Client->API()->Domain()->get($Domain->getId());
 		$this->assertEquals($FreshDomain->getCustomer()->getResourceUri(), $Customer2->getResourceUri());
+		try
+		{
+			$response = $Domain->moveToCustomer(new Customer($this->Client));
+			$this->assertTrue(false)->addCommentary($response);
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer2->delete());
 		$this->assertTrue($Customer1->delete());
