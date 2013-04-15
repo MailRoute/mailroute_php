@@ -33,7 +33,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testEmailAccountAddToWhiteList');
+		//$this->skipAllExcept('testEmailAccountMakeAliasesFrom');
 	}
 
 	public function testGetRootSchema()
@@ -914,6 +914,15 @@ class TestClient extends ClassTest
 		$aliases = $EmailAccount->getLocalpartAliases();
 		$this->assertEquals(count($aliases), 5);
 		$this->assertEquals($aliases[0]->getEmailAccount()->getResourceUri(), $EmailAccount->getResourceUri());
+		try
+		{
+			$EmailAccount->makeAliasesFrom(array(new EmailAccount($this->Client)));
+			$this->assertTrue(false);
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
