@@ -11,7 +11,6 @@ class EmailAccount extends ActiveEntity
 	protected $fields = array();
 	protected $PolicyUser;
 	protected $Contact;
-	protected $notification_tasks;
 	protected $black_list;
 	protected $white_list;
 	protected $localpart_aliases;
@@ -48,10 +47,12 @@ class EmailAccount extends ActiveEntity
 	 */
 	public function addNotificationTask(\DateTimeZone $Timezone, array $days_of_week, $hour = 3, $minute = 0)
 	{
-		$data         = array('enabled' => 1, 'email_account' => $this->getResourceUri(), 'hour' => $hour, 'minute' => $minute, 'timezone' => $Timezone->getName());
-		$days         = $this->getValidatedDaysOfWeek($days_of_week);
-		$data         = array_merge($data, $days);
+		$data = array('enabled' => true, 'email_account' => $this->getResourceUri(), 'hour' => $hour, 'minute' => $minute, 'timezone' => $Timezone->getName());
+		$days = $this->getValidatedDaysOfWeek($days_of_week);
+		$data = array_merge($data, $days);
+		/** @var NotificationAccountTask $Notification */
 		$Notification = $this->getAPIClient()->API()->NotificationAccountTask()->create($data);
+		$this->addNewNotification($Notification);
 		return $Notification;
 	}
 

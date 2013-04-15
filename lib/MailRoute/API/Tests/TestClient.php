@@ -9,6 +9,8 @@ use MailRoute\API\Entity\ContactReseller;
 use MailRoute\API\Entity\Customer;
 use MailRoute\API\Entity\Domain;
 use MailRoute\API\Entity\EmailAccount;
+use MailRoute\API\Entity\NotificationAccountTask;
+use MailRoute\API\Entity\NotificationDomainTask;
 use MailRoute\API\Entity\Reseller;
 use MailRoute\API\Exception;
 use MailRoute\API\IActiveEntity;
@@ -25,14 +27,7 @@ class TestClient extends ClassTest
 	{
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
-		$this->skipTest(array('testEmailAccountAddNotificationTask',
-			'testDomainAddNotificationTask',
-			'testEmailAccountAddNotificationTask',
-			'testEmailAccountBulkAddAlias',
-			'testDomainGetNotificationTask',
-			'testEmailAccountUseDomainNotification'
-		));
-		//$this->skipAllExcept('testCustomerDeleteAdmin');
+		$this->skipTest('testEmailAccountBulkAddAlias');
 	}
 
 	public function testGetRootSchema()
@@ -1485,13 +1480,29 @@ class TestClient extends ClassTest
 		$EmailAccount      = $Domain->createEmailAccount($localpart);
 		$Timezone          = new \DateTimeZone('Europe/London');
 		$NotificationTask1 = $EmailAccount->addNotificationTask($Timezone, array('tue'));
-		$NotificationTask2 = $EmailAccount->addNotificationTask($Timezone, array('wed'));
+		$NotificationTask2 = $EmailAccount->addNotificationTask($Timezone, array('wed'), 5, 17);
 		$this->assertIsObject($NotificationTask1);
 		$result = $EmailAccount->getNotificationTasks();
 		$this->assertIsArray($result)->addCommentary($result);
-		$this->assertIsObject($result[0])->addCommentary($result[0]);
-		$this->assertEquals($result[0]->getResourceUri(), $NotificationTask1->getResourceUri());
-		//$this->assertEquals($result[1]->getEmailAccount()->getResourceUri(), $EmailAccount->getResourceUri());
+		$this->assertIsObject($result[1])->addCommentary($result[1]);
+		// result[1] because EmailAccount have default NotificationAccountTask (in result[0]) 
+		$this->assertEquals($result[1]->getResourceUri(), $NotificationTask1->getResourceUri());
+		$this->assertEquals($result[2]->getEmailAccount()->getResourceUri(), $EmailAccount->getResourceUri());
+		$NotificationTask3 = $EmailAccount->addNotificationTask($Timezone, array('sun', 'wed'), 22, 8);
+		$result            = $EmailAccount->getNotificationTasks();
+		$this->assertEquals(count($result), 4);
+		$this->assertEquals($result[3]->getResourceUri(), $NotificationTask3->getResourceUri());
+		$this->assertEquals($result[3]->getDaysOfWeek(), array('sun', 'wed'));
+		$this->assertEquals($result[3]->getTimezone(), $Timezone->getName());
+		$this->assertEquals($result[3]->getHour(), 22);
+		$this->assertEquals($result[3]->getMinute(), 8);
+		/** @var NotificationAccountTask $NTaskFromServer */
+		$NTaskFromServer = $this->Client->API()->NotificationAccountTask()->get($NotificationTask2->getId());
+		$this->assertEquals($NTaskFromServer->getResourceUri(), $NotificationTask2->getResourceUri());
+		$this->assertEquals($NTaskFromServer->getDaysOfWeek(), array('wed'));
+		$this->assertEquals($NTaskFromServer->getTimezone(), $Timezone->getName());
+		$this->assertEquals($NTaskFromServer->getHour(), 5);
+		$this->assertEquals($NTaskFromServer->getMinute(), 17);
 		foreach ($result as $entity)
 		{
 			$this->assertTrue($entity->delete());
@@ -1509,15 +1520,31 @@ class TestClient extends ClassTest
 		$Reseller          = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer          = $Reseller->createCustomer('customer'.$reseller_name);
 		$Domain            = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
-		$Timezone          = new \DateTimeZone('Europe/London');
+		$Timezone          = new \DateTimeZone('Europe/Paris');
 		$NotificationTask1 = $Domain->addNotificationTask($Timezone, array('tue'));
-		$NotificationTask2 = $Domain->addNotificationTask($Timezone, array('tue'));
+		$NotificationTask2 = $Domain->addNotificationTask($Timezone, array('mon'), 15, 7);
 		$this->assertIsObject($NotificationTask1);
 		$result = $Domain->getNotificationTasks();
-		$this->assertIsArray($result);
-		$this->assertIsObject($result[0]);
-		$this->assertEquals($result[0]->getResourceUri(), $NotificationTask1->getResourceUri());
-		$this->assertEquals($result[1]->getDomain()->getResourceUri(), $Domain->getResourceUri());
+		$this->assertIsArray($result)->addCommentary($result);
+		$this->assertIsObject($result[1])->addCommentary($result[1]);
+		// result[1] because Domain have default NotificationDomainTask (in result[0]) 
+		$this->assertEquals($result[1]->getResourceUri(), $NotificationTask1->getResourceUri());
+		$this->assertEquals($result[2]->getDomain()->getResourceUri(), $Domain->getResourceUri());
+		$NotificationTask3 = $Domain->addNotificationTask($Timezone, array('sun', 'mon'), 22, 8);
+		$result            = $Domain->getNotificationTasks();
+		$this->assertEquals(count($result), 4);
+		$this->assertEquals($result[3]->getResourceUri(), $NotificationTask3->getResourceUri());
+		$this->assertEquals($result[3]->getDaysOfWeek(), array('sun', 'mon'));
+		$this->assertEquals($result[3]->getTimezone(), $Timezone->getName());
+		$this->assertEquals($result[3]->getHour(), 22);
+		$this->assertEquals($result[3]->getMinute(), 8);
+		/** @var NotificationDomainTask $NTaskFromServer */
+		$NTaskFromServer = $this->Client->API()->NotificationDomainTask()->get($NotificationTask2->getId());
+		$this->assertEquals($NTaskFromServer->getResourceUri(), $NotificationTask2->getResourceUri());
+		$this->assertEquals($NTaskFromServer->getTimezone(), $Timezone->getName());
+		$this->assertEquals($NTaskFromServer->getHour(), 15);
+		$this->assertEquals($NTaskFromServer->getDaysOfWeek(), array('mon'));
+		$this->assertEquals($NTaskFromServer->getMinute(), 7);
 		foreach ($result as $entity)
 		{
 			$this->assertTrue($entity->delete());

@@ -6,6 +6,8 @@ use MailRoute\API\Entity\Brandinginfo;
 use MailRoute\API\Entity\Customer;
 use MailRoute\API\Entity\Domain;
 use MailRoute\API\Entity\EmailAccount;
+use MailRoute\API\Entity\NotificationAccountTask;
+use MailRoute\API\Entity\NotificationDomainTask;
 use MailRoute\API\Entity\Reseller;
 
 abstract class ActiveEntity implements IActiveEntity
@@ -20,6 +22,7 @@ abstract class ActiveEntity implements IActiveEntity
 	protected $EmailAccount;
 	protected $Reseller;
 	protected $Customer;
+	protected $notification_tasks;
 
 	public function __construct(IClient $Client, array $data = array())
 	{
@@ -218,7 +221,7 @@ abstract class ActiveEntity implements IActiveEntity
 			throw new ValidationException("At least one day should be selected");
 		}
 		$week = array('sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat');
-		$days = array();
+		$days = array('sun' => false, 'mon' => false, 'tue' => false, 'wed' => false, 'thu' => false, 'fri' => false, 'sat' => false);
 		foreach ($days_of_week as $day)
 		{
 			$day = substr(strtolower($day), 0, 3);
@@ -226,12 +229,34 @@ abstract class ActiveEntity implements IActiveEntity
 			{
 				continue;
 			}
-			$days[$day] = 1;
+			$days[$day] = true;
 		}
-		if (empty($days))
+		if (!in_array(true, $days))
 		{
 			throw new ValidationException("At least one day should be selected");
 		}
 		return $days;
+	}
+
+	/**
+	 * @param NotificationAccountTask|NotificationDomainTask $Notification
+	 */
+	protected function addNewNotification($Notification)
+	{
+		if ($Notification->getId())
+		{
+			if (!is_array($this->fields['notification_tasks']))
+			{
+				$this->fields['notification_tasks'] = array($this->fields['notification_tasks'], $Notification->getResourceUri());
+			}
+			else
+			{
+				$this->fields['notification_tasks'][] = $Notification->getResourceUri();
+			}
+			if (!empty($this->notification_tasks))
+			{
+				$this->notification_tasks[] = $Notification;
+			}
+		}
 	}
 }

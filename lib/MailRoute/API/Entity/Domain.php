@@ -10,7 +10,6 @@ class Domain extends \MailRoute\API\ActiveEntity
 	protected $domain_aliases;
 	protected $email_accounts;
 	protected $mail_servers;
-	protected $notification_tasks;
 	protected $outbound_servers;
 	protected $Policy;
 	protected $black_list;
@@ -181,10 +180,12 @@ class Domain extends \MailRoute\API\ActiveEntity
 	 */
 	public function addNotificationTask(\DateTimeZone $Timezone, array $days_of_week, $hour = 3, $minute = 0)
 	{
-		$data         = array('enabled' => 1, 'domain' => $this->getResourceUri(), 'hour' => $hour, 'minute' => $minute, 'timezone' => $Timezone->getName());
-		$days         = $this->getValidatedDaysOfWeek($days_of_week);
-		$data         = array_merge($data, $days);
+		$data = array('enabled' => true, 'domain' => $this->getResourceUri(), 'hour' => $hour, 'minute' => $minute, 'timezone' => $Timezone->getName());
+		$days = $this->getValidatedDaysOfWeek($days_of_week);
+		$data = array_merge($data, $days);
+		/** @var NotificationDomainTask $Notification */
 		$Notification = $this->getAPIClient()->API()->NotificationDomainTask()->create($data);
+		$this->addNewNotification($Notification);
 		return $Notification;
 	}
 

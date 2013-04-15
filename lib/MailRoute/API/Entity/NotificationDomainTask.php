@@ -50,4 +50,31 @@ class NotificationDomainTask extends \MailRoute\API\ActiveEntity
 	{
 		$this->fields['priority'] = $priority;
 	}
+
+	public function getDaysOfWeek()
+	{
+		$days = array('sun' => $this->fields['sun'],
+					  'mon' => $this->fields['mon'],
+					  'tue' => $this->fields['tue'],
+					  'wed' => $this->fields['wed'],
+					  'thu' => $this->fields['thu'],
+					  'fri' => $this->fields['fri'],
+					  'sat' => $this->fields['sat']);
+		return array_keys($days, 1);
+	}
+
+	public function getHour()
+	{
+		return $this->fields['hour'];
+	}
+
+	public function getMinute()
+	{
+		return $this->fields['minute'];
+	}
+
+	public function getTimezone()
+	{
+		return $this->fields['timezone'];
+	}
 }
