@@ -15,6 +15,7 @@ use MailRoute\API\Entity\NotificationAccountTask;
 use MailRoute\API\Entity\NotificationDomainTask;
 use MailRoute\API\Entity\OutboundServer;
 use MailRoute\API\Entity\Reseller;
+use MailRoute\API\Entity\Wblist;
 use MailRoute\API\Exception;
 use MailRoute\API\IActiveEntity;
 use MailRoute\API\IClient;
@@ -31,7 +32,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testDomainCreateAlias');
+		//$this->skipAllExcept('testDomainAddToBlackList');
 	}
 
 	public function testGetRootSchema()
@@ -671,10 +672,26 @@ class TestClient extends ClassTest
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$Customer = $Reseller->createCustomer('customer'.$reseller_name);
 		$Domain   = $Customer->createDomain('domain'.md5(microtime(1).mt_rand(1, 9999).__LINE__).'.name');
-
-		$email  = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5).'@example.com';
-		$result = $Domain->addToBlackList($email);
+		$email    = substr(md5(microtime(1).mt_rand(1, 9999).__LINE__), 5).'@example.com';
+		$result   = $Domain->addToBlackList($email);
 		$this->assertIsObject($result);
+		$this->assertEquals($result->getWb(), 'b');
+		$this->assertEquals($result->getEmail(), $email);
+		/** @var Wblist $BlackList */
+		$BlackList = $this->Client->API()->Wblist()->get($result->getId());
+		$this->assertEquals($BlackList->getEmail(), $email);
+		$this->assertEquals($BlackList->getResourceUri(), $result->getResourceUri());
+		$this->assertEquals($BlackList->getDomain()->getResourceUri(), $Domain->getResourceUri());
+		try
+		{
+			$BL = $Domain->addToBlackList('');
+			$this->assertTrue(false);
+			$BL->delete();
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 		$this->assertTrue($result->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
