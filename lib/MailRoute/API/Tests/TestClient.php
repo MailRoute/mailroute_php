@@ -30,7 +30,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testDomainCreateEmailAccount');
+		//$this->skipAllExcept('testDomainBulkCreateEmailAccount');
 	}
 
 	public function testGetRootSchema()
@@ -616,6 +616,15 @@ class TestClient extends ClassTest
 			}
 			$this->assertEquals($EmailAccount->getLocalpart(), $key);
 			$this->assertTrue($EmailAccount->delete());
+		}
+		try
+		{
+			$Domain->bulkCreateEmailAccount(array('z' => 1));
+			$this->assertTrue(false);
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
 		}
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
