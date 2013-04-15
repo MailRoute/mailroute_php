@@ -33,7 +33,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testEmailAccountMakeAliasesFrom');
+		//$this->skipAllExcept('testEmailAccountRegenerateApiKey');
 	}
 
 	public function testGetRootSchema()
@@ -1021,6 +1021,9 @@ class TestClient extends ClassTest
 		$result = $EmailAccount->regenerateApiKey();
 
 		$this->assertTrue($result!==false)->addCommentary($result);
+		$this->assertIsValueOfType($result, 'string')->addCommentary($result);
+		$this->assertTrue(strlen($result) > 0);
+
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());

@@ -139,7 +139,8 @@ class EmailAccount extends ActiveEntity
 
 	public function regenerateApiKey()
 	{
-		return $this->getAPIClient()->callAPI($this->getApiEntityResource().'/'.$this->getId().'/regenerate_api_key', 'POST');
+		$result = $this->getAPIClient()->callAPI($this->getApiEntityResource().'/'.$this->getId().'/regenerate_api_key', 'POST');
+		return (isset($result['api_key']) ? $result['api_key'] : $result);
 	}
 
 	/**
