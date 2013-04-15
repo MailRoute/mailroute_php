@@ -33,7 +33,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testEmailAccountAddAlias');
+		//$this->skipAllExcept('testEmailAccountAddToBlackList');
 	}
 
 	public function testGetRootSchema()
@@ -719,9 +719,9 @@ class TestClient extends ClassTest
 		$this->assertEquals($WhiteList->getDomain()->getResourceUri(), $Domain->getResourceUri());
 		try
 		{
-			$BL = $Domain->addToWhiteList('');
+			$WL = $Domain->addToWhiteList('');
 			$this->assertTrue(false);
-			$BL->delete();
+			$WL->delete();
 		}
 		catch (Exception $E)
 		{
@@ -797,6 +797,15 @@ class TestClient extends ClassTest
 		{
 			$this->assertTrue(false)->addCommentary($E->getMessage());
 		}
+		try
+		{
+			$EmailAccount->bulkAddAlias(array('z' => 5));
+			$this->assertTrue(false);
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
@@ -818,6 +827,21 @@ class TestClient extends ClassTest
 		$this->assertIsObject($result);
 		$this->assertEquals($result->getEmail(), $blacklisted_email);
 		$this->assertEquals($result->getEmailAccount()->getResourceUri(), $EmailAccount->getResourceUri());
+		/** @var Wblist $BlackList */
+		$BlackList = $this->Client->API()->Wblist()->get($result->getId());
+		$this->assertEquals($BlackList->getWb(), 'b');
+		$this->assertEquals($BlackList->getEmail(), $blacklisted_email);
+		$this->assertEquals($BlackList->getResourceUri(), $result->getResourceUri());
+		try
+		{
+			$BL = $Domain->addToBlackList('');
+			$this->assertTrue(false);
+			$BL->delete();
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 		$this->assertTrue($result->delete());
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
