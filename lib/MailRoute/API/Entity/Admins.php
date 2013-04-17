@@ -56,6 +56,12 @@ class Admins extends \MailRoute\API\ActiveEntity
 		$this->fields['id'] = $id;
 	}
 
+	public function regenerateApiKey()
+	{
+		$result = $this->getAPIClient()->callAPI($this->getApiEntityResource().'/'.$this->getId().'/regenerate_api_key', 'POST');
+		return (isset($result['api_key']) ? $result['api_key'] : $result);
+	}
+
 	public function getIsActive()
 	{
 		return $this->fields['is_active'];

@@ -33,7 +33,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testEmailAccountRegenerateApiKey');
+		//$this->skipAllExcept('testAdminsRegenerateApiKey');
 	}
 
 	public function testGetRootSchema()
@@ -1746,5 +1746,23 @@ class TestClient extends ClassTest
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
+	}
+
+	public function testAdminsRegenerateApiKey()
+	{
+		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
+		/** @var Reseller $Reseller */
+		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Admin = $Reseller->createAdmin('admin@example.com',1);
+
+		$result = $Admin->regenerateApiKey();
+
+		$this->assertTrue($result!==false)->addCommentary($result);
+		$this->assertIsValueOfType($result, 'string')->addCommentary($result);
+		$this->assertTrue(strlen($result) > 0);
+
+		$this->assertTrue($Admin->delete());
+		$this->assertTrue($Reseller->delete());
+
 	}
 }
