@@ -1,23 +1,25 @@
 <?php
-namespace MailRoute\API;
+namespace MailRoute\API\Interfaces;
 
-interface IResource
+use MailRoute\API\Entity\Brandinginfo;
+
+interface IResourceBrandinginfo
 {
 	/**
 	 * @param string $id
-	 * @return IActiveEntity|IActiveEntity[]
+	 * @return Brandinginfo|Brandinginfo[]
 	 */
 	public function get($id = '');
 
 	/**
 	 * @param array|object $data
-	 * @return IActiveEntity
+	 * @return Brandinginfo
 	 */
 	public function create($data);
 
 	/**
 	 * @param array|object $data
-	 * @return IActiveEntity
+	 * @return Brandinginfo
 	 */
 	public function update($data);
 
@@ -29,34 +31,34 @@ interface IResource
 
 	/**
 	 * @param int $limit
-	 * @return IResource
+	 * @return IResourceBrandinginfo
 	 */
 	public function limit($limit);
 
 	/**
 	 * @param int $offset
-	 * @return IResource
+	 * @return IResourceBrandinginfo
 	 */
 	public function offset($offset);
 
 	/**
 	 * @param array $filter_map
-	 * @return IResource
+	 * @return IResourceBrandinginfo
 	 */
 	public function filter(array $filter_map);
 
-	/** @return IActiveEntity[] */
+	/** @return Brandinginfo[] */
 	public function fetchList();
 
 	/**
 	 * @param string $word
-	 * @return IActiveEntity[]
+	 * @return Brandinginfo[]
 	 */
 	public function search($word);
 
 	/**
 	 * @param array $data
-	 * @return IActiveEntity[]
+	 * @return Brandinginfo[]
 	 */
 	public function bulkCreate($data);
 }

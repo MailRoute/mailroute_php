@@ -1,23 +1,25 @@
 <?php
-namespace MailRoute\API;
+namespace MailRoute\API\Interfaces;
 
-interface IResource
+use MailRoute\API\Entity\Wblist;
+
+interface IResourceWblist
 {
 	/**
 	 * @param string $id
-	 * @return IActiveEntity|IActiveEntity[]
+	 * @return Wblist|Wblist[]
 	 */
 	public function get($id = '');
 
 	/**
 	 * @param array|object $data
-	 * @return IActiveEntity
+	 * @return Wblist
 	 */
 	public function create($data);
 
 	/**
 	 * @param array|object $data
-	 * @return IActiveEntity
+	 * @return Wblist
 	 */
 	public function update($data);
 
@@ -29,34 +31,34 @@ interface IResource
 
 	/**
 	 * @param int $limit
-	 * @return IResource
+	 * @return IResourceWblist
 	 */
 	public function limit($limit);
 
 	/**
 	 * @param int $offset
-	 * @return IResource
+	 * @return IResourceWblist
 	 */
 	public function offset($offset);
 
 	/**
 	 * @param array $filter_map
-	 * @return IResource
+	 * @return IResourceWblist
 	 */
 	public function filter(array $filter_map);
 
-	/** @return IActiveEntity[] */
+	/** @return Wblist[] */
 	public function fetchList();
 
 	/**
 	 * @param string $word
-	 * @return IActiveEntity[]
+	 * @return Wblist[]
 	 */
 	public function search($word);
 
 	/**
 	 * @param array $data
-	 * @return IActiveEntity[]
+	 * @return Wblist[]
 	 */
 	public function bulkCreate($data);
 }

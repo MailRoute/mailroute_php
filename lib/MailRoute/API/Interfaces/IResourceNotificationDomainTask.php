@@ -1,23 +1,25 @@
 <?php
-namespace MailRoute\API;
+namespace MailRoute\API\Interfaces;
 
-interface IResource
+use MailRoute\API\Entity\NotificationDomainTask;
+
+interface IResourceNotificationDomainTask
 {
 	/**
 	 * @param string $id
-	 * @return IActiveEntity|IActiveEntity[]
+	 * @return NotificationDomainTask|NotificationDomainTask[]
 	 */
 	public function get($id = '');
 
 	/**
 	 * @param array|object $data
-	 * @return IActiveEntity
+	 * @return NotificationDomainTask
 	 */
 	public function create($data);
 
 	/**
 	 * @param array|object $data
-	 * @return IActiveEntity
+	 * @return NotificationDomainTask
 	 */
 	public function update($data);
 
@@ -29,34 +31,34 @@ interface IResource
 
 	/**
 	 * @param int $limit
-	 * @return IResource
+	 * @return IResourceNotificationDomainTask
 	 */
 	public function limit($limit);
 
 	/**
 	 * @param int $offset
-	 * @return IResource
+	 * @return IResourceNotificationDomainTask
 	 */
 	public function offset($offset);
 
 	/**
 	 * @param array $filter_map
-	 * @return IResource
+	 * @return IResourceNotificationDomainTask
 	 */
 	public function filter(array $filter_map);
 
-	/** @return IActiveEntity[] */
+	/** @return NotificationDomainTask[] */
 	public function fetchList();
 
 	/**
 	 * @param string $word
-	 * @return IActiveEntity[]
+	 * @return NotificationDomainTask[]
 	 */
 	public function search($word);
 
 	/**
 	 * @param array $data
-	 * @return IActiveEntity[]
+	 * @return NotificationDomainTask[]
 	 */
 	public function bulkCreate($data);
 }

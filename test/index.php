@@ -9,15 +9,15 @@ $Autoloader->start();
 $Config = new \MailRoute\API\Config(json_decode(file_get_contents(__DIR__.'/config.json'), true));
 
 $Client = new \MailRoute\API\Tests\ClientMock($Config);
-$Test   = new \MailRoute\API\Tests\TestClient($Client);
-$Test->RunTests();
-$Printer = new \Jamm\Tester\ResultsPrinter();
-$Printer->addTests($Test->getTests());
-$Printer->printAndExit();
+//$Test   = new \MailRoute\API\Tests\TestClient($Client);
+//$Test->RunTests();
+//$Printer = new \Jamm\Tester\ResultsPrinter();
+//$Printer->addTests($Test->getTests());
+//$Printer->printAndExit();
 
 //Generate entities
-//$EG = new \MailRoute\API\Tests\EntitiesGenerator();
-//$EG->generateEntities(__DIR__.'/../lib/MailRoute/API/Entity', 'MailRoute\\API\\Entity', $Client, 'MailRoute\\API\\ActiveEntity');
+$EG = new \MailRoute\API\Tests\EntitiesGenerator();
+$EG->generateEntities(__DIR__.'/../lib/MailRoute/API/Entity', 'MailRoute\\API\\Entity', $Client, 'MailRoute\\API\\ActiveEntity');
 //Generate API interface for code completion
 //$IG = new \MailRoute\API\Tests\InterfaceGenerator();
 //file_put_contents(__DIR__.'/../lib/MailRoute/API/API.php', $IG->getInterface($Client));

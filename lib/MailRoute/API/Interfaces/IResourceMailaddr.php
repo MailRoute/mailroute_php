@@ -1,23 +1,25 @@
 <?php
-namespace MailRoute\API;
+namespace MailRoute\API\Interfaces;
 
-interface IResource
+use MailRoute\API\Entity\Mailaddr;
+
+interface IResourceMailaddr
 {
 	/**
 	 * @param string $id
-	 * @return IActiveEntity|IActiveEntity[]
+	 * @return Mailaddr|Mailaddr[]
 	 */
 	public function get($id = '');
 
 	/**
 	 * @param array|object $data
-	 * @return IActiveEntity
+	 * @return Mailaddr
 	 */
 	public function create($data);
 
 	/**
 	 * @param array|object $data
-	 * @return IActiveEntity
+	 * @return Mailaddr
 	 */
 	public function update($data);
 
@@ -29,34 +31,34 @@ interface IResource
 
 	/**
 	 * @param int $limit
-	 * @return IResource
+	 * @return IResourceMailaddr
 	 */
 	public function limit($limit);
 
 	/**
 	 * @param int $offset
-	 * @return IResource
+	 * @return IResourceMailaddr
 	 */
 	public function offset($offset);
 
 	/**
 	 * @param array $filter_map
-	 * @return IResource
+	 * @return IResourceMailaddr
 	 */
 	public function filter(array $filter_map);
 
-	/** @return IActiveEntity[] */
+	/** @return Mailaddr[] */
 	public function fetchList();
 
 	/**
 	 * @param string $word
-	 * @return IActiveEntity[]
+	 * @return Mailaddr[]
 	 */
 	public function search($word);
 
 	/**
 	 * @param array $data
-	 * @return IActiveEntity[]
+	 * @return Mailaddr[]
 	 */
 	public function bulkCreate($data);
 }

@@ -3,76 +3,70 @@ namespace MailRoute\API;
 
 interface API
 {
-	/** @return IResource */
+	/** @return Interfaces\IResourceAdmins */
 	public function Admins();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceBrandinginfo */
 	public function Brandinginfo();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceContactCustomer */
 	public function ContactCustomer();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceContactDomain */
 	public function ContactDomain();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceContactEmailAccount */
 	public function ContactEmailAccount();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceContactReseller */
 	public function ContactReseller();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceCustomer */
 	public function Customer();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceDomain */
 	public function Domain();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceDomainAlias */
 	public function DomainAlias();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceDomainWithAlias */
 	public function DomainWithAlias();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceEmailAccount */
 	public function EmailAccount();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceLocalpartAlias */
 	public function LocalpartAlias();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceMailServer */
 	public function MailServer();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceMailaddr */
+	public function Mailaddr();
+
+	/** @return Interfaces\IResourceNotificationAccountTask */
 	public function NotificationAccountTask();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceNotificationDomainTask */
 	public function NotificationDomainTask();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceOutboundServer */
 	public function OutboundServer();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourcePolicyDomain */
 	public function PolicyDomain();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourcePolicyUser */
 	public function PolicyUser();
 
-	/** @return IResource */
-	public function Quarantine();
-
-	/** @return IResource */
+	/** @return Interfaces\IResourceQuarantineMessage */
 	public function QuarantineMessage();
 
-	/** @return IResource */
-	public function QuarantineReadonly();
-
-	/** @return IResource */
-	public function QuarantineReadonlyMessage();
-
-	/** @return IResource */
+	/** @return Interfaces\IResourceReseller */
 	public function Reseller();
 
-	/** @return IResource */
+	/** @return Interfaces\IResourceWblist */
 	public function Wblist();
 
 }

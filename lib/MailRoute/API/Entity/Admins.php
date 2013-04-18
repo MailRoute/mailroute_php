@@ -1,7 +1,9 @@
 <?php
 namespace MailRoute\API\Entity;
 
-class Admins extends \MailRoute\API\ActiveEntity
+use MailRoute\API\ActiveEntity;
+
+class Admins extends ActiveEntity
 {
 	protected $api_entity_resource = 'admins';
 	protected $fields = array();

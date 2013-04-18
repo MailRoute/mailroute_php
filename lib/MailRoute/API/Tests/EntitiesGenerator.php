@@ -73,7 +73,12 @@ class EntitiesGenerator
 		{
 			return false;
 		}
-		return file_put_contents(rtrim($dir, '/').'/'.$this->inCamelCase($entity).'.php', $code);
+		$filename = rtrim($dir, '/').'/'.$this->inCamelCase($entity).'.php';
+		if (file_exists($filename) && filesize($filename) > 1)
+		{
+			return false;
+		}
+		return file_put_contents($filename, $code);
 	}
 
 	protected function inCamelCase($string)
