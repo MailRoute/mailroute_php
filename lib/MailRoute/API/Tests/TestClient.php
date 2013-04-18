@@ -36,7 +36,7 @@ class TestClient extends ClassTest
 		$this->skipTest('testEmailAccountBulkAddAlias');
 		$this->skipTest('testResellerCreateAndDeleteAdmin');
 		$this->skipTest('testAdminsRegenerateApiKey');
-		//$this->skipAllExcept('testCustomerGetDomains');
+		//$this->skipAllExcept('testDomainGetDomainAliases');
 	}
 
 	public function testGetRootSchema()
@@ -1501,6 +1501,7 @@ class TestClient extends ClassTest
 		$result = $Domain->getDomainAliases();
 		$this->assertInstanceOf($result[0], 'MailRoute\\API\\Entity\\DomainAlias');
 		$this->assertEquals($result[1]->getName(), $x.'alias2example.com');
+		$this->assertEquals($result[0]->getDomain()->getResourceUri(), $Domain->getResourceUri());
 		foreach ($result as $Alias)
 		{
 			$this->assertTrue($Alias->delete());
