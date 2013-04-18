@@ -33,7 +33,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testEmailAccountUseSelfPolicy');
+		//$this->skipAllExcept('testEmailAccountUseDomainNotification');
 	}
 
 	public function testGetRootSchema()
@@ -1145,11 +1145,17 @@ class TestClient extends ClassTest
 		$result = $EmailAccount->getActiveNotificationTasks();
 		$this->assertIsArray($result);
 		$this->assertInstanceOf($result[0], 'MailRoute\\API\\Entity\\NotificationDomainTask');
+		/** @var NotificationDomainTask $DomainNotificationTask */
+		list($DomainNotificationTask) = $Domain->getNotificationTasks();
+		$this->assertEquals($result[0]->getResourceUri(), $DomainNotificationTask->getResourceUri());
 
 		$this->assertTrue($EmailAccount->useSelfNotifications());
 		$result = $EmailAccount->getActiveNotificationTasks();
 		$this->assertIsArray($result);
 		$this->assertInstanceOf($result[0], 'MailRoute\\API\\Entity\\NotificationAccountTask');
+		/** @var NotificationAccountTask $SelfNotificationTask */
+		list($SelfNotificationTask) = $EmailAccount->getNotificationTasks();
+		$this->assertEquals($result[0]->getResourceUri(), $SelfNotificationTask->getResourceUri());
 
 		$this->assertTrue($EmailAccount->delete());
 		$this->assertTrue($Domain->delete());
