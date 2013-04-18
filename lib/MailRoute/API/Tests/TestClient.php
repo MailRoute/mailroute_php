@@ -33,7 +33,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testAdminsRegenerateApiKey');
+		//$this->skipAllExcept('testEmailAccountUseSelfPolicy');
 	}
 
 	public function testGetRootSchema()
@@ -1098,6 +1098,7 @@ class TestClient extends ClassTest
 		$this->assertTrue(!$SelfPolicy->getUseDomainPolicy());
 		$Policy = $EmailAccount->getActivePolicy();
 		$this->assertTrue($Policy->getResourceUri()!=$Domain->getPolicy()->getResourceUri());
+		$this->assertEquals($Policy->getResourceUri(), $SelfPolicy->getResourceUri());
 		$this->assertInstanceOf($Policy, 'MailRoute\\API\\Entity\\PolicyUser');
 
 		$this->assertTrue($EmailAccount->delete());
@@ -1752,8 +1753,8 @@ class TestClient extends ClassTest
 	{
 		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
-		$Reseller     = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
-		$Admin = $Reseller->createAdmin('admin@example.com',1);
+		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
+		$Admin    = $Reseller->createAdmin('admin@example.com', 1);
 
 		$result = $Admin->regenerateApiKey();
 
