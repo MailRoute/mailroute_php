@@ -36,7 +36,7 @@ class TestClient extends ClassTest
 		$this->skipTest('testEmailAccountBulkAddAlias');
 		$this->skipTest('testResellerCreateAndDeleteAdmin');
 		$this->skipTest('testAdminsRegenerateApiKey');
-		//$this->skipAllExcept('testDomainGetEmailAccounts');
+		//$this->skipAllExcept('testDomainGetMailServers');
 	}
 
 	public function testGetRootSchema()
@@ -1546,7 +1546,8 @@ class TestClient extends ClassTest
 		$MailServer2 = $Domain->createMailServer($x.'mail2.example.com');
 		$result      = $Domain->getMailServers();
 		$this->assertEquals(get_class($result[0]), get_class($MailServer1));
-		$this->assertEquals($result[1]->getServer(), $MailServer2->getServer());
+		$this->assertEquals($result[1]->getServer(), $x.'mail2.example.com');
+		$this->assertEquals($result[0]->getDomain()->getResourceUri(), $Domain->getResourceUri());
 		$this->assertTrue($MailServer1->delete());
 		$this->assertTrue($MailServer2->delete());
 		$this->assertTrue($Domain->delete());
