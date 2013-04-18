@@ -33,7 +33,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testEmailAccountUseDomainNotification');
+		//$this->skipAllExcept('testEmailAccountCreate');
 	}
 
 	public function testGetRootSchema()
@@ -1176,6 +1176,9 @@ class TestClient extends ClassTest
 		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\EmailAccount');
 		$this->assertEquals($result->getLocalpart(), 'email');
 		$this->assertEquals($result->getDomain()->getResourceUri(), $Domain->getResourceUri());
+		/** @var EmailAccount $FromServer */
+		$FromServer = $this->Client->API()->EmailAccount()->get($result->getId());
+		$this->assertEquals($result->getResourceUri(), $FromServer->getResourceUri());
 
 		$result = $this->Client->API()->EmailAccount()->create(array('email' => 'email2@example.com', 'domain' => $Domain->getResourceUri()));
 		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\EmailAccount');
