@@ -18,7 +18,7 @@ class Reseller extends ActiveEntity
 	 * @throws \MailRoute\API\ValidationException
 	 * @return Admins
 	 */
-	public function createAdmin($email, $send_welcome)
+	public function createAdmin($email, $send_welcome = false)
 	{
 		if (!$this->getId())
 		{

@@ -34,9 +34,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		$this->skipTest('testResellerCreateAndDeleteAdmin');
-		$this->skipTest('testAdminsRegenerateApiKey');
-		//$this->skipAllExcept('testDomainGetContacts');
+		//$this->skipAllExcept('testEmailAccountBulkAddAlias');
 	}
 
 	public function testGetRootSchema()
@@ -236,7 +234,7 @@ class TestClient extends ClassTest
 		$Reseller = $this->Client->API()->Reseller()->create($NewReseller);
 		try
 		{
-			$Admin = $Reseller->createAdmin('test@example.com', 1);
+			$Admin = $Reseller->createAdmin('test@example.com');
 			$this->assertIsObject($Admin);
 			$this->assertEquals($Admin->getEmail(), 'test@example.com');
 			$this->assertEquals($Admin->getReseller()->getResourceUri(), $Reseller->getResourceUri());
@@ -1842,7 +1840,7 @@ class TestClient extends ClassTest
 		$reseller_name = 'test '.microtime(1).mt_rand(1, 9999).__FUNCTION__;
 		/** @var Reseller $Reseller */
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
-		$Admin    = $Reseller->createAdmin('admin@example.com', 1);
+		$Admin    = $Reseller->createAdmin('admin@example.com');
 
 		$result = $Admin->regenerateApiKey();
 
