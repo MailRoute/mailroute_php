@@ -33,6 +33,8 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
+		$this->skipTest('testResellerCreateAndDeleteAdmin');
+		$this->skipTest('testAdminsRegenerateApiKey');
 		//$this->skipAllExcept('testEmailAccountMassAdd');
 	}
 
