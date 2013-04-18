@@ -34,7 +34,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testEmailAccountBulkAddAlias');
+		//$this->skipAllExcept('testDomainGetPolicy');
 	}
 
 	public function testGetRootSchema()
@@ -1659,6 +1659,7 @@ class TestClient extends ClassTest
 		$Domain   = $Customer->createDomain($x.'example.com');
 		$result   = $Domain->getPolicy();
 		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\PolicyDomain');
+		$this->assertEquals($result->getDomain()->getResourceUri(), $Domain->getResourceUri());
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
