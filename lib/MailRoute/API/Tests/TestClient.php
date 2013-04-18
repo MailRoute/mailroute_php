@@ -36,7 +36,7 @@ class TestClient extends ClassTest
 		$this->skipTest('testEmailAccountBulkAddAlias');
 		$this->skipTest('testResellerCreateAndDeleteAdmin');
 		$this->skipTest('testAdminsRegenerateApiKey');
-		//$this->skipAllExcept('testPolicyEnableDisableMethods');
+		//$this->skipAllExcept('testResellerGetCustomers');
 	}
 
 	public function testGetRootSchema()
@@ -1388,6 +1388,7 @@ class TestClient extends ClassTest
 		$this->assertIsObject($result[0]);
 		foreach ($result as $Customer)
 		{
+			$this->assertEquals($Customer->getReseller()->getResourceUri(), $Reseller->getResourceUri());
 			$this->assertTrue($Customer->delete());
 		}
 		$this->assertTrue($Reseller->delete());
