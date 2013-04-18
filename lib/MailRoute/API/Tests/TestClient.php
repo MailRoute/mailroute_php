@@ -15,6 +15,7 @@ use MailRoute\API\Entity\MailServer;
 use MailRoute\API\Entity\NotificationAccountTask;
 use MailRoute\API\Entity\NotificationDomainTask;
 use MailRoute\API\Entity\OutboundServer;
+use MailRoute\API\Entity\PolicyDomain;
 use MailRoute\API\Entity\Reseller;
 use MailRoute\API\Entity\Wblist;
 use MailRoute\API\Exception;
@@ -35,7 +36,7 @@ class TestClient extends ClassTest
 		$this->skipTest('testEmailAccountBulkAddAlias');
 		$this->skipTest('testResellerCreateAndDeleteAdmin');
 		$this->skipTest('testAdminsRegenerateApiKey');
-		//$this->skipAllExcept('testEmailAccountMassAdd');
+		//$this->skipAllExcept('testPolicyEnableDisableMethods');
 	}
 
 	public function testGetRootSchema()
@@ -1339,8 +1340,13 @@ class TestClient extends ClassTest
 		$Policy       = $EmailAccount->getActivePolicy();
 		$this->assertTrue($Policy->enableBadHdrFilter());
 		$this->assertEquals($Policy->getBypassHeaderChecks(), 'Y');
+		/** @var PolicyDomain $ServerPolicy */
+		$ServerPolicy = $this->Client->API()->PolicyDomain()->get($Policy->getId());
+		$this->assertEquals($ServerPolicy->getBypassHeaderChecks(), 'Y');
 		$this->assertTrue($Policy->disableBadHdrFilter());
 		$this->assertEquals($Policy->getBypassHeaderChecks(), 'N');
+		$ServerPolicy = $this->Client->API()->PolicyDomain()->get($Policy->getId());
+		$this->assertEquals($ServerPolicy->getBypassHeaderChecks(), 'N');
 
 		$this->assertTrue($Policy->enableBannedFilter());
 		$this->assertEquals($Policy->getBypassBannedChecks(), 'Y');
@@ -1356,6 +1362,9 @@ class TestClient extends ClassTest
 		$this->assertEquals($Policy->getBypassVirusChecks(), 'Y');
 		$this->assertTrue($Policy->disableVirusFiltering());
 		$this->assertEquals($Policy->getBypassVirusChecks(), 'N');
+		$this->assertTrue($Policy->disableVirusFiltering());
+		$ServerPolicy = $this->Client->API()->PolicyDomain()->get($Policy->getId());
+		$this->assertEquals($ServerPolicy->getBypassVirusChecks(), 'N');
 
 		$this->assertTrue($Policy->setAntiSpamMode(AntiSpamMode::lenient));
 
