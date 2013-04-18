@@ -36,7 +36,7 @@ class TestClient extends ClassTest
 		$this->skipTest('testEmailAccountBulkAddAlias');
 		$this->skipTest('testResellerCreateAndDeleteAdmin');
 		$this->skipTest('testAdminsRegenerateApiKey');
-		//$this->skipAllExcept('testResellerGetCustomers');
+		//$this->skipAllExcept('testResellerGetBrandingInfo');
 	}
 
 	public function testGetRootSchema()
@@ -1401,6 +1401,8 @@ class TestClient extends ClassTest
 		$Reseller = $this->Client->API()->Reseller()->create(array('name' => $reseller_name));
 		$result   = $Reseller->getBrandingInfo();
 		$this->assertIsObject($result);
+		$this->assertInstanceOf($result, 'MailRoute\\API\\Entity\\Brandinginfo');
+		$this->assertEquals($result->getReseller()->getResourceUri(), $Reseller->getResourceUri());
 		$Reseller->delete();
 	}
 
