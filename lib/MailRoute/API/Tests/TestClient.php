@@ -33,7 +33,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testEmailAccountCreate');
+		//$this->skipAllExcept('testEmailAccountMassDelete');
 	}
 
 	public function testGetRootSchema()
@@ -1231,12 +1231,31 @@ class TestClient extends ClassTest
 			try
 			{
 				$result = $this->Client->API()->EmailAccount()->get($id);
-				$this->assertTrue(!$result);
+				$this->assertTrue(false);
+				$result->delete();
 			}
 			catch (NotFoundException $E)
 			{
 				$this->assertTrue(true);
 			}
+		}
+		try
+		{
+			$EmailAccount->massDelete(array());
+			$this->assertTrue(false);
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
+		try
+		{
+			$EmailAccount->massDelete(array('x', 'y', 'z'));
+			$this->assertTrue(false);
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
 		}
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
