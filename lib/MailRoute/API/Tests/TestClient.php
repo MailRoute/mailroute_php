@@ -33,7 +33,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testEmailAccountMassDelete');
+		//$this->skipAllExcept('testEmailAccountMassAdd');
 	}
 
 	public function testGetRootSchema()
@@ -1277,12 +1277,46 @@ class TestClient extends ClassTest
 		try
 		{
 			$result = $this->Client->API()->EmailAccount()->bulkCreate(array('localparts' => $localparts, 'domain' => $Domain->getResourceUri()));
+			$this->assertTrue($result);
+			$check_list = $Domain->getEmailAccounts();
+			$this->assertEquals(count($check_list), count($localparts));
+			foreach ($check_list as $CheckEmailAccount)
+			{
+				$this->assertTrue(in_array($CheckEmailAccount->getLocalpart(), $localparts));
+			}
+			$this->assertEquals($check_list[0]->getDomain()->getResourceUri(), $Domain->getResourceUri());
 		}
 		catch (Exception $E)
 		{
-			$result = false;
+			$this->assertTrue(false);
 		}
-		$this->assertTrue($result);
+		try
+		{
+			$this->Client->API()->EmailAccount()->bulkCreate(array());
+			$this->assertTrue(false);
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
+		try
+		{
+			$this->Client->API()->EmailAccount()->bulkCreate(array('localparts' => array()));
+			$this->assertTrue(false);
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
+		try
+		{
+			$this->Client->API()->EmailAccount()->bulkCreate(array('localparts' => 1));
+			$this->assertTrue(false);
+		}
+		catch (Exception $E)
+		{
+			$this->assertTrue(true);
+		}
 		$this->assertTrue($Domain->delete());
 		$this->assertTrue($Customer->delete());
 		$this->assertTrue($Reseller->delete());
