@@ -51,7 +51,7 @@ class Customer extends ActiveEntity
 		return $deleted;
 	}
 
-	public function createAdmin($email, $send_welcome = false)
+	public function createAdmin($email, $send_welcome = false, $username = '')
 	{
 		if (!$this->getId())
 		{
@@ -59,6 +59,7 @@ class Customer extends ActiveEntity
 		}
 		$Admin = new Admins($this->getAPIClient());
 		$Admin->setEmail($email);
+		$Admin->setUsername($username);
 		$Admin->setSendWelcome($send_welcome);
 		$new_data = $this->getAPIClient()->callAPI($Admin->getApiEntityResource().'/'.$this->getApiEntityResource().'/'.$this->getId().'/',
 			'POST', $Admin->getAPIEntityFields());

@@ -8,11 +8,15 @@ $Autoloader->start();
 
 $Config = new \MailRoute\API\Config(json_decode(file_get_contents(__DIR__.'/config.json'), true));
 
-$Client = new \MailRoute\API\Tests\ClientMock($Config);
-$Test   = new \MailRoute\API\Tests\TestClient($Client);
-$Test->RunTests();
 $Printer = new \Jamm\Tester\ResultsPrinter();
-$Printer->addTests($Test->getTests());
+$Client  = new \MailRoute\API\Tests\ClientMock($Config);
+$Test    = new \MailRoute\API\Tests\TestClient($Client);
+//$Test->RunTests();
+//$Printer->addTests($Test->getTests());
+$TestAccess = new \MailRoute\API\Tests\TestAccess($Config);
+$TestAccess->RunTests();
+$Printer->addTests($TestAccess->getTests());
+
 $Printer->printAndExit();
 
 //Generate entities

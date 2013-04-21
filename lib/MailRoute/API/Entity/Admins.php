@@ -127,9 +127,10 @@ class Admins extends ActiveEntity
 		$this->fields['username'] = $username;
 	}
 
-	public function delete()
-	{
-		$resource_path = substr($this->getResourceUri(), strlen($this->getAPIClient()->getAPIPathPrefix()));
-		return $this->getAPIClient()->callAPI($resource_path, 'DELETE');
-	}
+//  TODO: remove this comment after check of deletion
+//	public function delete()
+//	{
+//		$resource_path = substr($this->getResourceUri(), strlen($this->getAPIClient()->getAPIPathPrefix()));
+//		return $this->getAPIClient()->callAPI($resource_path, 'DELETE');
+//	}
 }

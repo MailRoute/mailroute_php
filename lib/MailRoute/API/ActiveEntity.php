@@ -46,12 +46,12 @@ abstract class ActiveEntity implements IActiveEntity
 
 	public function delete()
 	{
-		$data = $this->getAPIEntityFields();
-		if (empty($data['id']))
+		$id = $this->getId();
+		if (empty($id))
 		{
 			throw new ValidationException("Can't delete entity without ID", 400);
 		}
-		return $this->Client->callAPI($this->getApiEntityResource().'/'.$data['id'], 'DELETE');
+		return $this->Client->callAPI($this->getApiEntityResource().'/'.$id, 'DELETE');
 	}
 
 	public function getApiEntityResource()
@@ -95,7 +95,7 @@ abstract class ActiveEntity implements IActiveEntity
 
 	protected function getId()
 	{
-		return $this->fields['id'];
+		return (isset($this->fields['id']) ? $this->fields['id'] : NULL);
 	}
 
 	/**

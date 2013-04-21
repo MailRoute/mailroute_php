@@ -14,11 +14,12 @@ class Reseller extends ActiveEntity
 
 	/**
 	 * @param $email
-	 * @param $send_welcome
+	 * @param bool $send_welcome
+	 * @param string $username
 	 * @throws \MailRoute\API\ValidationException
 	 * @return Admins
 	 */
-	public function createAdmin($email, $send_welcome = false)
+	public function createAdmin($email, $send_welcome = false, $username = '')
 	{
 		if (!$this->getId())
 		{
@@ -27,6 +28,7 @@ class Reseller extends ActiveEntity
 		$Client = $this->getAPIClient();
 		$Admin  = new Admins($Client);
 		$Admin->setEmail($email);
+		$Admin->setUsername($username);
 		$Admin->setSendWelcome($send_welcome);
 		$Admin->setReseller($this->getResourceUri());
 		$new_data = $Client->callAPI($Admin->getApiEntityResource().'/'.$this->getApiEntityResource().'/'.$this->getId().'/',
