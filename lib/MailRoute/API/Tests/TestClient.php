@@ -25,7 +25,7 @@ class TestClient extends ClassTest
 		$this->Client = $Client;
 		$this->Client->setDeleteNotFoundIsError(true);
 		$this->skipTest('testEmailAccountBulkAddAlias');
-		//$this->skipAllExcept('testDomainAliasGetDomain');
+		//$this->skipAllExcept(array('testResellerCreateAndDeleteAdmin', 'testCustomerCreateAdmin', 'testCustomerDeleteAdmin'));
 	}
 
 	public function testGetRootSchema()

@@ -2,6 +2,7 @@
 namespace MailRoute\API\Entity;
 
 use MailRoute\API\ActiveEntity;
+use MailRoute\API\Exception;
 
 class Admins extends ActiveEntity
 {
@@ -127,10 +128,8 @@ class Admins extends ActiveEntity
 		$this->fields['username'] = $username;
 	}
 
-//  TODO: remove this comment after check of deletion
-//	public function delete()
-//	{
-//		$resource_path = substr($this->getResourceUri(), strlen($this->getAPIClient()->getAPIPathPrefix()));
-//		return $this->getAPIClient()->callAPI($resource_path, 'DELETE');
-//	}
+	public function save()
+	{
+		throw new Exception("This resource can't be updated", 405);
+	}
 }

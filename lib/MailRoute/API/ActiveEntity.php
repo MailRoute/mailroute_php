@@ -35,12 +35,12 @@ abstract class ActiveEntity implements IActiveEntity
 
 	public function save()
 	{
-		$data = $this->getAPIEntityFields();
-		if (empty($data['id']))
+		$id = $this->getId();
+		if (empty($id))
 		{
 			throw new ValidationException("Can't save entity without ID", 400);
 		}
-		$result = $this->Client->callAPI($this->getApiEntityResource().'/'.$data['id'], 'PUT', $data);
+		$result = $this->Client->callAPI($this->getApiEntityResource().'/'.$id, 'PUT', $this->getAPIEntityFields());
 		return (!empty($result));
 	}
 
